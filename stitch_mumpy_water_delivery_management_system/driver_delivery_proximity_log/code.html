@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#004b73","tertiary-fixed":"#cce5ff","on-tertiary-container":"#77c2ff","on-surface":"#0b1c30","on-background":"#0b1c30","secondary-container":"#39b8fd","on-primary":"#ffffff","inverse-on-surface":"#eaf1ff","on-tertiary":"#ffffff","primary-fixed":"#dae1ff","on-secondary":"#ffffff","tertiary-container":"#004f7a","surface-container-lowest":"#ffffff","on-error":"#ffffff","surface-container-low":"#eff4ff","error":"#ba1a1a","on-tertiary-fixed":"#001d31","surface":"#f8f9ff","on-secondary-fixed":"#001e2f","surface-bright":"#f8f9ff","secondary-fixed":"#c9e6ff","inverse-primary":"#b3c5ff","background":"#f8f9ff","on-primary-container":"#a1b9ff","primary-fixed-dim":"#b3c5ff","on-error-container":"#93000a","on-secondary-container":"#004666","secondary":"#006591","surface-container":"#e5eeff","surface-dim":"#cbdbf5","surface-variant":"#d3e4fe","tertiary-fixed-dim":"#93ccff","surface-container-highest":"#d3e4fe","primary-container":"#1044a5","on-primary-fixed-variant":"#0640a1","primary":"#002e7c","surface-tint":"#2e59ba","on-primary-fixed":"#001849","error-container":"#ffdad6","on-secondary-fixed-variant":"#004c6e","secondary-fixed-dim":"#89ceff","outline":"#747684","inverse-surface":"#213145","tertiary":"#003757","surface-container-high":"#dce9ff","on-surface-variant":"#434652","outline-variant":"#c4c6d4"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xl":"2.5rem","space-lg":"1.5rem","space-md":"1rem",margin:"2rem","space-sm":"0.5rem",gutter:"1.25rem","gutter-mobile":"0.75rem","margin-mobile":"1rem","space-xs":"0.25rem"},fontFamily:display:["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"]},fontSize:{display:["44px",{lineHeight:"52px",letterSpacing:"-0.03em",fontWeight:"800"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"700"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"700"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["12px",{lineHeight:"18px",fontWeight:"400"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><header class="fixed top-0 left-0 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex items-center justify-between px-6"><div class="flex items-center gap-6"><div class="flex items-center gap-3"><img alt="Mumpy Water Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVZHtQKjNAS2M0a6JdTJzewiln3cooJ3yeFt6vcN6vSEoJCr6VdFMwXFk84EGupTldhorobBbT_B-igDOGQBY3UpSWy_VMS28GvumoHtLlT3rcRLzL4y2iOEVf2Tjzppe9a-4OtYsA-GLFwq-cM2GGF22EleaOUc84k5OYE4Ug7yIJcZdmN1_nCDoPmNuG6HBFfZi1SzGYS9ia3r8hiyF5gw0nZVZ0leMRmTDzE_ScXJY6yzAPa4MB"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-extrabold">Mumpy</span></div><div class="h-5 w-px bg-outline-variant/40 hidden sm:block"></div><div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm font-bold uppercase tracking-wider">North Sector Hub 04 - Live Dispatch</span></div></div><div class="hidden lg:flex items-center gap-2 bg-surface-container-low px-4 py-1.5 rounded-full"><span class="material-symbols-outlined text-secondary text-base">water_drop</span><span class="font-body-sm text-body-sm text-on-surface-variant">Bottles in Transit: <strong class="text-primary font-bold">420</strong></span><span class="text-outline-variant font-body-sm">|</span><span class="font-body-sm text-body-sm text-on-surface-variant">Delivered Today: <strong class="text-secondary font-bold">1,280</strong></span></div><div class="flex items-center gap-4"><div class="relative hidden sm:flex items-center"><span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">search</span><input class="pl-9 pr-4 py-1.5 rounded-lg bg-surface-container-low text-on-surface text-body-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary w-52 lg:w-64 transition-all" placeholder="Search crates, routes, IDs..." type="text"/></div><button aria-label="Notifications" class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-3 pl-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUAvhRNhOweNJStSKpvtzqHDVQTsiCeaO7M-QD2-vzIF5q9AVEMykHCIcul8L3ISSa3kipQhU-gFTNWgYDzw3pX2TebaK2-ImDUqyu_uSbDtk63rR3nY87Au3-uyaAngNKaKOPFmFfaXrEu8uQeqkIMk5C_Wu5H6-6XBpipZjBXYtqwV4o6mmL4lrysRRUut2bkJzWVwA-mT6NHkSY_1H8-MDU21Hq3FG9_kIJScF8tLugStLTSSv0"/><div class="hidden xl:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Rajesh Patel</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Operations Lead</span></div></div></div></header><aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-surface-container-low/70 backdrop-blur-md z-40 flex flex-col justify-between p-4"><div class="flex flex-col gap-6"><div class="px-3 pt-2"><span class="font-label-sm text-label-sm font-bold uppercase text-on-surface-variant/80 tracking-wider">Operational Units</span></div><nav class="flex flex-col gap-1.5" data-active-classes="bg-primary text-on-primary shadow-sm font-bold rounded-xl"><a aria-current="page" class="flex items-center gap-3 px-3.5 py-2.5 transition-all bg-primary text-on-primary shadow-sm font-bold rounded-xl" data-path="driver-delivery-proximity-log" href="#"><span class="material-symbols-outlined text-xl">local_shipping</span>Driver &amp; Proximity</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="fleet-pickup-tracker" href="#"><span class="material-symbols-outlined text-xl">hub</span>Fleet Live Map</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="admin-revenue-analytics" href="#"><span class="material-symbols-outlined text-xl">analytics</span>Admin Insights</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="customer-onboarding" href="#"><span class="material-symbols-outlined text-xl">group_add</span>Customer Directory</a></nav></div><div class="p-3 bg-surface-container rounded-xl flex flex-col gap-2"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant">Plant Reservoir</span><span class="font-label-sm text-label-sm font-bold text-secondary">92% Full</span></div><div class="w-full bg-surface-variant rounded-full h-1.5 overflow-hidden"><div class="bg-secondary-container h-1.5 rounded-full" style="width: 92%"></div></div><span class="font-body-sm text-body-sm text-on-surface-variant">Reverse Osmosis Line active</span></div></aside><div class="pl-64"><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-6 py-6 lg:px-8 space-y-6 max-w-7xl mx-auto w-full">
+<!-- Active Vehicle & Telemetry Hero Strip -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-5 md:p-6 transition-all hover:shadow-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<!-- Left: Driver & Telemetry identity -->
+<div class="flex items-start sm:items-center gap-4">
+<div class="relative shrink-0">
+<img class="w-14 h-14 rounded-2xl object-cover shadow-sm" data-alt="Close up warm professional portrait of an Indian logistics driver named Suresh Kumar wearing a neat navy blue collared uniform, well lit against modern delivery plant background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLoV9lKk9q78UOnesxtVRghsDSCvOHuIYfaZOMj5pzM0FUy2hVrIKlq2oz8VYkvGo1DTAY8T-w5QNsfYVk1v1L2MMp8z0aStYK6L-9PRhL895PReApm6bOzmtFgjV1T_dHl004lipvD_Jh38xZD24FLuZrS0ySqjPOfFhbNqbQpMnm_Vq6Do4fteyhkbHofV17ebwfOpl26ENfoap7PaOIW_ZBEgvsavvfu9ER1RGwN_8rTUot64Wr"/>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 bg-secondary-container rounded-full flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-surface-container-lowest animate-ping"></span>
+</span>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex flex-wrap items-center gap-2">
+<h1 class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Pickup Van MH-12-AQ-8821</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">local_shipping</span> Active Route
+              </span>
+</div>
+<div class="flex flex-wrap items-center gap-3 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base text-secondary">person</span> Suresh Kumar
+              </span>
+<span>•</span>
+<span class="flex items-center gap-1 bg-surface-container-low px-2.5 py-0.5 rounded-md text-on-surface">
+<span class="material-symbols-outlined text-base text-secondary">near_me</span>
+<strong class="font-semibold">Sector 14, Ring Road</strong>
+<span class="text-on-surface-variant text-xs font-mono">(Lat: 18.5204° N, Long: 73.8567° E)</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Right: Onboard Water Payload Inventory Widget -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-surface-container-low p-3.5 rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-2xl">water_bottle</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-sm text-headline-sm text-primary font-extrabold tracking-tight" id="onboard-count">42</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/ 100 Initial Loaded</span>
+</div>
+<div class="w-40 sm:w-44 bg-surface-variant rounded-full h-2 mt-1 overflow-hidden">
+<div class="bg-secondary-container h-2 rounded-full transition-all duration-500" id="onboard-bar" style="width: 42%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-1">42% stock remaining in van</span>
+</div>
+</div>
+<div class="sm:border-l border-surface-variant sm:pl-3 flex sm:flex-col justify-end gap-2">
+<button class="px-3.5 py-2 rounded-lg bg-surface-container-lowest text-secondary hover:bg-surface-container font-label-md text-label-md font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap" onclick="requestStockReload()">
+<span class="material-symbols-outlined text-base">local_drink</span> Reload Stock
+            </button>
+<span class="font-label-sm text-label-sm text-outline-variant text-center hidden sm:block">Hub Depot: 1.8km</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Operational Section -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: Nearby Proximity Drop-offs -->
+<div class="lg:col-span-7 flex flex-col gap-4">
+<!-- Header & Proximity Filter Bar -->
+<div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-2xl">explore</span>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Proximity Queue</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sorted by live distance from van coordinates</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+<button class="px-3 py-1 rounded-full text-xs font-bold transition-all filter-chip bg-primary text-on-primary shadow-sm" onclick="filterProximity(this, 'all')">
+              All Nearby (18)
+            </button>
+<button class="px-3 py-1 rounded-full text-xs font-bold transition-all filter-chip bg-surface-container text-on-surface-variant hover:bg-surface-container-high" onclick="filterProximity(this, '500m')">
+              &lt; 500m
+            </button>
+<button class="px-3 py-1 rounded-full text-xs font-bold transition-all filter-chip bg-surface-container text-on-surface-variant hover:bg-surface-container-high" onclick="filterProximity(this, '1km')">
+              &lt; 1km
+            </button>
+<button class="px-3 py-1 rounded-full text-xs font-bold transition-all filter-chip bg-secondary-fixed text-on-secondary-fixed hover:bg-secondary-fixed/80" onclick="filterProximity(this, 'unserved')">
+              Unserved (14)
+            </button>
+</div>
+</div>
+<!-- Customer Cards Stack -->
+<div class="space-y-3.5" id="customer-list">
+<!-- Card 1 (Active Selected) -->
+<div class="customer-card bg-surface-container-lowest rounded-2xl p-5 shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer border-l-4 border-l-primary" data-address="Tower B, Plot 14, Sector 14, Ring Road" data-balance="₹0.00" data-distance="120m" data-id="CUST-104" data-name="Sharma Residency - Flat 402" data-phone="+91 98201 44521" data-pref="2 x 20L Cans or 24 Pack 1L Mumpy Bottles" onclick="selectCustomer(this)">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed font-headline-sm text-headline-sm shrink-0">
+<span class="material-symbols-outlined">apartment</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">navigation</span> 120m away
+                    </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">High Priority</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Sharma Residency - Flat 402</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="material-symbols-outlined text-sm">location_on</span> Tower B, Sector 14 • <span class="font-mono">+91 98201 44521</span>
+</p>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm font-medium">Balance: <strong class="text-primary">Clear (₹0)</strong></span>
+<button class="px-3.5 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold shadow-sm hover:shadow-md transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">inventory</span> Log Drop-off
+                </button>
+</div>
+</div>
+<div class="mt-3.5 pt-3 bg-surface-container-low/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+<span class="font-body-sm text-body-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">water_drop</span>
+                Standard order: <strong class="text-primary font-semibold">2 x 20L Cans or 24 Pack 1L Mumpy Bottles</strong>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gate Access: Ring Bell at Intercom</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="customer-card bg-surface-container-lowest rounded-2xl p-5 shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer border-l-4 border-l-transparent" data-address="Ground Floor, Commercial Wing, Sector 14" data-balance="₹280 Due" data-distance="350m" data-id="CUST-109" data-name="Green Valley Multispeciality Clinic" data-phone="+91 99230 11984" data-pref="4 x 20L Dispenser Cans" onclick="selectCustomer(this)">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface font-headline-sm text-headline-sm shrink-0">
+<span class="material-symbols-outlined">local_hospital</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed/60 text-on-secondary-fixed font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">navigation</span> 350m away
+                    </span>
+<span class="px-2 py-0.5 rounded-md bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">₹280 Due</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Green Valley Clinic</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="material-symbols-outlined text-sm">location_on</span> Commercial Wing, Main Rd • <span class="font-mono">+91 99230 11984</span>
+</p>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm font-medium">Weekly Delivery</span>
+<button class="px-3.5 py-2 rounded-xl bg-surface-container text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-bold transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">inventory</span> Log Drop-off
+                </button>
+</div>
+</div>
+<div class="mt-3.5 pt-3 bg-surface-container-low/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+<span class="font-body-sm text-body-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">water_drop</span>
+                Standard order: <strong class="text-primary font-semibold">4 x 20L Dispenser Cans (Sterile sealed)</strong>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Doctor OP Ward Dispenser #2</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="customer-card bg-surface-container-lowest rounded-2xl p-5 shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer border-l-4 border-l-transparent" data-address="Reception Hub, 3rd Floor Pantry, Zenith Tech Park" data-balance="Prepaid Account" data-distance="520m" data-id="CUST-218" data-name="Zenith Tech Park Block B" data-phone="+91 97664 88310" data-pref="6 x 20L Cans + 2 Crate Mumpy 500ml Mini" onclick="selectCustomer(this)">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface font-headline-sm text-headline-sm shrink-0">
+<span class="material-symbols-outlined">domain</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">navigation</span> 520m away
+                    </span>
+<span class="px-2 py-0.5 rounded-md bg-secondary-container/20 text-on-secondary-container font-label-sm text-label-sm font-semibold">Prepaid Client</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Zenith Tech Park Block B</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="material-symbols-outlined text-sm">location_on</span> Service Lift 02, 3rd Fl • <span class="font-mono">+91 97664 88310</span>
+</p>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm font-medium">Badge Loading Area</span>
+<button class="px-3.5 py-2 rounded-xl bg-surface-container text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-bold transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">inventory</span> Log Drop-off
+                </button>
+</div>
+</div>
+<div class="mt-3.5 pt-3 bg-surface-container-low/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+<span class="font-body-sm text-body-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">water_drop</span>
+                Standard order: <strong class="text-primary font-semibold">6 x 20L Cans + 2 Crate Mumpy 500ml Mini</strong>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Collect 6 empty cans from pantry</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="customer-card bg-surface-container-lowest rounded-2xl p-5 shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer border-l-4 border-l-transparent" data-address="Shop 12-14, Central Market, Sector 14" data-balance="₹140 Due" data-distance="750m" data-id="CUST-330" data-name="Anand Sweets &amp; Bakers" data-phone="+91 94220 89123" data-pref="3 x 20L Cans + 1 Case 1L Bottles" onclick="selectCustomer(this)">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface font-headline-sm text-headline-sm shrink-0">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">navigation</span> 750m away
+                    </span>
+<span class="px-2 py-0.5 rounded-md bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">₹140 Due</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Anand Sweets &amp; Bakers</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="material-symbols-outlined text-sm">location_on</span> Shop 12-14, Central Market • <span class="font-mono">+91 94220 89123</span>
+</p>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm font-medium">Daily Drop</span>
+<button class="px-3.5 py-2 rounded-xl bg-surface-container text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-bold transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">inventory</span> Log Drop-off
+                </button>
+</div>
+</div>
+<div class="mt-3.5 pt-3 bg-surface-container-low/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+<span class="font-body-sm text-body-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">water_drop</span>
+                Standard order: <strong class="text-primary font-semibold">3 x 20L Cans + 1 Case 1L Bottles</strong>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Unload via rear kitchen bay</span>
+</div>
+</div>
+</div>
+<!-- Static Route Map Visualizer Thumbnail -->
+<div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl">route</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Ring Road Optimal Sector Cluster</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Turn-by-turn proximity routing saved 3.4km fuel today</p>
+</div>
+</div>
+<div class="w-full sm:w-48 h-20 rounded-xl overflow-hidden shadow-inner relative" data-location="Sector 14, Pune, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZOHOSnvPBPIko0pgDGJE0p7EH4FExoCH_-5hHlg2sbcY0LV9md7wY6IB7_GBGriFJnW3Yh3rszXyfBXAXbpfE2mxe6sw8dJhgRMibUwARazMUF0y40TgRlf6ffLPm5evOUkLHxWxtwtEC4P9ss3aaIJJ6lYsZtUL4OyeGfk2S5e3yt801Tj_2c13X1EkDdz2KIDvu69RyE_9MLKiETgEnvfrN3auZvFneM3CjorBMYVgHyLxJ84Hh')">
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-[1px] flex items-center justify-center">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-lowest/90 font-label-sm text-label-sm font-bold text-primary flex items-center gap-1 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> GPS Live Active
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Interactive Delivery Log Form & Product Validation Modal -->
+<div class="lg:col-span-5 sticky top-20">
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-md flex flex-col gap-5">
+<!-- Modal Card Header -->
+<div class="flex items-start justify-between pb-4 border-b border-surface-container">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">edit_document</span> Instant Delivery Entry
+              </span>
+<h2 class="font-headline-sm text-headline-sm text-primary font-bold mt-0.5" id="modal-cust-name">Sharma Residency - Flat 402</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="modal-cust-addr">Tower B, Plot 14, Sector 14, Ring Road</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold" id="modal-cust-dist">
+              120m away
+            </span>
+</div>
+<!-- Product Authentic Mineral Water Reference Card -->
+<div class="bg-surface-container-low rounded-xl p-3.5 flex items-center gap-3.5">
+<div class="w-14 h-16 rounded-lg bg-surface-container-lowest overflow-hidden shrink-0 flex items-center justify-center p-1 shadow-sm">
+<img alt="Mumpy Packaged Drinking Water With Added Minerals Twin Bottles" class="h-full w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMp6WoDF0UkhA3BihU-wGfWdRtbHO2FLi2pUoye1YqZoi1-M4j0P6Bw8qp412mquYezxQysavGSfPhpCpCBIm8ytKPU-lQXe40u0zux0EuhoLym2jwQSM9kWzehJDf6ZF6-8MYgOfjoqUw1RIxCnaQ0jRezcX3oQWlQl_EkEqZpHnOB6ff6VAZI4wGNp75QoPk-1mFYGydi9SXKalWQfdbalONi6u_3YiAgTeU_xRV6umZeqsf8c_2f9lrdAFUxBiKAw"/>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md font-bold text-primary truncate">Mumpy Pure Mineral Water</span>
+<span class="material-symbols-outlined text-secondary text-sm" title="Certified Batch">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">Packaged drinking water with added minerals &amp; ISI safe seal</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-label-sm text-label-sm font-mono text-outline-variant bg-surface-container px-2 py-0.5 rounded">BATCH #MP-2024-88A</span>
+<span class="font-label-sm text-label-sm font-bold text-secondary">Verified Sealed</span>
+</div>
+</div>
+</div>
+<!-- Interactive Steppers -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+<!-- Delivered Counter -->
+<div class="bg-surface-container-low p-3.5 rounded-xl flex flex-col justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-base">add_circle</span> Delivered
+              </span>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2">Full Mumpy bottles/cans</p>
+<div class="flex items-center justify-between bg-surface-container-lowest rounded-lg p-1 shadow-sm">
+<button class="w-9 h-9 rounded-md bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center font-bold transition-colors" onclick="decrementDelivered()">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="font-headline-sm text-headline-sm text-primary font-extrabold px-3" id="delivered-count">2</span>
+<button class="w-9 h-9 rounded-md bg-primary hover:bg-primary-container text-on-primary flex items-center justify-center font-bold transition-colors" onclick="incrementDelivered()">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+<!-- Empty Bottles Collected Back Counter -->
+<div class="bg-surface-container-low p-3.5 rounded-xl flex flex-col justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-outline-variant text-base">recycling</span> Empties Returned
+              </span>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2">Clean returnable cans</p>
+<div class="flex items-center justify-between bg-surface-container-lowest rounded-lg p-1 shadow-sm">
+<button class="w-9 h-9 rounded-md bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center font-bold transition-colors" onclick="decrementEmpties()">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="font-headline-sm text-headline-sm text-primary font-extrabold px-3" id="empties-count">2</span>
+<button class="w-9 h-9 rounded-md bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center font-bold transition-colors" onclick="incrementEmpties()">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Payment Mode Selection -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-on-surface">Payment Collection</span>
+<span class="font-headline-sm text-headline-sm text-primary font-extrabold" id="amount-payable">₹140.00</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="payment-method" onchange="updatePayOption('Cash')" type="radio" value="cash"/>
+<div class="peer-checked:bg-primary peer-checked:text-on-primary peer-checked:shadow-sm bg-surface-container-low text-on-surface-variant p-2.5 rounded-xl text-center font-label-md text-label-md font-semibold transition-all flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-lg">payments</span>
+<span>Cash</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="payment-method" onchange="updatePayOption('UPI QR')" type="radio" value="upi"/>
+<div class="peer-checked:bg-primary peer-checked:text-on-primary peer-checked:shadow-sm bg-surface-container-low text-on-surface-variant p-2.5 rounded-xl text-center font-label-md text-label-md font-semibold transition-all flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-lg">qr_code_2</span>
+<span>UPI QR</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="payment-method" onchange="updatePayOption('Monthly Account')" type="radio" value="credit"/>
+<div class="peer-checked:bg-primary peer-checked:text-on-primary peer-checked:shadow-sm bg-surface-container-low text-on-surface-variant p-2.5 rounded-xl text-center font-label-md text-label-md font-semibold transition-all flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-lg">receipt_long</span>
+<span>Monthly Ledger</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Customer Sign/Note field -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Drop-off Note / Security Gate Reference (Optional)</label>
+<input class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none transition-all placeholder:text-outline-variant" id="drop-note" placeholder="e.g. Handed to security guard Mohan / Left at doorway" type="text"/>
+</div>
+<!-- Action Button -->
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full py-3.5 px-4 rounded-xl bg-primary text-on-primary hover:bg-primary-container font-title-md text-title-md font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2" id="btn-confirm-delivery" onclick="confirmDelivery()">
+<span class="material-symbols-outlined text-xl">send</span>
+<span>Confirm &amp; Generate Instant SMS Receipt</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm text-secondary">check_circle</span>
+<span>Auto-updates customer subscription passbook &amp; plant dispatch balance</span>
+</div>
+</div>
+<!-- Toast Alert confirmation container -->
+<div class="hidden p-3.5 bg-secondary-fixed text-on-secondary-fixed rounded-xl flex items-center gap-3 transition-all animate-bounce" id="receipt-toast">
+<span class="material-symbols-outlined text-2xl text-secondary">mark_email_read</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md font-bold">SMS Sent &amp; Logged Successfully!</span>
+<span class="font-body-sm text-body-sm" id="toast-message">Receipt dispatched to +91 98201 44521</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Stats Bar at bottom -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">14 min</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Average Stop Duration</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined">recycling</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm font-bold text-secondary">38 Cans</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Empties Recovered</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">currency_rupee</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">₹3,920</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Cash / UPI In-Van</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">28 / 42</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Daily Drops Completed</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  let deliveredCount = 2;
+  let emptiesCount = 2;
+  let unitPrice = 70;
+  let currentPhone = '+91 98201 44521';
+  let vanStock = 42;
+
+  function updatePriceDisplay() {
+    const total = deliveredCount * unitPrice;
+    document.getElementById('amount-payable').textContent = '₹' + total.toFixed(2);
+  }
+
+  function incrementDelivered() {
+    if (deliveredCount < vanStock) {
+      deliveredCount++;
+      document.getElementById('delivered-count').textContent = deliveredCount;
+      updatePriceDisplay();
+    }
+  }
+
+  function decrementDelivered() {
+    if (deliveredCount > 1) {
+      deliveredCount--;
+      document.getElementById('delivered-count').textContent = deliveredCount;
+      updatePriceDisplay();
+    }
+  }
+
+  function incrementEmpties() {
+    emptiesCount++;
+    document.getElementById('empties-count').textContent = emptiesCount;
+  }
+
+  function decrementEmpties() {
+    if (emptiesCount > 0) {
+      emptiesCount--;
+      document.getElementById('empties-count').textContent = emptiesCount;
+    }
+  }
+
+  function selectCustomer(element) {
+    document.querySelectorAll('.customer-card').forEach(card => {
+      card.classList.remove('border-l-primary');
+      card.classList.add('border-l-transparent');
+    });
+    element.classList.remove('border-l-transparent');
+    element.classList.add('border-l-primary');
+
+    const name = element.getAttribute('data-name');
+    const addr = element.getAttribute('data-address');
+    const phone = element.getAttribute('data-phone');
+    const dist = element.getAttribute('data-distance');
+
+    currentPhone = phone;
+    document.getElementById('modal-cust-name').textContent = name;
+    document.getElementById('modal-cust-addr').textContent = addr;
+    document.getElementById('modal-cust-dist').textContent = dist + ' away';
+    
+    // reset toast
+    document.getElementById('receipt-toast').classList.add('hidden');
+  }
+
+  function updatePayOption(mode) {
+    console.log('Payment Mode selected:', mode);
+  }
+
+  function requestStockReload() {
+    alert('Depot Alert Triggered: Dispatch van request for 50 additional 20L cans logged for Suresh Kumar at Sector 14 Hub.');
+  }
+
+  function confirmDelivery() {
+    if (vanStock < deliveredCount) {
+      alert('Insufficient onboard stock! Please tap Reload Stock first.');
+      return;
+    }
+
+    vanStock -= deliveredCount;
+    document.getElementById('onboard-count').textContent = vanStock;
+    document.getElementById('onboard-bar').style.width = vanStock + '%';
+
+    const toast = document.getElementById('receipt-toast');
+    document.getElementById('toast-message').textContent = 'SMS Receipt for ' + deliveredCount + ' Cans dispatched to ' + currentPhone;
+    toast.classList.remove('hidden');
+
+    const confirmBtn = document.getElementById('btn-confirm-delivery');
+    confirmBtn.disabled = true;
+    confirmBtn.classList.add('opacity-50');
+    setTimeout(() => {
+      confirmBtn.disabled = false;
+      confirmBtn.classList.remove('opacity-50');
+    }, 2000);
+  }
+
+  function filterProximity(button, filterType) {
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.classList.remove('bg-primary', 'text-on-primary');
+      btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+    button.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    button.classList.add('bg-primary', 'text-on-primary');
+  }
+</script></main></div></body></html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#004b73","tertiary-fixed":"#cce5ff","on-tertiary-container":"#77c2ff","on-surface":"#0b1c30","on-background":"#0b1c30","secondary-container":"#39b8fd","on-primary":"#ffffff","inverse-on-surface":"#eaf1ff","on-tertiary":"#ffffff","primary-fixed":"#dae1ff","on-secondary":"#ffffff","tertiary-container":"#004f7a","surface-container-lowest":"#ffffff","on-error":"#ffffff","surface-container-low":"#eff4ff","error":"#ba1a1a","on-tertiary-fixed":"#001d31","surface":"#f8f9ff","on-secondary-fixed":"#001e2f","surface-bright":"#f8f9ff","secondary-fixed":"#c9e6ff","inverse-primary":"#b3c5ff","background":"#f8f9ff","on-primary-container":"#a1b9ff","primary-fixed-dim":"#b3c5ff","on-error-container":"#93000a","on-secondary-container":"#004666","secondary":"#006591","surface-container":"#e5eeff","surface-dim":"#cbdbf5","surface-variant":"#d3e4fe","tertiary-fixed-dim":"#93ccff","surface-container-highest":"#d3e4fe","primary-container":"#1044a5","on-primary-fixed-variant":"#0640a1","primary":"#002e7c","surface-tint":"#2e59ba","on-primary-fixed":"#001849","error-container":"#ffdad6","on-secondary-fixed-variant":"#004c6e","secondary-fixed-dim":"#89ceff","outline":"#747684","inverse-surface":"#213145","tertiary":"#003757","surface-container-high":"#dce9ff","on-surface-variant":"#434652","outline-variant":"#c4c6d4"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xl":"2.5rem","space-lg":"1.5rem","space-md":"1rem",margin:"2rem","space-sm":"0.5rem",gutter:"1.25rem","gutter-mobile":"0.75rem","margin-mobile":"1rem","space-xs":"0.25rem"},fontFamily:display:["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"]},fontSize:{display:["44px",{lineHeight:"52px",letterSpacing:"-0.03em",fontWeight:"800"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"700"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"700"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["12px",{lineHeight:"18px",fontWeight:"400"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><header class="fixed top-0 left-0 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex items-center justify-between px-6"><div class="flex items-center gap-6"><div class="flex items-center gap-3"><img alt="Mumpy Water Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVZHtQKjNAS2M0a6JdTJzewiln3cooJ3yeFt6vcN6vSEoJCr6VdFMwXFk84EGupTldhorobBbT_B-igDOGQBY3UpSWy_VMS28GvumoHtLlT3rcRLzL4y2iOEVf2Tjzppe9a-4OtYsA-GLFwq-cM2GGF22EleaOUc84k5OYE4Ug7yIJcZdmN1_nCDoPmNuG6HBFfZi1SzGYS9ia3r8hiyF5gw0nZVZ0leMRmTDzE_ScXJY6yzAPa4MB"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-extrabold">Mumpy</span></div><div class="h-5 w-px bg-outline-variant/40 hidden sm:block"></div><div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm font-bold uppercase tracking-wider">North Sector Hub 04 - Live Dispatch</span></div></div><div class="hidden lg:flex items-center gap-2 bg-surface-container-low px-4 py-1.5 rounded-full"><span class="material-symbols-outlined text-secondary text-base">water_drop</span><span class="font-body-sm text-body-sm text-on-surface-variant">Bottles in Transit: <strong class="text-primary font-bold">420</strong></span><span class="text-outline-variant font-body-sm">|</span><span class="font-body-sm text-body-sm text-on-surface-variant">Delivered Today: <strong class="text-secondary font-bold">1,280</strong></span></div><div class="flex items-center gap-4"><div class="relative hidden sm:flex items-center"><span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">search</span><input class="pl-9 pr-4 py-1.5 rounded-lg bg-surface-container-low text-on-surface text-body-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary w-52 lg:w-64 transition-all" placeholder="Search crates, routes, IDs..." type="text"/></div><button aria-label="Notifications" class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-3 pl-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUAvhRNhOweNJStSKpvtzqHDVQTsiCeaO7M-QD2-vzIF5q9AVEMykHCIcul8L3ISSa3kipQhU-gFTNWgYDzw3pX2TebaK2-ImDUqyu_uSbDtk63rR3nY87Au3-uyaAngNKaKOPFmFfaXrEu8uQeqkIMk5C_Wu5H6-6XBpipZjBXYtqwV4o6mmL4lrysRRUut2bkJzWVwA-mT6NHkSY_1H8-MDU21Hq3FG9_kIJScF8tLugStLTSSv0"/><div class="hidden xl:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Rajesh Patel</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Operations Lead</span></div></div></div></header><aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-surface-container-low/70 backdrop-blur-md z-40 flex flex-col justify-between p-4"><div class="flex flex-col gap-6"><div class="px-3 pt-2"><span class="font-label-sm text-label-sm font-bold uppercase text-on-surface-variant/80 tracking-wider">Operational Units</span></div><nav class="flex flex-col gap-1.5" data-active-classes="bg-primary text-on-primary shadow-sm font-bold rounded-xl"><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="driver-delivery-proximity-log" href="#"><span class="material-symbols-outlined text-xl">local_shipping</span>Driver &amp; Proximity</a><a aria-current="page" class="flex items-center gap-3 px-3.5 py-2.5 transition-all bg-primary text-on-primary shadow-sm font-bold rounded-xl" data-path="fleet-pickup-tracker" href="#"><span class="material-symbols-outlined text-xl">hub</span>Fleet Live Map</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="admin-revenue-analytics" href="#"><span class="material-symbols-outlined text-xl">analytics</span>Admin Insights</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="customer-onboarding" href="#"><span class="material-symbols-outlined text-xl">group_add</span>Customer Directory</a></nav></div><div class="p-3 bg-surface-container rounded-xl flex flex-col gap-2"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant">Plant Reservoir</span><span class="font-label-sm text-label-sm font-bold text-secondary">92% Full</span></div><div class="w-full bg-surface-variant rounded-full h-1.5 overflow-hidden"><div class="bg-secondary-container h-1.5 rounded-full" style="width: 92%"></div></div><span class="font-body-sm text-body-sm text-on-surface-variant">Reverse Osmosis Line active</span></div></aside><div class="pl-64"><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="p-6 md:p-8 flex flex-col gap-6">
+<!-- Top Owner Quick-Action & Subheading Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold tracking-wide uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+            Telemetry Stream Live
+          </span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">| Shift 06:00 - 18:00 IST</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Fleet &amp; Dispatch Command</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time water crate telemetry, bottle exhaustion status, and route dispatch radar.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface font-title-md text-title-md shadow-sm hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-secondary text-lg">tune</span>
+          Filter Routes
+        </button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-title-md text-title-md shadow-md hover:bg-primary-container transition-all" onclick="emergencyBroadcast()">
+<span class="material-symbols-outlined text-lg">send_to_mobile</span>
+          Broadcast to Drivers
+        </button>
+</div>
+</div>
+<!-- 5 High-Impact Metric Cards -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- Metric 1: Active Pickups -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-secondary/5 group-hover:scale-125 transition-transform pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant tracking-wider">Active Vans</span>
+<div class="w-8 h-8 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">local_shipping</span>
+</div>
+</div>
+<div>
+<span class="font-display text-display text-primary block leading-none">8<span class="font-headline-sm text-headline-sm text-on-surface-variant font-normal">/10</span></span>
+<div class="flex items-center gap-1.5 mt-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">100% On-Duty Fleet</span>
+</div>
+</div>
+</div>
+<!-- Metric 2: Morning Bottled Load -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-primary/5 group-hover:scale-125 transition-transform pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant tracking-wider">Loaded at 06:00</span>
+<div class="w-8 h-8 rounded-xl bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">water_bottle</span>
+</div>
+</div>
+<div>
+<span class="font-display text-display text-primary block leading-none">1,840</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-2">Mumpy 20L + 1L Packs</span>
+</div>
+</div>
+<!-- Metric 3: Delivered Units -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-secondary-container/10 group-hover:scale-125 transition-transform pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant tracking-wider">Delivered</span>
+<div class="w-8 h-8 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-xl">inventory_2</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline justify-between">
+<span class="font-display text-display text-secondary block leading-none">1,290</span>
+<span class="font-label-md text-label-md font-bold text-secondary">70%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 mt-2.5 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 70%;"></div>
+</div>
+</div>
+</div>
+<!-- Metric 4: Onboard in Transit -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-tertiary-fixed/30 group-hover:scale-125 transition-transform pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant tracking-wider">In Transit</span>
+<div class="w-8 h-8 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-xl">near_me</span>
+</div>
+</div>
+<div>
+<span class="font-display text-display text-primary block leading-none">550</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-2">Active Crate Cargo</span>
+</div>
+</div>
+<!-- Metric 5: Low Stock Alerts -->
+<div class="col-span-2 md:col-span-1 bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-error-container/30 group-hover:scale-125 transition-transform pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase font-bold text-error tracking-wider">Refill Required</span>
+<div class="w-8 h-8 rounded-xl bg-error-container flex items-center justify-center text-error animate-pulse">
+<span class="material-symbols-outlined text-xl">warning</span>
+</div>
+</div>
+<div>
+<span class="font-display text-display text-error block leading-none">3 <span class="font-headline-sm text-headline-sm text-error font-normal">Vans</span></span>
+<span class="font-body-sm text-body-sm text-error block mt-2 font-semibold">Under 10 bottles remaining</span>
+</div>
+</div>
+</div>
+<!-- Main Workspace: Split HUD (Left Interactive Visualizer Map + Right Vehicle Roster + Slide-in Telemetry Drawer) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- Interactive Fleet Telemetry & Live Map Visualizer (7 Columns) -->
+<div class="xl:col-span-7 flex flex-col gap-4">
+<!-- Live Map Card Container -->
+<div class="bg-surface-container-lowest rounded-3xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+<!-- Map Header Bar with Quick Filters -->
+<div class="flex flex-wrap items-center justify-between gap-3 z-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-2xl bg-surface-container-low flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined">satellite_alt</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface leading-tight">Live Sector Spatial Radar</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pune West &amp; PCMC Industrial Belt</span>
+</div>
+</div>
+<!-- Legend Badge Bar -->
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-full text-xs">
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span> Delivering (5)
+              </span>
+<span class="text-outline-variant">•</span>
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-amber-700 font-bold">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Refill (2)
+              </span>
+<span class="text-outline-variant">•</span>
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant font-bold">
+<span class="w-2.5 h-2.5 rounded-full bg-outline"></span> Base Plant (1)
+              </span>
+</div>
+</div>
+<!-- The Visual Map Viewport -->
+<div class="relative w-full h-[480px] rounded-2xl overflow-hidden bg-surface-dim shadow-inner">
+<!-- Real Satellite/Map Layer via Static API Container -->
+<div class="w-full h-full bg-cover bg-center" data-location="Shivajinagar, Pune, Maharashtra" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAyLwL50bKJcy_9s-GbWZDdMIuWDapf3A-c-sEsQPV-qlbxkJx1bUgvUJ0QRoE2qRRsGRj9roP3-kdzuHHGTMZa1hIveUuEiLMImibgH4M9vN3NpW2Uia9LTSJWM6EqmlmIu1PvZ1ceBvrjG6yUQkuvH__GD-KI0Kh3WF-BPHsyG7F5TjeH7sT8sEvqZmZDInbef643akOJV8hAqqRp4HzASe1mg4srvhhRVNIONAU4Obm6pRZYIU_3')"></div>
+<!-- Subtle Blue Hydro-Grid Overlay for High-Tech Dispatch HUD -->
+<div class="absolute inset-0 bg-primary/10 mix-blend-multiply pointer-events-none"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent pointer-events-none"></div>
+<!-- Central Bottling Plant Marker -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center">
+<div class="relative flex items-center justify-center">
+<span class="w-12 h-12 rounded-full bg-primary/20 animate-ping absolute"></span>
+<div class="w-10 h-10 rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-lg border-2 border-surface-container-lowest">
+<span class="material-symbols-outlined text-lg">water_drop</span>
+</div>
+</div>
+<div class="mt-1 px-2.5 py-1 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-md flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm font-extrabold text-primary">MUMPY CENTRAL PLANT</span>
+</div>
+</div>
+<!-- Pin 1: MH-12-AQ-8821 (Sector 14 - Delivering) -->
+<button class="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 z-20 group transition-transform hover:scale-110 focus:outline-none" onclick="selectVehicle('MH-12-AQ-8821')">
+<div class="flex items-center gap-2 bg-surface-container-lowest/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-lg hover:shadow-xl transition-all">
+<div class="w-6 h-6 rounded-lg bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">local_shipping</span>
+</div>
+<div class="text-left">
+<span class="font-label-sm text-label-sm font-bold text-on-surface block leading-tight">#01 Suresh</span>
+<span class="font-body-sm text-body-sm text-secondary font-bold block leading-none">18 btls • 24 km/h</span>
+</div>
+</div>
+<div class="w-3 h-3 bg-secondary rotate-45 mx-auto -mt-1 rounded-sm shadow-md"></div>
+</button>
+<!-- Pin 2: MH-12-BR-3042 (IT Corridor - Moving) -->
+<button class="absolute top-1/3 right-1/4 -translate-x-1/2 -translate-y-1/2 z-20 group transition-transform hover:scale-110 focus:outline-none" onclick="selectVehicle('MH-12-BR-3042')">
+<div class="flex items-center gap-2 bg-surface-container-lowest/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-lg hover:shadow-xl transition-all">
+<div class="w-6 h-6 rounded-lg bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">local_shipping</span>
+</div>
+<div class="text-left">
+<span class="font-label-sm text-label-sm font-bold text-on-surface block leading-tight">#02 Ramesh</span>
+<span class="font-body-sm text-body-sm text-primary font-bold block leading-none">85 btls • En Route</span>
+</div>
+</div>
+<div class="w-3 h-3 bg-primary rotate-45 mx-auto -mt-1 rounded-sm shadow-md"></div>
+</button>
+<!-- Pin 3: MH-12-CY-9910 (Needs Refill - Amber Alert) -->
+<button class="absolute bottom-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 z-20 group transition-transform hover:scale-110 focus:outline-none" onclick="selectVehicle('MH-12-CY-9910')">
+<div class="flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-xl shadow-lg hover:shadow-xl transition-all">
+<div class="w-6 h-6 rounded-lg bg-amber-500 text-white flex items-center justify-center animate-pulse">
+<span class="material-symbols-outlined text-xs">priority_high</span>
+</div>
+<div class="text-left">
+<span class="font-label-sm text-label-sm font-bold text-amber-900 block leading-tight">#03 Amit (Refill!)</span>
+<span class="font-body-sm text-body-sm text-amber-700 font-bold block leading-none">4 btls • Returning</span>
+</div>
+</div>
+<div class="w-3 h-3 bg-amber-500 rotate-45 mx-auto -mt-1 rounded-sm shadow-md"></div>
+</button>
+<!-- Pin 4: MH-12-DT-5120 (Old Town Market - Drop in progress) -->
+<button class="absolute bottom-1/3 right-1/3 -translate-x-1/2 -translate-y-1/2 z-20 group transition-transform hover:scale-110 focus:outline-none" onclick="selectVehicle('MH-12-DT-5120')">
+<div class="flex items-center gap-2 bg-surface-container-lowest/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-lg hover:shadow-xl transition-all">
+<div class="w-6 h-6 rounded-lg bg-surface-variant text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">local_parking</span>
+</div>
+<div class="text-left">
+<span class="font-label-sm text-label-sm font-bold text-on-surface block leading-tight">#04 Vikas</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-bold block leading-none">42 btls • At Customer</span>
+</div>
+</div>
+<div class="w-3 h-3 bg-surface-variant rotate-45 mx-auto -mt-1 rounded-sm shadow-md"></div>
+</button>
+<!-- Floating Quick Telemetry Banner on bottom edge of map -->
+<div class="absolute bottom-4 left-4 right-4 z-20 bg-surface-container-lowest/90 backdrop-blur-xl p-3.5 rounded-xl shadow-md flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Active Fleet Efficiency: <strong class="text-primary font-bold">94.8% on-schedule</strong></span>
+</div>
+<div class="hidden sm:flex items-center gap-4 text-xs font-medium text-on-surface-variant">
+<span>Avg Stop Time: <strong>4.2 mins</strong></span>
+<span>•</span>
+<span>Fleet Fuel Avg: <strong>76%</strong></span>
+</div>
+</div>
+</div>
+<!-- Bottom Micro Water Quality & Batch Sensor Feeds -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+<div class="p-3 bg-surface-container-low rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary">science</span>
+<div>
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant block">Batch TDS Purity</span>
+<span class="font-title-md text-title-md text-primary font-bold">48 ppm (Optimal)</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Pure</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary">thermostat</span>
+<div>
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant block">Cargo Temp Avg</span>
+<span class="font-title-md text-title-md text-primary font-bold">19.4°C Chilled</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold bg-secondary-fixed/50 px-2 py-0.5 rounded-full">Cool</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary">assignment_turned_in</span>
+<div>
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant block">Empty Crates Ret.</span>
+<span class="font-title-md text-title-md text-primary font-bold">312 Recovered</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold bg-surface-variant px-2 py-0.5 rounded-full">In Yard</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right 5 Columns: Collapsible Fleet Roster & Active Detail Inspector -->
+<div class="xl:col-span-5 flex flex-col gap-5">
+<!-- Live Vehicle Selector Roster -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-base">format_list_bulleted</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">Fleet Pickups (4 of 8 Shown)</h3>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-secondary cursor-pointer hover:underline">View All 8</span>
+</div>
+<div class="flex flex-col gap-3" id="rosterList">
+<!-- Vehicle Card 1: Selected by Default -->
+<div class="vehicle-card p-4 rounded-2xl bg-surface-container-low cursor-pointer transition-all duration-200 hover:shadow-md border-l-4 border-secondary" id="card-MH-12-AQ-8821" onclick="selectVehicle('MH-12-AQ-8821')">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-primary">Pickup #01</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container rounded-md text-on-surface font-semibold">MH-12-AQ-8821</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">Driver: <strong>Suresh Kumar</strong> • Route: Sector 14 &amp; 15</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                  Active Delivery
+                </span>
+</div>
+<!-- Quick Gauge & Bottle Pill -->
+<div class="flex items-center justify-between mt-3 pt-3 border-t border-surface-container/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">water_drop</span>
+<span class="font-label-md text-label-md text-on-surface font-bold"><span class="text-primary font-extrabold">18</span> Bottles Left</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<span class="font-semibold text-secondary">24 km/h</span>
+<span>•</span>
+<span>14/18 Drops done</span>
+</div>
+</div>
+</div>
+<!-- Vehicle Card 2 -->
+<div class="vehicle-card p-4 rounded-2xl bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-all duration-200" id="card-MH-12-BR-3042" onclick="selectVehicle('MH-12-BR-3042')">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-primary">Pickup #02</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container rounded-md text-on-surface font-semibold">MH-12-BR-3042</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">Driver: <strong>Ramesh Patil</strong> • Route: IT Corridor Phase 2</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-primary-fixed text-on-primary-fixed">
+                  Moving Next Drop
+                </span>
+</div>
+<div class="flex items-center justify-between mt-3 pt-3 border-t border-surface-container/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">water_drop</span>
+<span class="font-label-md text-label-md text-on-surface font-bold"><span class="text-primary font-extrabold">85</span> Bottles Loaded</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<span class="font-semibold text-primary">38 km/h</span>
+<span>•</span>
+<span>8/22 Drops done</span>
+</div>
+</div>
+</div>
+<!-- Vehicle Card 3: Alert Card -->
+<div class="vehicle-card p-4 rounded-2xl bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-all duration-200" id="card-MH-12-CY-9910" onclick="selectVehicle('MH-12-CY-9910')">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-primary">Pickup #03</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container rounded-md text-on-surface font-semibold">MH-12-CY-9910</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">Driver: <strong>Amit Varma</strong> • Route: Model Colony</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 flex items-center gap-1 animate-pulse">
+<span class="material-symbols-outlined text-xs">warning</span> Needs Refill
+                </span>
+</div>
+<div class="flex items-center justify-between mt-3 pt-3 border-t border-surface-container/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-base">water_damage</span>
+<span class="font-label-md text-label-md text-error font-extrabold">4 Bottles Remaining</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<span class="font-bold text-amber-700">Returning to Plant</span>
+<span>•</span>
+<span>24/24 Done</span>
+</div>
+</div>
+</div>
+<!-- Vehicle Card 4: Dropping Off -->
+<div class="vehicle-card p-4 rounded-2xl bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-all duration-200" id="card-MH-12-DT-5120" onclick="selectVehicle('MH-12-DT-5120')">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-primary">Pickup #04</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container rounded-md text-on-surface font-semibold">MH-12-DT-5120</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">Driver: <strong>Vikas Shinde</strong> • Route: Old Town Market</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-surface-variant text-on-surface-variant">
+                  Unloading Stop
+                </span>
+</div>
+<div class="flex items-center justify-between mt-3 pt-3 border-t border-surface-container/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">water_drop</span>
+<span class="font-label-md text-label-md text-on-surface font-bold"><span class="text-primary font-extrabold">42</span> Bottles Left</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<span class="font-semibold text-on-surface">Parked (Drop #11)</span>
+<span>•</span>
+<span>10/16 Done</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Detail Inspection Drawer / Card for Selected Vehicle -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm flex flex-col gap-5" id="inspectorPanel">
+<!-- Inspector Header -->
+<div class="flex items-center justify-between pb-3 border-b border-surface-container">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-2xl bg-primary text-on-primary flex items-center justify-center font-bold text-base shadow-sm">
+                #01
+              </div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold" id="inspectPlate">MH-12-AQ-8821</h3>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-sm text-label-sm font-bold">GPS Synced</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="inspectDriver">Assigned: Suresh Kumar (Ph: +91 98220 44109)</span>
+</div>
+</div>
+<a class="p-2.5 rounded-xl bg-secondary text-on-secondary shadow-sm hover:bg-secondary-container transition-all" href="tel:+919822044109" title="Direct Call Driver">
+<span class="material-symbols-outlined text-xl">call</span>
+</a>
+</div>
+<!-- Trip Statistics HUD -->
+<div class="grid grid-cols-3 gap-2 text-center">
+<div class="p-3 rounded-xl bg-surface-container-low">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant block">Departed</span>
+<span class="font-title-md text-title-md text-primary font-extrabold mt-0.5 block" id="inspectDepart">06:15 AM</span>
+<span class="text-[10px] text-on-surface-variant">Mumpy Yard A</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant block">Initial Load</span>
+<span class="font-title-md text-title-md text-primary font-extrabold mt-0.5 block" id="inspectInitial">240 Bottles</span>
+<span class="text-[10px] text-secondary font-bold">20L Seal Jugs</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant block">Remaining</span>
+<span class="font-title-md text-title-md text-secondary font-extrabold mt-0.5 block" id="inspectRemaining">18 Bottles</span>
+<span class="text-[10px] text-emerald-600 font-bold">7.5% Left</span>
+</div>
+</div>
+<!-- Live Route Breadcrumbs & Drops -->
+<div class="flex flex-col gap-2.5">
+<span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant tracking-wider">Recent Route Manifest</span>
+<div class="flex flex-col gap-2 relative pl-4 border-l-2 border-surface-container">
+<!-- Stop 1 -->
+<div class="relative">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -left-[21px] top-1.5 ring-4 ring-surface-container-lowest"></span>
+<div class="flex items-center justify-between text-xs">
+<span class="font-semibold text-on-surface">Om Sai Residency (12 Cans)</span>
+<span class="text-on-surface-variant font-medium">09:42 AM • Completed</span>
+</div>
+</div>
+<!-- Stop 2 -->
+<div class="relative">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -left-[21px] top-1.5 ring-4 ring-surface-container-lowest"></span>
+<div class="flex items-center justify-between text-xs">
+<span class="font-semibold text-on-surface">Galaxy Supermarket Hub (25 Cans)</span>
+<span class="text-on-surface-variant font-medium">10:18 AM • Completed</span>
+</div>
+</div>
+<!-- Current Target Stop -->
+<div class="relative">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary absolute -left-[21px] top-1.5 ring-4 ring-surface-container-lowest animate-pulse"></span>
+<div class="flex items-center justify-between text-xs bg-surface-container-low p-2 rounded-lg">
+<div>
+<span class="font-bold text-primary block">Current: Sector 15 Sports Complex</span>
+<span class="text-on-surface-variant font-medium">ETA: 6 mins (10 Cans)</span>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-secondary">In Transit</span>
+</div>
+</div>
+<!-- Pending Stop -->
+<div class="relative">
+<span class="w-2.5 h-2.5 rounded-full bg-outline-variant absolute -left-[21px] top-1.5 ring-4 ring-surface-container-lowest"></span>
+<div class="flex items-center justify-between text-xs text-on-surface-variant">
+<span>Prabhat Diagnostics (8 Cans)</span>
+<span>Pending • Stop #16</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action Buttons -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 py-2.5 px-3 rounded-xl bg-surface-container text-primary font-label-md text-label-md font-bold hover:bg-surface-container-high transition-all flex items-center justify-center gap-1.5" onclick="reRouteVehicle()">
+<span class="material-symbols-outlined text-base">alt_route</span>
+              Reassign Route
+            </button>
+<button class="flex-1 py-2.5 px-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold shadow hover:bg-primary-container transition-all flex items-center justify-center gap-1.5" onclick="requestReturn()">
+<span class="material-symbols-outlined text-base">restart_alt</span>
+              Order Plant Refill
+            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  const vehicleData = {
+    'MH-12-AQ-8821': {
+      number: '#01',
+      plate: 'MH-12-AQ-8821',
+      driver: 'Suresh Kumar',
+      phone: '+91 98220 44109',
+      depart: '06:15 AM',
+      initial: '240 Bottles',
+      remaining: '18 Bottles',
+      percent: '7.5%'
+    },
+    'MH-12-BR-3042': {
+      number: '#02',
+      plate: 'MH-12-BR-3042',
+      driver: 'Ramesh Patil',
+      phone: '+91 94211 77290',
+      depart: '06:40 AM',
+      initial: '260 Bottles',
+      remaining: '85 Bottles',
+      percent: '32.6%'
+    },
+    'MH-12-CY-9910': {
+      number: '#03',
+      plate: 'MH-12-CY-9910',
+      driver: 'Amit Varma',
+      phone: '+91 97632 10834',
+      depart: '05:50 AM',
+      initial: '220 Bottles',
+      remaining: '4 Bottles',
+      percent: '1.8%'
+    },
+    'MH-12-DT-5120': {
+      number: '#04',
+      plate: 'MH-12-DT-5120',
+      driver: 'Vikas Shinde',
+      phone: '+91 91580 99423',
+      depart: '07:10 AM',
+      initial: '210 Bottles',
+      remaining: '42 Bottles',
+      percent: '20.0%'
+    }
+  };
+
+  function selectVehicle(plate) {
+    const data = vehicleData[plate];
+    if (!data) return;
+
+    // Update inspector view
+    document.getElementById('inspectPlate').textContent = data.plate;
+    document.getElementById('inspectDriver').textContent = `Assigned: ${data.driver} (Ph: ${data.phone})`;
+    document.getElementById('inspectDepart').textContent = data.depart;
+    document.getElementById('inspectInitial').textContent = data.initial;
+    document.getElementById('inspectRemaining').textContent = data.remaining;
+
+    // Update roster highlights
+    document.querySelectorAll('.vehicle-card').forEach(card => {
+      card.classList.remove('bg-surface-container-low', 'border-l-4', 'border-secondary', 'shadow-md');
+      card.classList.add('bg-surface-container-lowest');
+    });
+
+    const activeCard = document.getElementById('card-' + plate);
+    if (activeCard) {
+      activeCard.classList.remove('bg-surface-container-lowest');
+      activeCard.classList.add('bg-surface-container-low', 'border-l-4', 'border-secondary', 'shadow-md');
+    }
+  }
+
+  function emergencyBroadcast() {
+    alert("Broadcasting live telemetry priority alert to all 8 active Mumpy Water delivery pickup drivers.");
+  }
+
+  function reRouteVehicle() {
+    alert("Opening route modification matrix. Optimized waypoint calculated via Mumpy logistics gateway.");
+  }
+
+  function requestReturn() {
+    alert("Return to Mumpy Central Bottling Plant dispatch alert sent to driver terminal.");
+  }
+</script></main></div></body></html>

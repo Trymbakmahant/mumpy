@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-primary-container":"#a1b9ff","primary-fixed":"#dae1ff","background":"#f8f9ff","on-primary":"#ffffff","on-tertiary-fixed":"#001d31","on-secondary-fixed-variant":"#004c6e","on-tertiary-container":"#77c2ff","surface-container-low":"#eff4ff","tertiary-container":"#004f7a","surface-bright":"#f8f9ff","on-error":"#ffffff","on-error-container":"#93000a","primary":"#002e7c","on-primary-fixed-variant":"#0640a1","tertiary-fixed-dim":"#93ccff","surface-container-highest":"#d3e4fe","error-container":"#ffdad6","inverse-primary":"#b3c5ff","secondary":"#006591","on-secondary":"#ffffff","primary-container":"#1044a5","surface":"#f8f9ff","on-secondary-container":"#004666","tertiary-fixed":"#cce5ff","primary-fixed-dim":"#b3c5ff","secondary-fixed-dim":"#89ceff","outline":"#747684","surface-tint":"#2e59ba","surface-dim":"#cbdbf5","outline-variant":"#c4c6d4","surface-container":"#e5eeff","on-surface-variant":"#434652","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","tertiary":"#003757","on-secondary-fixed":"#001e2f","on-background":"#0b1c30","on-tertiary":"#ffffff","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004b73","surface-container-high":"#dce9ff","secondary-fixed":"#c9e6ff","error":"#ba1a1a","surface-container-lowest":"#ffffff","on-primary-fixed":"#001849","secondary-container":"#39b8fd","on-surface":"#0b1c30"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"gutter-mobile":"0.75rem","space-md":"1rem","margin-mobile":"1rem",margin:"2rem",gutter:"1.25rem","space-sm":"0.5rem","space-lg":"1.5rem","space-xl":"2.5rem","space-xs":"0.25rem"},fontFamily:{"headline-md":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],display:["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"700"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}],display:["44px",{lineHeight:"52px",letterSpacing:"-0.03em",fontWeight:"800"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"700"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"700"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",fontWeight:"400"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="Logotype and emblem for Mumpy Packaged Drinking Water. Clean stylized rounded typography 'Mumpy' in rich royal blue with refreshing light cyan water splash and clean droplet accent, modern beverage logistics brand badge.. Design context: - Primary color: #1044a5
+- Font: plusJakartaSans
+- Mode: light
+- Roundness: rounded-md
+. The logo should be visually consistent with these brand tokens." class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XG_VTfpuX-gKyEdANGGzillWidsyvdSg8L3EuCetPe6kntVDeeVVshgN3Vz4mcan6XXqQGwW2R-xht63AS_WU4ALFPsP-2UWUIZDvsWwNy6B2U8EYuKS8O8E7NlsW4W7ic40xIQfv0Z76vzwd-2mOZai3l-qkxZ10-uIV79zbGp8mlYSYnptr6FKFBT8zFyQY5gxtwutsWs07vQMO4hBVPIwNUelQefTfRnulAqpnoxX7xttSiI2N3HQ"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider truncate">Central Hub 04</span></div><h1 class="font-title-md text-title-md text-on-surface font-bold truncate leading-tight">Customers</h1></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Alerts" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors focus:outline-none"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="relative flex items-center justify-center p-0.5 rounded-full bg-secondary-fixed/40"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WwwBWZ2sk-bF8h5QEreqocPOi07L0EzVTHvuwqnxWlgJdBztGHM0P9_ewe4FCFtwpBZ_LbXtnqInShN6SWBVCUAmZ9JLVGC4ae0ZV4onM1vzDFmEkWw7PhlWhjP5yrwCf2yYTwxB6LiGL5KDHWsZz3YzHrCA94AQptOb6r1C88IcNNpJzPOgPUmnDRjWWAjEZjHdEei9n7ndfYwsJ3mlkVrpdy0yRvpThRjWpHp_OxknStvmjXuMO3S28"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full">
+<div class="px-margin-mobile pt-space-sm pb-space-lg flex flex-col gap-space-md">
+<!-- Top Operational Metrics Carousel -->
+<div class="grid grid-cols-3 gap-space-xs">
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Accounts</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container">groups</span>
+</div>
+<div class="mt-space-xs">
+<div class="font-headline-sm text-headline-sm text-on-surface">342</div>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">hub</span> Verified
+          </span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">New (Mo.)</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">trending_up</span>
+</div>
+<div class="mt-space-xs">
+<div class="font-headline-sm text-headline-sm text-on-surface">28</div>
+<span class="font-label-sm text-label-sm text-secondary-container font-bold">+14% MoM</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Fulfilled</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container">water_drop</span>
+</div>
+<div class="mt-space-xs">
+<div class="font-headline-sm text-headline-sm text-on-surface">98.4%</div>
+<span class="font-label-sm text-label-sm text-secondary">Optimal</span>
+</div>
+</div>
+</div>
+<!-- Onboarding Quick Intake Trigger / Header banner -->
+<div class="bg-gradient-to-r from-primary via-primary-container to-secondary p-space-md rounded-xl shadow-md text-on-primary relative overflow-hidden">
+<div class="relative z-10 flex items-center justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 text-on-primary-container">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wide">Rapid Hydration Intake</span>
+</div>
+<h2 class="font-title-md text-title-md font-bold text-on-primary mt-0.5">Client Dispatch Registration</h2>
+<p class="font-body-sm text-body-sm text-primary-fixed-dim line-clamp-1">Stage 1 of 3: Telematics &amp; Delivery Schema</p>
+</div>
+<button class="flex-shrink-0 bg-surface-container-lowest text-primary-container font-label-md text-label-md px-space-md py-space-sm rounded-full shadow-sm flex items-center gap-1 active:scale-95 transition-transform" id="toggle-form-btn">
+<span class="material-symbols-outlined text-[18px]" id="form-icon">expand_less</span>
+<span id="form-toggle-text">Collapse</span>
+</button>
+</div>
+<!-- Subtle Decorative Droplet Shape -->
+<div class="absolute -right-4 -bottom-6 w-24 h-24 rounded-full bg-secondary-container/20 blur-xl pointer-events-none"></div>
+</div>
+<!-- Mobile Customer Onboarding Form Container (Collapsible Card) -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-md transition-all duration-300" id="onboarding-form-card">
+<!-- Account Category Toggle -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Account Classification</label>
+<div class="grid grid-cols-2 p-1 bg-surface-container rounded-lg gap-1" id="account-type-toggle">
+<button class="type-btn font-label-md text-label-md py-2 px-space-sm rounded-md transition-colors text-on-surface-variant flex items-center justify-center gap-1.5" data-type="residential" type="button">
+<span class="material-symbols-outlined text-[16px]">cottage</span> Residential
+          </button>
+<button class="type-btn font-label-md text-label-md py-2 px-space-sm rounded-md transition-colors bg-primary-container text-on-primary shadow-sm flex items-center justify-center gap-1.5" data-type="commercial" type="button">
+<span class="material-symbols-outlined text-[16px]">domain</span> Office / B2B
+          </button>
+</div>
+</div>
+<!-- Entity & Contact Inputs -->
+<div class="flex flex-col gap-space-sm">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Full Name / Corporate Entity</label>
+<div class="flex items-center px-space-sm py-2.5 bg-surface rounded-lg">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2">badge</span>
+<input class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none" id="entity-name" placeholder="e.g. Arvind Rao or Nexus Tech" type="text" value="Zenitron Software Labs"/>
+</div>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Primary Mobile (SMS Manifest &amp; OTP)</label>
+<div class="flex items-center px-space-sm py-2.5 bg-surface rounded-lg">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2">phone_iphone</span>
+<input class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none" id="entity-phone" placeholder="+91 00000 00000" type="tel" value="+91 98230 45892"/>
+</div>
+</div>
+</div>
+<!-- Precision GPS Telematics Tag -->
+<div class="p-space-sm bg-surface-container-low rounded-xl flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">my_location</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">Unloading Geofence</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-secondary font-label-sm text-label-sm flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span> Ready
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Lock entrance dock for automatic driver handoff prompts.</p>
+<div class="flex items-center justify-between bg-surface-container-lowest p-space-sm rounded-lg mt-1">
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Coordinates Tagged</span>
+<span class="font-body-sm text-body-sm font-bold text-primary truncate" id="gps-coords">18.5204° N, 73.8567° E</span>
+</div>
+<button class="px-space-sm py-1.5 bg-surface-container text-secondary font-label-sm text-label-sm rounded-lg active:scale-95 transition-transform flex items-center gap-1" id="fetch-gps-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">refresh</span> Re-Sync
+          </button>
+</div>
+</div>
+<!-- Assigned Route Van Selection -->
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Assigned Route Fleet Unit</label>
+<div class="relative bg-surface rounded-lg flex items-center px-space-sm py-2.5">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2">local_shipping</span>
+<select class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none appearance-none pr-6">
+<option selected="" value="van4">Van #04 (Ramesh Patil - IT Corridor)</option>
+<option value="van2">Van #02 (Imran Sayyed - Lakeview Metro)</option>
+<option value="van7">Van #07 (Gurpreet Singh - Sector 14 Direct)</option>
+</select>
+<span class="material-symbols-outlined text-outline text-[18px] absolute right-3 pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Water Specification Selection Cards -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Water Tier &amp; Packaging</label>
+<div class="grid grid-cols-2 gap-space-xs">
+<!-- Option A: 20L Can -->
+<div class="water-option cursor-pointer p-space-sm rounded-xl bg-surface-container-high text-on-surface flex flex-col justify-between transition-all" id="tier-20l">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary-container text-[24px]">water_full</span>
+<span class="w-4 h-4 rounded-full bg-primary flex items-center justify-center check-dot">
+<span class="material-symbols-outlined text-[12px] text-on-primary">check</span>
+</span>
+</div>
+<div class="mt-2">
+<div class="font-title-md text-title-md font-bold text-on-surface">20L Mineral Can</div>
+<div class="font-label-sm text-label-sm text-secondary font-bold mt-0.5">₹75 / refill</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Food-grade Polycarbonate</div>
+</div>
+</div>
+<!-- Option B: 1L Case -->
+<div class="water-option cursor-pointer p-space-sm rounded-xl bg-surface-container-low text-on-surface flex flex-col justify-between transition-all" id="tier-1l">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-outline text-[24px]">liquor</span>
+<span class="w-4 h-4 rounded-full bg-transparent flex items-center justify-center check-dot"></span>
+</div>
+<div class="mt-2">
+<div class="font-title-md text-title-md font-bold text-on-surface">1L Case (12 Pcs)</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant font-bold mt-0.5">₹180 / case</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Sealed Recycled PET</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quantity Counter & Delivery Cadence -->
+<div class="grid grid-cols-2 gap-space-sm items-center bg-surface-container-low p-space-sm rounded-xl">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Batch Quota</span>
+<div class="flex items-center gap-1.5 bg-surface-container-lowest p-1 rounded-lg">
+<button class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-on-surface active:scale-90" id="qty-dec" type="button">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-title-md text-title-md font-bold text-on-surface flex-1 text-center" id="qty-val">6</span>
+<button class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-on-surface active:scale-90" id="qty-inc" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Frequency</span>
+<select class="w-full bg-surface-container-lowest text-on-surface font-label-md text-label-md py-2 px-space-xs rounded-lg focus:outline-none" id="frequency-select">
+<option selected="" value="daily">Daily Handoff</option>
+<option value="alt">Alternate Days</option>
+<option value="weekly">Weekly Drop</option>
+</select>
+</div>
+</div>
+<!-- Refundable Can Deposit Tracker Strip -->
+<div class="p-space-sm bg-secondary-fixed/20 rounded-xl flex items-center justify-between text-on-secondary-fixed-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">currency_rupee</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase font-bold">Crate &amp; Can Escrow</span>
+<span class="font-body-sm text-body-sm">₹150 refundable deposit / 20L can</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-md text-title-md font-bold text-primary" id="deposit-amount">₹900</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant" id="deposit-cans-count">(6 Units)</span>
+</div>
+</div>
+<!-- Mobile Action Buttons -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<button class="w-full bg-primary-container text-on-primary py-3 px-space-md rounded-xl font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-transform" id="save-customer-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+          Save &amp; Assign Route Manifest
+        </button>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="py-2.5 px-space-sm bg-surface-container text-secondary font-label-md text-label-md rounded-xl flex items-center justify-center gap-1.5 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+            Tag Can Barcode
+          </button>
+<button class="py-2.5 px-space-sm bg-surface-container text-on-surface-variant font-label-md text-label-md rounded-xl flex items-center justify-center gap-1.5 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+            Add Ledger Note
+          </button>
+</div>
+</div>
+</div>
+<!-- Client Directory & Subscriptions Search Header -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Client Route Manifest</h3>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-high px-space-sm py-0.5 rounded-full font-bold">4 Active In Queue</span>
+</div>
+<!-- Search Input Field -->
+<div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm px-space-sm py-2">
+<span class="material-symbols-outlined text-outline text-[20px] mr-2">search</span>
+<input class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none" id="directory-search" placeholder="Search by name, ID, phone, sector..." type="text"/>
+<button class="w-7 h-7 flex items-center justify-center text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+</div>
+<!-- Quick Filter Pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1">
+<button class="px-space-md py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm flex-shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">view_agenda</span> All Sectors (342)
+        </button>
+<button class="px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex-shrink-0 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active Routes
+        </button>
+<button class="px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex-shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">payments</span> Has Deposit
+        </button>
+<button class="px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex-shrink-0 flex items-center gap-1">
+          Pending Return
+        </button>
+</div>
+</div>
+<!-- Directory Customer Cards Feed -->
+<div class="flex flex-col gap-space-sm" id="customer-list">
+<!-- Card 1: CogniTech Solutions -->
+<div class="customer-card bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/50 flex items-center justify-center text-primary-container flex-shrink-0 font-bold">
+              CS
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-title-md text-title-md font-bold text-on-surface truncate">CogniTech Solutions</h4>
+<span class="material-symbols-outlined text-[16px] text-primary" title="Verified B2B">verified</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span>#MUM-8902</span>
+<span>•</span>
+<span class="text-secondary font-bold">IT Corridor (Van #04)</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm">B2B Corp</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between text-on-surface mt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">local_drink</span>
+<div>
+<div class="font-label-md text-label-md font-bold">12 x 20L Cans</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Daily Morning Drop</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Empties Balance</span>
+<span class="font-label-md text-label-md font-bold text-secondary flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 12/12 Clean
+            </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span> +91 98230 45892
+          </span>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Dispatch Call" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</button>
+<button aria-label="Telematics Geofence" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">navigation</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Sunita Kulkarni -->
+<div class="customer-card bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-secondary flex-shrink-0 font-bold">
+              SK
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-title-md text-title-md font-bold text-on-surface truncate">Sunita Kulkarni</h4>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span>#MUM-8903</span>
+<span>•</span>
+<span class="truncate">Lakeview Res Flat 601</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">Residential</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between text-on-surface mt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">water_full</span>
+<div>
+<div class="font-label-md text-label-md font-bold">2 x 20L Cans</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Alternate Days</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Empties Balance</span>
+<span class="font-label-md text-label-md font-bold text-secondary flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 2/2 Clean
+            </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span> +91 97640 11920
+          </span>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Dispatch Call" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</button>
+<button aria-label="Telematics Geofence" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">navigation</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Apex Fitness Gym (Deposit/Empties Alert) -->
+<div class="customer-card bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-error-container/40 flex items-center justify-center text-error flex-shrink-0 font-bold">
+              AF
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-title-md text-title-md font-bold text-on-surface truncate">Apex Fitness Gym</h4>
+<span class="material-symbols-outlined text-[16px] text-error" title="Empties Pending">warning</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span>#MUM-8904</span>
+<span>•</span>
+<span class="truncate">Sector 14 Plot 88</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container/50 text-error font-label-sm text-label-sm font-bold">Deposit Alert</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between text-on-surface mt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">fitness_center</span>
+<div>
+<div class="font-label-md text-label-md font-bold">8 x 20L Cans</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Daily Refill Drop</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Empties Balance</span>
+<span class="font-label-md text-label-md font-bold text-error flex items-center justify-end gap-1">
+              5/8 (3 Pending)
+            </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span> +91 94220 87311
+          </span>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Dispatch Call" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</button>
+<button aria-label="Telematics Geofence" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">navigation</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4: Manoj Rathi -->
+<div class="customer-card bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-secondary flex-shrink-0 font-bold">
+              MR
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-title-md text-title-md font-bold text-on-surface truncate">Manoj Rathi</h4>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span>#MUM-8905</span>
+<span>•</span>
+<span class="truncate">Kalyani Hills Villa 12</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed/50 text-secondary font-label-sm text-label-sm">Retail Pack</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between text-on-surface mt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">inventory_2</span>
+<div>
+<div class="font-label-md text-label-md font-bold">3 x 1L Cases (36 Pcs)</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Weekly Saturday</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Packaging</span>
+<span class="font-label-md text-label-md font-bold text-secondary">
+              Sealed PET
+            </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span> +91 99210 54109
+          </span>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Dispatch Call" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</button>
+<button aria-label="Telematics Geofence" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">navigation</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Logistics Plant Telemetry Status Card -->
+<div class="p-space-md bg-surface-container rounded-xl flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary-container shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">water_voc</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="font-title-md text-title-md font-bold text-on-surface">Purity Verification Standard</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Automated UV-Ozone batch cycle #B-408 cleared TDS 48 ppm at 06:30 AM.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initOnboarding() {
+    let quantity = 6;
+    const depositPerCan = 150;
+    let selectedTier = '20l';
+
+    const qtyVal = document.getElementById('qty-val');
+    const depositAmount = document.getElementById('deposit-amount');
+    const depositCount = document.getElementById('deposit-cans-count');
+    const btnInc = document.getElementById('qty-inc');
+    const btnDec = document.getElementById('qty-dec');
+    const formCard = document.getElementById('onboarding-form-card');
+    const toggleBtn = document.getElementById('toggle-form-btn');
+    const toggleText = document.getElementById('form-toggle-text');
+    const formIcon = document.getElementById('form-icon');
+    const gpsBtn = document.getElementById('fetch-gps-btn');
+    const gpsCoords = document.getElementById('gps-coords');
+    const tier20l = document.getElementById('tier-20l');
+    const tier1l = document.getElementById('tier-1l');
+    const typeButtons = document.querySelectorAll('#account-type-toggle .type-btn');
+    const searchInput = document.getElementById('directory-search');
+    const customerCards = document.querySelectorAll('.customer-card');
+    const saveBtn = document.getElementById('save-customer-btn');
+
+    function updateCalculations() {
+      if (qtyVal) qtyVal.textContent = quantity;
+      if (depositAmount && depositCount) {
+        if (selectedTier === '20l') {
+          const total = quantity * depositPerCan;
+          depositAmount.textContent = '₹' + total;
+          depositCount.textContent = '(' + quantity + ' Units)';
+        } else {
+          depositAmount.textContent = '₹0';
+          depositCount.textContent = '(Non-returnable PET)';
+        }
+      }
+    }
+
+    if (btnInc) {
+      btnInc.addEventListener('click', () => {
+        if (quantity < 100) {
+          quantity += 1;
+          updateCalculations();
+        }
+      });
+    }
+
+    if (btnDec) {
+      btnDec.addEventListener('click', () => {
+        if (quantity > 1) {
+          quantity -= 1;
+          updateCalculations();
+        }
+      });
+    }
+
+    // Toggle Form expand / collapse
+    if (toggleBtn && formCard) {
+      let isCollapsed = false;
+      toggleBtn.addEventListener('click', () => {
+        isCollapsed = !isCollapsed;
+        if (isCollapsed) {
+          formCard.classList.add('hidden');
+          toggleText.textContent = 'Expand';
+          formIcon.textContent = 'expand_more';
+        } else {
+          formCard.classList.remove('hidden');
+          toggleText.textContent = 'Collapse';
+          formIcon.textContent = 'expand_less';
+        }
+      });
+    }
+
+    // Water Tier selection
+    function setTier(tier) {
+      selectedTier = tier;
+      if (tier === '20l') {
+        tier20l.classList.replace('bg-surface-container-low', 'bg-surface-container-high');
+        tier1l.classList.replace('bg-surface-container-high', 'bg-surface-container-low');
+        tier20l.querySelector('.check-dot').className = 'w-4 h-4 rounded-full bg-primary flex items-center justify-center check-dot';
+        tier20l.querySelector('.check-dot').innerHTML = '<span class="material-symbols-outlined text-[12px] text-on-primary">check</span>';
+        tier1l.querySelector('.check-dot').className = 'w-4 h-4 rounded-full bg-transparent flex items-center justify-center check-dot';
+        tier1l.querySelector('.check-dot').innerHTML = '';
+      } else {
+        tier1l.classList.replace('bg-surface-container-low', 'bg-surface-container-high');
+        tier20l.classList.replace('bg-surface-container-high', 'bg-surface-container-low');
+        tier1l.querySelector('.check-dot').className = 'w-4 h-4 rounded-full bg-primary flex items-center justify-center check-dot';
+        tier1l.querySelector('.check-dot').innerHTML = '<span class="material-symbols-outlined text-[12px] text-on-primary">check</span>';
+        tier20l.querySelector('.check-dot').className = 'w-4 h-4 rounded-full bg-transparent flex items-center justify-center check-dot';
+        tier20l.querySelector('.check-dot').innerHTML = '';
+      }
+      updateCalculations();
+    }
+
+    if (tier20l && tier1l) {
+      tier20l.addEventListener('click', () => setTier('20l'));
+      tier1l.addEventListener('click', () => setTier('1l'));
+    }
+
+    // Account Type switcher
+    typeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        typeButtons.forEach(b => {
+          b.className = 'type-btn font-label-md text-label-md py-2 px-space-sm rounded-md transition-colors text-on-surface-variant flex items-center justify-center gap-1.5';
+        });
+        btn.className = 'type-btn font-label-md text-label-md py-2 px-space-sm rounded-md transition-colors bg-primary-container text-on-primary shadow-sm flex items-center justify-center gap-1.5';
+      });
+    });
+
+    // Simulated GPS Telematics Tagging
+    if (gpsBtn && gpsCoords) {
+      gpsBtn.addEventListener('click', () => {
+        gpsCoords.textContent = 'Acquiring GPS lock...';
+        setTimeout(() => {
+          gpsCoords.textContent = '18.5289° N, 73.8741° E (Dock 2)';
+        }, 600);
+      });
+    }
+
+    // Live directory search filter
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        customerCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(query) ? 'flex' : 'none';
+        });
+      });
+    }
+
+    // Feedback on client save
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const currentText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Enrolling to Hub #04...';
+        setTimeout(() => {
+          saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> Manifest Updated!';
+          setTimeout(() => {
+            saveBtn.innerHTML = currentText;
+          }, 1500);
+        }, 800);
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(16,68,165,0.06)]" data-active-classes="text-primary-container font-bold"><div class="flex items-center justify-around h-16 px-gutter-mobile"><a class="flex flex-col items-center justify-center min-w-[64px] h-14 text-on-surface-variant transition-colors" data-path="deliver" href="#"><span class="material-symbols-outlined text-[24px]">local_shipping</span><span class="font-label-sm text-label-sm mt-1">Deliver</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-14 text-on-surface-variant transition-colors" data-path="fleet" href="#"><span class="material-symbols-outlined text-[24px]">radar</span><span class="font-label-sm text-label-sm mt-1">Fleet</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-14 text-on-surface-variant transition-colors" data-path="analytics" href="#"><span class="material-symbols-outlined text-[24px]">analytics</span><span class="font-label-sm text-label-sm mt-1">Analytics</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[64px] h-14 transition-colors text-primary-container font-bold" data-path="customers" href="#"><span class="material-symbols-outlined text-[24px]">group</span><span class="font-label-sm text-label-sm mt-1">Customers</span></a></div></nav></body></html>

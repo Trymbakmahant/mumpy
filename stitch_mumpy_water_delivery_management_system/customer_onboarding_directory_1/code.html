@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#004b73","tertiary-fixed":"#cce5ff","on-tertiary-container":"#77c2ff","on-surface":"#0b1c30","on-background":"#0b1c30","secondary-container":"#39b8fd","on-primary":"#ffffff","inverse-on-surface":"#eaf1ff","on-tertiary":"#ffffff","primary-fixed":"#dae1ff","on-secondary":"#ffffff","tertiary-container":"#004f7a","surface-container-lowest":"#ffffff","on-error":"#ffffff","surface-container-low":"#eff4ff","error":"#ba1a1a","on-tertiary-fixed":"#001d31","surface":"#f8f9ff","on-secondary-fixed":"#001e2f","surface-bright":"#f8f9ff","secondary-fixed":"#c9e6ff","inverse-primary":"#b3c5ff","background":"#f8f9ff","on-primary-container":"#a1b9ff","primary-fixed-dim":"#b3c5ff","on-error-container":"#93000a","on-secondary-container":"#004666","secondary":"#006591","surface-container":"#e5eeff","surface-dim":"#cbdbf5","surface-variant":"#d3e4fe","tertiary-fixed-dim":"#93ccff","surface-container-highest":"#d3e4fe","primary-container":"#1044a5","on-primary-fixed-variant":"#0640a1","primary":"#002e7c","surface-tint":"#2e59ba","on-primary-fixed":"#001849","error-container":"#ffdad6","on-secondary-fixed-variant":"#004c6e","secondary-fixed-dim":"#89ceff","outline":"#747684","inverse-surface":"#213145","tertiary":"#003757","surface-container-high":"#dce9ff","on-surface-variant":"#434652","outline-variant":"#c4c6d4"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xl":"2.5rem","space-lg":"1.5rem","space-md":"1rem",margin:"2rem","space-sm":"0.5rem",gutter:"1.25rem","gutter-mobile":"0.75rem","margin-mobile":"1rem","space-xs":"0.25rem"},fontFamily:display:["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"]},fontSize:{display:["44px",{lineHeight:"52px",letterSpacing:"-0.03em",fontWeight:"800"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"700"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"700"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["12px",{lineHeight:"18px",fontWeight:"400"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><header class="fixed top-0 left-0 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex items-center justify-between px-6"><div class="flex items-center gap-6"><div class="flex items-center gap-3"><img alt="Mumpy Water Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVZHtQKjNAS2M0a6JdTJzewiln3cooJ3yeFt6vcN6vSEoJCr6VdFMwXFk84EGupTldhorobBbT_B-igDOGQBY3UpSWy_VMS28GvumoHtLlT3rcRLzL4y2iOEVf2Tjzppe9a-4OtYsA-GLFwq-cM2GGF22EleaOUc84k5OYE4Ug7yIJcZdmN1_nCDoPmNuG6HBFfZi1SzGYS9ia3r8hiyF5gw0nZVZ0leMRmTDzE_ScXJY6yzAPa4MB"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-extrabold">Mumpy</span></div><div class="h-5 w-px bg-outline-variant/40 hidden sm:block"></div><div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm font-bold uppercase tracking-wider">North Sector Hub 04 - Live Dispatch</span></div></div><div class="hidden lg:flex items-center gap-2 bg-surface-container-low px-4 py-1.5 rounded-full"><span class="material-symbols-outlined text-secondary text-base">water_drop</span><span class="font-body-sm text-body-sm text-on-surface-variant">Bottles in Transit: <strong class="text-primary font-bold">420</strong></span><span class="text-outline-variant font-body-sm">|</span><span class="font-body-sm text-body-sm text-on-surface-variant">Delivered Today: <strong class="text-secondary font-bold">1,280</strong></span></div><div class="flex items-center gap-4"><div class="relative hidden sm:flex items-center"><span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">search</span><input class="pl-9 pr-4 py-1.5 rounded-lg bg-surface-container-low text-on-surface text-body-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary w-52 lg:w-64 transition-all" placeholder="Search crates, routes, IDs..." type="text"/></div><button aria-label="Notifications" class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-3 pl-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUAvhRNhOweNJStSKpvtzqHDVQTsiCeaO7M-QD2-vzIF5q9AVEMykHCIcul8L3ISSa3kipQhU-gFTNWgYDzw3pX2TebaK2-ImDUqyu_uSbDtk63rR3nY87Au3-uyaAngNKaKOPFmFfaXrEu8uQeqkIMk5C_Wu5H6-6XBpipZjBXYtqwV4o6mmL4lrysRRUut2bkJzWVwA-mT6NHkSY_1H8-MDU21Hq3FG9_kIJScF8tLugStLTSSv0"/><div class="hidden xl:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Rajesh Patel</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Operations Lead</span></div></div></div></header><aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-surface-container-low/70 backdrop-blur-md z-40 flex flex-col justify-between p-4"><div class="flex flex-col gap-6"><div class="px-3 pt-2"><span class="font-label-sm text-label-sm font-bold uppercase text-on-surface-variant/80 tracking-wider">Operational Units</span></div><nav class="flex flex-col gap-1.5" data-active-classes="bg-primary text-on-primary shadow-sm font-bold rounded-xl"><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="driver-delivery-proximity-log" href="#"><span class="material-symbols-outlined text-xl">local_shipping</span>Driver &amp; Proximity</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="fleet-pickup-tracker" href="#"><span class="material-symbols-outlined text-xl">hub</span>Fleet Live Map</a><a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md text-title-md" data-path="admin-revenue-analytics" href="#"><span class="material-symbols-outlined text-xl">analytics</span>Admin Insights</a><a aria-current="page" class="flex items-center gap-3 px-3.5 py-2.5 transition-all bg-primary text-on-primary shadow-sm font-bold rounded-xl" data-path="customer-onboarding" href="#"><span class="material-symbols-outlined text-xl">group_add</span>Customer Directory</a></nav></div><div class="p-3 bg-surface-container rounded-xl flex flex-col gap-2"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm uppercase font-bold text-on-surface-variant">Plant Reservoir</span><span class="font-label-sm text-label-sm font-bold text-secondary">92% Full</span></div><div class="w-full bg-surface-variant rounded-full h-1.5 overflow-hidden"><div class="bg-secondary-container h-1.5 rounded-full" style="width: 92%"></div></div><span class="font-body-sm text-body-sm text-on-surface-variant">Reverse Osmosis Line active</span></div></aside><div class="pl-64"><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-6 py-6 max-w-[1600px] w-full mx-auto flex flex-col gap-6">
+<!-- Top Metric Ribbon & Header Context -->
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold bg-secondary-fixed/40 px-2 py-0.5 rounded-full">CRM &amp; Routing Protocol</span>
+<span class="text-outline-variant font-body-sm">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Hub 04 (North West Region)</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Customer Onboarding &amp; Route Directory</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Streamlined intake for residential bulk subscriptions, commercial hubs, and verified GPS routing.</p>
+</div>
+<!-- Quick Operational Metrics Bento Counters -->
+<div class="flex items-center gap-3 flex-wrap">
+<div class="bg-surface-container-lowest shadow-sm rounded-xl px-4 py-2.5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Total Accounts</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold leading-none">342</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest shadow-sm rounded-xl px-4 py-2.5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl">person_add</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">New This Month</span>
+<div class="flex items-center gap-1.5 leading-none">
+<span class="font-headline-sm text-headline-sm text-secondary font-extrabold">28</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-fixed/50 px-1 py-0.2 rounded font-bold">+14%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest shadow-sm rounded-xl px-4 py-2.5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Active Fulfillment</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold leading-none">98.4%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Grid: Intake Form (Left) & Directory Explorer (Right) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: New Customer Onboarding Form (5 cols) -->
+<div class="xl:col-span-5 flex flex-col gap-4">
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-6 relative overflow-hidden">
+<!-- Hydro Decorative Water Glow -->
+<div class="absolute -right-16 -top-16 w-48 h-48 bg-secondary-fixed/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between pb-4 mb-5 border-b border-surface-variant/30">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-xl">person_pin</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">New Customer Onboarding</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Fast dispatch tagging with live coordinate lock</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-bold uppercase tracking-wider">Step 1 of 3</span>
+</div>
+<form class="flex flex-col gap-5" id="onboardingForm" onsubmit="event.preventDefault(); handleNewCustomerSubmit();">
+<!-- Section 1: Identity & Contact -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">badge</span> Contact &amp; Billing Identity
+                </span>
+<div class="flex items-center gap-2 bg-surface-container-low p-1 rounded-lg">
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="accType" type="radio" value="Residential"/>
+<span class="px-2.5 py-1 rounded-md text-label-sm font-semibold peer-checked:bg-primary peer-checked:text-on-primary text-on-surface-variant transition-all block">Residential</span>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="accType" type="radio" value="Commercial"/>
+<span class="px-2.5 py-1 rounded-md text-label-sm font-semibold peer-checked:bg-primary peer-checked:text-on-primary text-on-surface-variant transition-all block">Office / B2B</span>
+</label>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex flex-col gap-1 md:col-span-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Full Name / Corporate Entity <span class="text-error">*</span></label>
+<input class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all shadow-inner" id="custName" placeholder="e.g. Zenitron Software Labs / Arvind Rao" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Primary Contact (SMS Dispatches) <span class="text-error">*</span></label>
+<div class="relative">
+<span class="absolute left-3 top-2.5 text-label-md font-bold text-on-surface-variant">+91</span>
+<input class="pl-12 pr-3 py-2 w-full rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="custPhone" placeholder="98230 45892" required="" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Billing Email</label>
+<input class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="custEmail" placeholder="accounts@zenitron.io" type="email"/>
+</div>
+</div>
+<label class="flex items-center gap-2.5 cursor-pointer mt-0.5">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary bg-surface-container" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Send WhatsApp live delivery notifications &amp; empties ledger receipts</span>
+</label>
+</div>
+<!-- Section 2: Delivery Location & Geotagging -->
+<div class="flex flex-col gap-3 pt-2">
+<span class="font-label-md text-label-md font-bold text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">pin_drop</span> Delivery Destination &amp; Coordinates
+              </span>
+<div class="flex flex-col gap-2.5">
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Operational Sector / Hub</label>
+<select class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary" id="custSector">
+<option value="IT Corridor - Phase 2">IT Corridor - Phase 2</option>
+<option value="Sector 14 Industrial Area">Sector 14 Industrial Area</option>
+<option value="Lakeview Residency Cluster">Lakeview Residency Cluster</option>
+<option value="Kalyani Hills West">Kalyani Hills West</option>
+<option value="Downtown Central Commerce">Downtown Central Commerce</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Assigned Route Van</label>
+<select class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary" id="custRoute">
+<option value="Van #04 (Ramesh Kumar)">Van #04 (Ramesh Kumar)</option>
+<option value="Van #02 (Sunil Verma)">Van #02 (Sunil Verma)</option>
+<option value="Van #08 (Praveen Joshi)">Van #08 (Praveen Joshi)</option>
+<option value="Direct Express Trike 01">Direct Express Trike 01</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Premises / Floor / Unit Number</label>
+<input class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="custAddress" placeholder="Tower B, Suite 402, Quantum Heights" required="" type="text"/>
+</div>
+<!-- GPS Fetch Action Card -->
+<div class="bg-surface-container-low/70 rounded-xl p-3 flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-lg">satellite_alt</span>
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Precision GPS Telematics Tag</span>
+</div>
+<button class="px-2.5 py-1 rounded-lg bg-secondary text-on-secondary font-label-sm text-label-sm font-bold flex items-center gap-1 hover:opacity-90 shadow-sm transition-all active:scale-95" onclick="simulateGpsFetch()" type="button">
+<span class="material-symbols-outlined text-sm">my_location</span> Fetch Coordinates
+                    </button>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<input class="px-2.5 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md font-mono text-center" id="custLat" readonly="" type="text" value="18.5204° N"/>
+<input class="px-2.5 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md font-mono text-center" id="custLng" readonly="" type="text" value="73.8567° E"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Water Supply Requirements & Deposit -->
+<div class="flex flex-col gap-3 pt-2">
+<span class="font-label-md text-label-md font-bold text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">water_drop</span> Water Specification &amp; Quota
+              </span>
+<!-- Product Selection Radio Cards -->
+<div class="grid grid-cols-2 gap-3">
+<label class="cursor-pointer relative">
+<input checked="" class="sr-only peer" name="prodType" type="radio" value="20L Mineral Cans"/>
+<div class="p-3 rounded-xl bg-surface-container-low peer-checked:bg-secondary-fixed/40 peer-checked:shadow-sm flex flex-col gap-1 transition-all h-full">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-secondary text-xl">propane_tank</span>
+<span class="w-3 h-3 rounded-full bg-outline-variant peer-checked:bg-secondary"></span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">20L Mineral Cans</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Reverse osmosis + minerals. ₹75/can refilled.</span>
+</div>
+</label>
+<label class="cursor-pointer relative">
+<input class="sr-only peer" name="prodType" type="radio" value="1L Bottled Pack (12/cs)"/>
+<div class="p-3 rounded-xl bg-surface-container-low peer-checked:bg-secondary-fixed/40 peer-checked:shadow-sm flex flex-col gap-1 transition-all h-full">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary text-xl">local_drink</span>
+<span class="w-3 h-3 rounded-full bg-outline-variant peer-checked:bg-primary"></span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Mumpy 1L Case</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Carton of 12 sealed twist-cap bottles. ₹180/case.</span>
+</div>
+</label>
+</div>
+<div class="grid grid-cols-3 gap-2.5">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Quantity / Drop</label>
+<div class="flex items-center bg-surface-container-low rounded-lg p-1 justify-between">
+<button class="w-7 h-7 rounded bg-surface-container-lowest text-on-surface font-bold hover:bg-surface-container transition-colors" onclick="adjustQty(-1)" type="button">-</button>
+<span class="font-title-md text-title-md font-bold text-primary" id="qtyCounter">6</span>
+<button class="w-7 h-7 rounded bg-surface-container-lowest text-on-surface font-bold hover:bg-surface-container transition-colors" onclick="adjustQty(1)" type="button">+</button>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Cadence</label>
+<select class="px-2.5 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none" id="custFrequency">
+<option value="Alternate Days">Alt Days</option>
+<option value="Daily">Daily</option>
+<option value="Weekly (Mon)">Weekly Mon</option>
+<option value="Weekly (Thu)">Weekly Thu</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Slot</label>
+<select class="px-2.5 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-md focus:bg-surface-container-lowest focus:outline-none" id="custSlot">
+<option value="Morning 07:00-10:00">07 - 10 AM</option>
+<option value="Afternoon 14:00-17:00">02 - 05 PM</option>
+</select>
+</div>
+</div>
+<!-- Security Deposit Summary Pill -->
+<div class="p-3 bg-secondary-fixed/20 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg">shield</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Empty Can Security Deposit</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Refundable ₹150 × <span id="depositMultiplier">6</span> Cans</span>
+</div>
+</div>
+<span class="font-headline-sm text-headline-sm text-secondary font-extrabold" id="depositTotal">₹900</span>
+</div>
+</div>
+<!-- Submit CTA & QR Print Button -->
+<div class="flex items-center gap-3 pt-2">
+<button class="flex-1 py-3 px-4 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-bold flex items-center justify-center gap-2 shadow-md hover:bg-primary-container transition-all active:scale-[0.98]" type="submit">
+<span class="material-symbols-outlined text-xl">how_to_reg</span> Save &amp; Assign Route
+              </button>
+<button class="py-3 px-4 rounded-xl bg-surface-container-high text-primary font-title-md text-title-md font-bold flex items-center justify-center gap-1.5 hover:bg-surface-container transition-all" onclick="showQrModal()" title="Print Crate ID QR Code" type="button">
+<span class="material-symbols-outlined text-xl">qr_code_2</span> Tag QR
+              </button>
+</div>
+</form>
+</div>
+<!-- Small Operations Notice -->
+<div class="bg-surface-container-low rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Automated Manifest Sync</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Newly onboarded clients are automatically queued into Driver Ramesh's morning dispatch checklist with GPS geo-fencing at 100m proximity.</p>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Customer Directory & Telemetry Queue (7 cols) -->
+<div class="xl:col-span-7 flex flex-col gap-4">
+<!-- Live Visual Snapshot Map & Route Density Card -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-4 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4">
+<div class="w-full sm:w-56 h-36 bg-cover bg-center rounded-xl relative overflow-hidden shrink-0 shadow-inner" data-location="Kalyani Nagar, Pune, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB01jHqoKAhWP2T7CJyF0L7Xz5a5JN4keKO7h1mo675XCDD628qK7KL3HYXvqN1yVGc5MGDtUscjap8vB-jXK8z9eahNnBqhCNznIkzq12egmbpqkqSCw_Up6ReUY0zhhmiyo3EzVfOpfLwAWCRNQDNzLhRWJwWNfoOe1Pe1qsqFR26XFbLXi22g-YlmZ5U4TdyRE8XeD6-obqtA0z-F-KuVgpz4vz09AQQ-gcpePWKZMo4fk5vaB-H')">
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-[1px] flex flex-col justify-between p-2">
+<span class="bg-surface/90 text-on-surface text-[10px] font-bold px-2 py-0.5 rounded-full w-max shadow-sm">GPS Overlay Active</span>
+<div class="flex items-center gap-1 text-on-primary bg-primary/80 backdrop-blur-md px-2 py-1 rounded-lg w-max text-[11px] font-bold">
+<span class="material-symbols-outlined text-xs">navigation</span> 14 Waypoints Today
+              </div>
+</div>
+</div>
+<div class="flex flex-col justify-between w-full h-full py-1">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold uppercase text-secondary">Route Cluster Optimization</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Updated 2m ago</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-0.5">North Sector Dispatch Ring</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Average delivery travel time between customer premises dropped to 8.4 minutes following geofenced clustering.</p>
+</div>
+<div class="flex items-center gap-4 mt-3 pt-2 border-t border-surface-variant/30 text-body-sm text-on-surface-variant">
+<span>Empties in Transit: <strong class="text-on-surface font-bold">142 Cans</strong></span>
+<span>•</span>
+<span>Deposits Held: <strong class="text-secondary font-bold">₹51,300</strong></span>
+</div>
+</div>
+</div>
+<!-- Directory Table Container -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-5 flex flex-col gap-4">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Client Directory &amp; Subscriptions</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Manage bottle balances, delivery cadences, and routing tags</p>
+</div>
+<!-- Export / Quick Print Action -->
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-sm text-label-sm font-bold flex items-center gap-1.5" onclick="alert('Exporting customer route directory CSV for North Sector 04...')">
+<span class="material-symbols-outlined text-base">file_download</span> Export Run Sheet
+            </button>
+</div>
+<!-- Search & Filter Ribbon -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-2.5">
+<div class="md:col-span-6 relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-lg pointer-events-none">search</span>
+<input class="w-full pl-9 pr-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" id="directorySearch" onkeyup="filterDirectoryTable()" placeholder="Search by name, ID, mobile, or landmark..." type="text"/>
+</div>
+<div class="md:col-span-3">
+<select class="w-full px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" id="sectorFilter" onchange="filterDirectoryTable()">
+<option value="ALL">All Sectors</option>
+<option value="IT Corridor">IT Corridor</option>
+<option value="Sector 14">Sector 14</option>
+<option value="Lakeview">Lakeview</option>
+<option value="Kalyani Hills">Kalyani Hills</option>
+</select>
+</div>
+<div class="md:col-span-3">
+<select class="w-full px-3 py-2 rounded-lg bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" id="statusFilter" onchange="filterDirectoryTable()">
+<option value="ALL">All Statuses</option>
+<option value="Active">Active Only</option>
+<option value="Deposit Pending">Deposit Alerts</option>
+<option value="Paused">Paused Deliveries</option>
+</select>
+</div>
+</div>
+<!-- Directory Table -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left text-body-sm text-on-surface">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-2.5 px-3 rounded-l-lg">Customer / ID</th>
+<th class="py-2.5 px-3">Area &amp; Coordinates</th>
+<th class="py-2.5 px-3">Allocation</th>
+<th class="py-2.5 px-3">Empties Balance</th>
+<th class="py-2.5 px-3">Status</th>
+<th class="py-2.5 px-3 text-right rounded-r-lg">Manage</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high/40" id="directoryTableBody">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-sector="IT Corridor" data-status="Active">
+<td class="py-3 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold text-xs">IT</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">CogniTech Solutions</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">#MUM-8902 • +91 98450 12098</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">IT Corridor - Bldg 4</span>
+<span class="font-mono text-label-sm text-label-sm text-on-surface-variant">18.5204° N, 73.8567° E</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-bold text-primary">12 × 20L Cans</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily (07-10 AM)</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-on-surface">12/12</span>
+<span class="material-symbols-outlined text-secondary text-sm" title="Zero pending return cans">check_circle</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm text-label-sm font-bold bg-secondary-fixed/50 text-on-secondary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                    </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('CogniTech Solutions', 'Dispatched 12 Cans')" title="Record Quick Bottle Delivery">
+<span class="material-symbols-outlined text-lg">local_shipping</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('CogniTech Solutions', 'QR Copied')" title="Customer QR Pass">
+<span class="material-symbols-outlined text-lg">qr_code</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-sector="Lakeview" data-status="Active">
+<td class="py-3 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface font-bold text-xs">SK</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">Sunita Kulkarni</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">#MUM-8903 • +91 99201 44812</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Lakeview Res - Flat 601</span>
+<span class="font-mono text-label-sm text-label-sm text-on-surface-variant">18.5288° N, 73.8612° E</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-bold text-primary">2 × 20L Cans</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Alt Days (Morning)</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-on-surface">2/2</span>
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm text-label-sm font-bold bg-secondary-fixed/50 text-on-secondary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                    </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Sunita Kulkarni', 'Dispatched 2 Cans')" title="Record Quick Bottle Delivery">
+<span class="material-symbols-outlined text-lg">local_shipping</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Sunita Kulkarni', 'QR Copied')" title="Customer QR Pass">
+<span class="material-symbols-outlined text-lg">qr_code</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-sector="Sector 14" data-status="Deposit Pending">
+<td class="py-3 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary font-bold text-xs">AG</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">Apex Fitness Gym</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">#MUM-8904 • +91 97654 33211</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Sector 14 - Plot 88</span>
+<span class="font-mono text-label-sm text-label-sm text-on-surface-variant">18.5310° N, 73.8490° E</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-bold text-primary">8 × 20L Cans</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily (02-05 PM)</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-error">5/8</span>
+<span class="material-symbols-outlined text-error text-sm" title="3 Can security deposits pending">warning</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm text-label-sm font-bold bg-error-container text-on-error-container">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> ₹450 Due
+                    </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Apex Fitness Gym', 'Dispatched 8 Cans')" title="Record Quick Bottle Delivery">
+<span class="material-symbols-outlined text-lg">local_shipping</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Apex Fitness Gym', 'QR Copied')" title="Customer QR Pass">
+<span class="material-symbols-outlined text-lg">qr_code</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-sector="Kalyani Hills" data-status="Active">
+<td class="py-3 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-variant flex items-center justify-center text-primary font-bold text-xs">MR</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">Manoj Rathi (Cafe 9)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">#MUM-8905 • +91 94220 89100</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Kalyani Hills Main Rd</span>
+<span class="font-mono text-label-sm text-label-sm text-on-surface-variant">18.5412° N, 73.8701° E</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-bold text-primary">3 × 1L Cases</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Weekly Thu (Morning)</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-body-sm text-body-sm font-bold text-on-surface-variant">N/A (PET)</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm text-label-sm font-bold bg-secondary-fixed/50 text-on-secondary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                    </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Manoj Rathi', 'Dispatched 3 Cases')" title="Record Quick Bottle Delivery">
+<span class="material-symbols-outlined text-lg">local_shipping</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Manoj Rathi', 'QR Copied')" title="Customer QR Pass">
+<span class="material-symbols-outlined text-lg">qr_code</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-sector="Lakeview" data-status="Paused">
+<td class="py-3 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-outline font-bold text-xs">VA</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-on-surface opacity-70 group-hover:text-primary transition-colors">Vikas Ahuja</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">#MUM-8891 • +91 93701 10042</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col opacity-70">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Lakeview Res - Villa 19</span>
+<span class="font-mono text-label-sm text-label-sm text-on-surface-variant">18.5292° N, 73.8630° E</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col opacity-70">
+<span class="font-body-sm text-body-sm font-bold text-on-surface-variant">1 × 20L Can</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Weekly Mon (Morning)</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="font-title-md text-title-md font-bold text-on-surface opacity-70">1/1</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm text-label-sm font-bold bg-surface-variant text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Vacation Hold
+                    </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-secondary font-bold" onclick="triggerAction('Vikas Ahuja', 'Subscription Resumed')" title="Resume Deliveries">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" onclick="triggerAction('Vikas Ahuja', 'QR Copied')" title="Customer QR Pass">
+<span class="material-symbols-outlined text-lg">qr_code</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Bottom Micro Notification Strip -->
+<div class="pt-3 border-t border-surface-variant/30 flex items-center justify-between text-body-sm text-on-surface-variant">
+<span id="showingCount">Showing 5 of 342 active water distribution accounts</span>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-on-surface font-semibold text-label-sm" disabled="">Previous</button>
+<span class="font-bold text-primary text-label-sm">Page 1</span>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-on-surface font-semibold text-label-sm">Next</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- QR Modal Component (Hidden by default) -->
+<div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" id="qrModal">
+<div class="bg-surface-container-lowest rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col items-center gap-4 text-center">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-3xl">qr_code_scanner</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Mumpy Smart Intake QR</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Affix this serialized QR code onto the customer's delivery crate rack for instant driver RFID/barcode verification.</p>
+</div>
+<!-- Generated Mock SVG QR Visual -->
+<div class="p-4 bg-surface rounded-xl shadow-inner border border-surface-variant/40 flex flex-col items-center gap-2">
+<svg class="w-40 h-40 text-primary" fill="currentColor" viewbox="0 0 100 100">
+<path d="M10,10 h30 v30 h-30 z M15,15 v20 h20 v-20 z M20,20 h10 v10 h-10 z"></path>
+<path d="M60,10 h30 v30 h-30 z M65,15 v20 h20 v-20 z M70,20 h10 v10 h-10 z"></path>
+<path d="M10,60 h30 v30 h-30 z M15,65 v20 h20 v-20 z M20,70 h10 v10 h-10 z"></path>
+<rect height="8" width="8" x="45" y="15"></rect>
+<rect height="8" width="8" x="45" y="30"></rect>
+<rect height="8" width="8" x="45" y="60"></rect>
+<rect height="8" width="8" x="60" y="55"></rect>
+<rect height="8" width="15" x="75" y="55"></rect>
+<rect height="15" width="10" x="60" y="70"></rect>
+<rect height="12" width="12" x="75" y="75"></rect>
+</svg>
+<span class="font-mono text-label-md font-bold text-secondary">MUM-CRATE-2025-04X</span>
+</div>
+<div class="flex items-center gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-surface-container text-on-surface font-label-md font-bold" onclick="closeQrModal()">Dismiss</button>
+<button class="flex-1 py-2 rounded-lg bg-primary text-on-primary font-label-md font-bold flex items-center justify-center gap-1" onclick="window.print();">
+<span class="material-symbols-outlined text-base">print</span> Print Label
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive Scripts -->
+<script>
+    let currentQty = 6;
+    const canRateDeposit = 150;
+
+    function adjustQty(delta) {
+      currentQty = Math.max(1, currentQty + delta);
+      document.getElementById('qtyCounter').innerText = currentQty;
+      document.getElementById('depositMultiplier').innerText = currentQty;
+      document.getElementById('depositTotal').innerText = '₹' + (currentQty * canRateDeposit);
+    }
+
+    function simulateGpsFetch() {
+      const latField = document.getElementById('custLat');
+      const lngField = document.getElementById('custLng');
+      latField.value = 'Locating...';
+      lngField.value = 'Locating...';
+      
+      setTimeout(() => {
+        // High accuracy simulated coordinates in target sector
+        const rLat = (18.5200 + Math.random() * 0.02).toFixed(4);
+        const rLng = (73.8500 + Math.random() * 0.02).toFixed(4);
+        latField.value = rLat + '° N';
+        lngField.value = rLng + '° E';
+      }, 500);
+    }
+
+    function showQrModal() {
+      document.getElementById('qrModal').classList.remove('hidden');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qrModal').classList.add('hidden');
+    }
+
+    function handleNewCustomerSubmit() {
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const sector = document.getElementById('custSector').value;
+      const address = document.getElementById('custAddress').value.trim();
+      const lat = document.getElementById('custLat').value;
+      const lng = document.getElementById('custLng').value;
+      const freq = document.getElementById('custFrequency').value;
+      const slot = document.getElementById('custSlot').value;
+      const prodType = document.querySelector('input[name="prodType"]:checked').value;
+
+      if (!name || !phone || !address) {
+        alert('Please fill out all required customer identity fields.');
+        return;
+      }
+
+      const tbody = document.getElementById('directoryTableBody');
+      const newTr = document.createElement('tr');
+      newTr.className = 'hover:bg-surface-container-low/50 transition-colors group';
+      newTr.setAttribute('data-sector', sector.includes('IT') ? 'IT Corridor' : (sector.includes('14') ? 'Sector 14' : 'Lakeview'));
+      newTr.setAttribute('data-status', 'Active');
+
+      const shortCode = name.substring(0, 2).toUpperCase();
+      const newId = '#MUM-' + Math.floor(8910 + Math.random() * 100);
+
+      newTr.innerHTML = `
+        <td class="py-3 px-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs">${shortCode}</div>
+            <div class="flex flex-col">
+              <span class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">${name}</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">${newId} • +91 ${phone}</span>
+            </div>
+          </div>
+        </td>
+        <td class="py-3 px-3">
+          <div class="flex flex-col">
+            <span class="font-body-sm text-body-sm font-semibold text-on-surface">${address}</span>
+            <span class="font-mono text-label-sm text-label-sm text-on-surface-variant">${lat}, ${lng}</span>
+          </div>
+        </td>
+        <td class="py-3 px-3">
+          <div class="flex flex-col">
+            <span class="font-body-sm text-body-sm font-bold text-primary">${currentQty} × ${prodType.includes('20L') ? '20L Cans' : '1L Cases'}</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">${freq}</span>
+          </div>
+        </td>
+        <td class="py-3 px-3">
+          <div class="flex items-center gap-1.5">
+            <span class="font-title-md text-title-md font-bold text-on-surface">${currentQty}/${currentQty}</span>
+            <span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+          </div>
+        </td>
+        <td class="py-3 px-3">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm text-label-sm font-bold bg-secondary-fixed/50 text-on-secondary-fixed">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+          </span>
+        </td>
+        <td class="py-3 px-3 text-right">
+          <button onclick="triggerAction('${name}', 'Delivery Logged')" class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" title="Record Quick Bottle Delivery">
+            <span class="material-symbols-outlined text-lg">local_shipping</span>
+          </button>
+          <button onclick="showQrModal()" class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary" title="Customer QR Pass">
+            <span class="material-symbols-outlined text-lg">qr_code</span>
+          </button>
+        </td>
+      `;
+
+      tbody.insertBefore(newTr, tbody.firstChild);
+
+      // Notification feedback
+      alert(`Customer '${name}' successfully onboarded and assigned to Van route! Deposit hold: ₹${currentQty * canRateDeposit}`);
+
+      // Reset form
+      document.getElementById('custName').value = '';
+      document.getElementById('custPhone').value = '';
+      document.getElementById('custEmail').value = '';
+      document.getElementById('custAddress').value = '';
+    }
+
+    function filterDirectoryTable() {
+      const searchVal = document.getElementById('directorySearch').value.toLowerCase();
+      const sectorVal = document.getElementById('sectorFilter').value;
+      const statusVal = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('#directoryTableBody tr');
+
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rowSector = row.getAttribute('data-sector');
+        const rowStatus = row.getAttribute('data-status');
+
+        const matchesSearch = text.includes(searchVal);
+        const matchesSector = (sectorVal === 'ALL') || (rowSector && rowSector.includes(sectorVal));
+        const matchesStatus = (statusVal === 'ALL') || (rowStatus === statusVal);
+
+        if (matchesSearch && matchesSector && matchesStatus) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('showingCount').innerText = `Showing ${visibleCount} filtered customer distribution accounts`;
+    }
+
+    function triggerAction(custName, msg) {
+      alert(`${msg} for ${custName}`);
+    }
+  </script>
+</div></main></div></body></html>

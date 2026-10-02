@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-primary-container":"#a1b9ff","primary-fixed":"#dae1ff","background":"#f8f9ff","on-primary":"#ffffff","on-tertiary-fixed":"#001d31","on-secondary-fixed-variant":"#004c6e","on-tertiary-container":"#77c2ff","surface-container-low":"#eff4ff","tertiary-container":"#004f7a","surface-bright":"#f8f9ff","on-error":"#ffffff","on-error-container":"#93000a","primary":"#002e7c","on-primary-fixed-variant":"#0640a1","tertiary-fixed-dim":"#93ccff","surface-container-highest":"#d3e4fe","error-container":"#ffdad6","inverse-primary":"#b3c5ff","secondary":"#006591","on-secondary":"#ffffff","primary-container":"#1044a5","surface":"#f8f9ff","on-secondary-container":"#004666","tertiary-fixed":"#cce5ff","primary-fixed-dim":"#b3c5ff","secondary-fixed-dim":"#89ceff","outline":"#747684","surface-tint":"#2e59ba","surface-dim":"#cbdbf5","outline-variant":"#c4c6d4","surface-container":"#e5eeff","on-surface-variant":"#434652","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","tertiary":"#003757","on-secondary-fixed":"#001e2f","on-background":"#0b1c30","on-tertiary":"#ffffff","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004b73","surface-container-high":"#dce9ff","secondary-fixed":"#c9e6ff","error":"#ba1a1a","surface-container-lowest":"#ffffff","on-primary-fixed":"#001849","secondary-container":"#39b8fd","on-surface":"#0b1c30"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"gutter-mobile":"0.75rem","space-md":"1rem","margin-mobile":"1rem",margin:"2rem",gutter:"1.25rem","space-sm":"0.5rem","space-lg":"1.5rem","space-xl":"2.5rem","space-xs":"0.25rem"},fontFamily:{"headline-md":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],display:["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"700"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}],display:["44px",{lineHeight:"52px",letterSpacing:"-0.03em",fontWeight:"800"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"700"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"700"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",fontWeight:"400"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="Logotype and emblem for Mumpy Packaged Drinking Water. Clean stylized rounded typography 'Mumpy' in rich royal blue with refreshing light cyan water splash and clean droplet accent, modern beverage logistics brand badge.. Design context: - Primary color: #1044a5
+- Font: plusJakartaSans
+- Mode: light
+- Roundness: rounded-md
+. The logo should be visually consistent with these brand tokens." class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XG_VTfpuX-gKyEdANGGzillWidsyvdSg8L3EuCetPe6kntVDeeVVshgN3Vz4mcan6XXqQGwW2R-xht63AS_WU4ALFPsP-2UWUIZDvsWwNy6B2U8EYuKS8O8E7NlsW4W7ic40xIQfv0Z76vzwd-2mOZai3l-qkxZ10-uIV79zbGp8mlYSYnptr6FKFBT8zFyQY5gxtwutsWs07vQMO4hBVPIwNUelQefTfRnulAqpnoxX7xttSiI2N3HQ"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider truncate">Central Hub 04</span></div><h1 class="font-title-md text-title-md text-on-surface font-bold truncate leading-tight">Analytics</h1></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Alerts" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors focus:outline-none"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="relative flex items-center justify-center p-0.5 rounded-full bg-secondary-fixed/40"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WwwBWZ2sk-bF8h5QEreqocPOi07L0EzVTHvuwqnxWlgJdBztGHM0P9_ewe4FCFtwpBZ_LbXtnqInShN6SWBVCUAmZ9JLVGC4ae0ZV4onM1vzDFmEkWw7PhlWhjP5yrwCf2yYTwxB6LiGL5KDHWsZz3YzHrCA94AQptOb6r1C88IcNNpJzPOgPUmnDRjWWAjEZjHdEei9n7ndfYwsJ3mlkVrpdy0yRvpThRjWpHp_OxknStvmjXuMO3S28"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full">
+<div class="px-margin-mobile pt-space-sm pb-space-lg flex flex-col gap-space-md">
+<!-- Sub-header Timefilter & Live Indicator -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+          Live Stream
+        </span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Today, 24 Oct</span>
+</div>
+<div class="flex items-center bg-surface-container-low p-0.5 rounded-full shadow-sm">
+<button class="px-3 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm shadow-sm transition-all">Today</button>
+<button class="px-3 py-1 rounded-full text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-all">7D</button>
+<button class="px-3 py-1 rounded-full text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-all">30D</button>
+</div>
+</div>
+<!-- 1. Financial HUD & Revenue Summary -->
+<div class="rounded-xl bg-surface-container-lowest shadow-md p-space-md flex flex-col gap-space-md relative overflow-hidden">
+<!-- Water Droplet Ambient Graphic Glow -->
+<div class="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-secondary-fixed/30 blur-2xl pointer-events-none"></div>
+<div class="flex items-start justify-between relative z-10">
+<div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px] text-secondary">payments</span>
+            Gross Revenue Today
+          </div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display text-display text-primary tracking-tight font-extrabold">₹48,650</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+            +14.2%
+          </span>
+<span class="text-on-surface-variant font-body-sm text-body-sm mt-1">Goal: ₹45,000</span>
+</div>
+</div>
+<!-- Water Dispatch Metric Split Bar -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary-container">water_drop</span>
+<span class="font-title-md text-title-md font-bold text-on-surface">1,620 Units</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dispatched</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">108% of Run Target</span>
+</div>
+<!-- Meter bar showing 1L vs 20L proportion -->
+<div class="w-full h-2.5 rounded-full bg-surface-container-highest flex overflow-hidden">
+<div class="h-full bg-primary-container transition-all" style="width: 60.5%"></div>
+<div class="h-full bg-secondary-container transition-all" style="width: 39.5%"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm pt-0.5">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>980 x 1L Bottles</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span>640 x 20L Jars</span>
+</div>
+</div>
+</div>
+<!-- Payment Mix Chips -->
+<div class="grid grid-cols-3 gap-space-xs pt-1">
+<div class="p-2 rounded-lg bg-surface-container flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">UPI Auto/QR</span>
+<span class="font-title-md text-title-md font-bold text-primary">₹34.2k</span>
+<span class="font-body-sm text-body-sm text-secondary font-semibold">70.3%</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Cash Collection</span>
+<span class="font-title-md text-title-md font-bold text-primary">₹11.4k</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-semibold">23.4%</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Credit Net-7</span>
+<span class="font-title-md text-title-md font-bold text-primary">₹3.0k</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-semibold">6.3%</span>
+</div>
+</div>
+<!-- Quick Export Pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-0.5 pt-1">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-md text-label-md whitespace-nowrap transition-colors">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+          Daily Sales CSV
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-md text-label-md whitespace-nowrap transition-colors">
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>
+          Manifest
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-md text-label-md whitespace-nowrap transition-colors">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+          GST Summary
+        </button>
+</div>
+</div>
+<!-- 2. Area Water Demand Ranking & Heatmap Analysis -->
+<div class="rounded-xl bg-surface-container-lowest shadow-md p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">location_searching</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md font-bold text-on-surface">Area Water Demand</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time sector consumption quota</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-bold">5 Active Zones</span>
+</div>
+<!-- Mini Live Route Map Snippet -->
+<div class="relative w-full h-32 rounded-xl overflow-hidden shadow-sm" data-location="Koramangala, Bangalore" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3tIst-uETvCjNU4cuqJQeU-bLCnJHaFnvvzA6DLEMeDmwsKcPTfH6yHW_zvn3Yczrw5vTPYelEkfnN6ymRkG3B2zziPXfuzV2l-JPRixas9dSO2NdK_V0AWRrNtCWJZgni_q-eAIdyEXGDE87pEvaFgpcLBcsqCjapihaARWnmZlCO-VnUntnUJ3YmhmSf8UdqvCTLay9mBdQko4QSIhh_R46-BTG6r_efKvGjRmpDpR0LwPYaClw')">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent flex flex-col justify-end p-space-sm text-on-primary">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-md text-label-md font-bold text-on-primary">Sector Route Intensity</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-lowest/20 backdrop-blur-md px-2 py-0.5 rounded-md text-on-primary">Hotspot: Tech Phase 2</span>
+</div>
+</div>
+</div>
+<!-- Ranked List of Sectors -->
+<div class="flex flex-col gap-space-sm">
+<!-- Sector 01 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0">01</span>
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">IT Park &amp; Tech Phase 2</span>
+</div>
+<div class="text-right flex-shrink-0 ml-2">
+<span class="font-title-md text-title-md font-bold text-primary">450 units</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-1">(28%)</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 82%"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="inline-flex items-center gap-1 text-tertiary-container font-semibold">
+<span class="material-symbols-outlined text-[14px] text-secondary">bolt</span>
+              Peak Demand Alert
+            </span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-primary font-bold">+120 Jars Auto-Dispatched</span>
+</div>
+</div>
+<!-- Sector 02 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0">02</span>
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">Lakeview Residential Towers</span>
+</div>
+<div class="text-right flex-shrink-0 ml-2">
+<span class="font-title-md text-title-md font-bold text-primary">380 units</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-1">(23%)</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full" style="width: 68%"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="inline-flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+              Morning Run Completed
+            </span>
+<span>Regular cadence</span>
+</div>
+</div>
+<!-- Sector 03 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0">03</span>
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">Civil Lines &amp; Care Hospitals</span>
+</div>
+<div class="text-right flex-shrink-0 ml-2">
+<span class="font-title-md text-title-md font-bold text-primary">310 units</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-1">(19%)</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 55%"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="inline-flex items-center gap-1 text-secondary font-semibold">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+              TDS 110ppm Tested
+            </span>
+<span class="text-on-surface-variant">Medical grade purity</span>
+</div>
+</div>
+<!-- Sector 04 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0">04</span>
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">High Street Commercial Plaza</span>
+</div>
+<div class="text-right flex-shrink-0 ml-2">
+<span class="font-title-md text-title-md font-bold text-primary">260 units</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-1">(16%)</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-surface-tint rounded-full" style="width: 44%"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Afternoon replenishment scheduled</span>
+<span>Est. 15:30</span>
+</div>
+</div>
+<!-- Sector 05 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0">05</span>
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">University Campus Hostels</span>
+</div>
+<div class="text-right flex-shrink-0 ml-2">
+<span class="font-title-md text-title-md font-bold text-primary">220 units</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-1">(14%)</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-outline-variant rounded-full" style="width: 35%"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Hostel Block 1 to 6</span>
+<span class="text-secondary font-semibold">Prepaid</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. Weekly Revenue Trend Bar Chart -->
+<div class="rounded-xl bg-surface-container-lowest shadow-md p-space-md flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div>
+<h2 class="font-title-md text-title-md font-bold text-on-surface">Weekly Sales Rhythm</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">7-day gross fulfillment analytics</p>
+</div>
+<div class="text-right">
+<span class="font-title-md text-title-md font-bold text-primary">₹3,08,650</span>
+<p class="font-label-sm text-label-sm text-secondary font-semibold">10,480 Units</p>
+</div>
+</div>
+<!-- Bar Chart Visualization -->
+<div class="pt-space-sm flex flex-col gap-space-xs">
+<div class="h-36 w-full flex items-end justify-between gap-2 px-1">
+<!-- Mon -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">38k</span>
+<div class="w-full rounded-t-lg bg-surface-container-high transition-all" style="height: 62%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">M</span>
+</div>
+<!-- Tue -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">41k</span>
+<div class="w-full rounded-t-lg bg-surface-container-high transition-all" style="height: 68%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">T</span>
+</div>
+<!-- Wed -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">39k</span>
+<div class="w-full rounded-t-lg bg-surface-container-high transition-all" style="height: 64%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">W</span>
+</div>
+<!-- Thu -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">44k</span>
+<div class="w-full rounded-t-lg bg-surface-container-high transition-all" style="height: 74%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">T</span>
+</div>
+<!-- Fri -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">46k</span>
+<div class="w-full rounded-t-lg bg-surface-container-high transition-all" style="height: 78%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">F</span>
+</div>
+<!-- Sat -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-sm text-label-sm text-primary font-bold">52k</span>
+<div class="w-full rounded-t-lg bg-secondary-container transition-all" style="height: 94%;"></div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">S</span>
+</div>
+<!-- Today -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end relative">
+<span class="font-label-sm text-label-sm text-primary font-extrabold">48.6k</span>
+<div class="w-full rounded-t-lg bg-primary-container shadow-md transition-all relative overflow-hidden" style="height: 84%;">
+<div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-extrabold">Today</span>
+</div>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-secondary">tips_and_updates</span>
+<span class="font-body-sm text-body-sm text-on-surface">Demand spikes by +26% on weekends in residential sectors</span>
+</div>
+</div>
+</div>
+<!-- 4. Live Invoice & Settlement Stream -->
+<div class="rounded-xl bg-surface-container-lowest shadow-md p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">receipt</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md font-bold text-on-surface">Recent Settlements</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time payment verification</p>
+</div>
+</div>
+<button class="font-label-sm text-label-sm text-primary font-bold hover:underline">View All</button>
+</div>
+<!-- Feed Items -->
+<div class="flex flex-col gap-space-sm">
+<!-- Stream Item 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">corporate_fare</span>
+</div>
+<div class="min-w-0">
+<p class="font-title-md text-title-md font-bold text-on-surface truncate">Infosys Cafeteria #2</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm">UPI Auto</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">14:24 PM • 140 Cans</span>
+</div>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="font-title-md text-title-md font-bold text-primary block">₹4,200</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Cleared</span>
+</div>
+</div>
+<!-- Stream Item 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+</div>
+<div class="min-w-0">
+<p class="font-title-md text-title-md font-bold text-on-surface truncate">Aura Mart &amp; General Store</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Cash</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">13:58 PM • 60 Bottles</span>
+</div>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="font-title-md text-title-md font-bold text-primary block">₹1,850</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Collected</span>
+</div>
+</div>
+<!-- Stream Item 3 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">local_hospital</span>
+</div>
+<div class="min-w-0">
+<p class="font-title-md text-title-md font-bold text-on-surface truncate">Apex Heart Institute</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm">UPI QR</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">13:12 PM • 210 Cans</span>
+</div>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="font-title-md text-title-md font-bold text-primary block">₹6,400</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Cleared</span>
+</div>
+</div>
+<!-- Stream Item 4 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">apartment</span>
+</div>
+<div class="min-w-0">
+<p class="font-title-md text-title-md font-bold text-on-surface truncate">Lakeview Society Tower C</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-tertiary font-label-sm text-label-sm">Credit Net-7</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">12:45 PM • 100 Jars</span>
+</div>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="font-title-md text-title-md font-bold text-primary block">₹3,000</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Due in 5d</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottling Plant Dispatch Float Telemetry Banner -->
+<div class="rounded-xl bg-primary text-on-primary p-space-md shadow-lg flex items-center justify-between relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-primary-container blur-xl pointer-events-none"></div>
+<div class="flex items-center gap-3 relative z-10">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">factory</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-tertiary-fixed-dim uppercase tracking-wider block">Bottling Reserve Fleet</span>
+<span class="font-title-md text-title-md font-bold text-on-primary">Hub 04: 8,400L Available</span>
+</div>
+</div>
+<button class="relative z-10 px-3.5 py-2 rounded-lg bg-secondary-container text-on-secondary-container font-label-md text-label-md font-bold shadow-sm active:scale-95 transition-all">
+        Deploy Extra
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interaction for timefilter tabs
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if(this.innerText === 'Today' || this.innerText === '7D' || this.innerText === '30D') {
+        const parent = this.parentElement;
+        parent.querySelectorAll('button').forEach(b => {
+          b.className = 'px-3 py-1 rounded-full text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-all';
+        });
+        this.className = 'px-3 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm shadow-sm transition-all';
+      }
+    });
+  });
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(16,68,165,0.06)]" data-active-classes="text-primary-container font-bold"><div class="flex items-center justify-around h-16 px-gutter-mobile"><a class="flex flex-col items-center justify-center min-w-[64px] h-14 text-on-surface-variant transition-colors" data-path="deliver" href="#"><span class="material-symbols-outlined text-[24px]">local_shipping</span><span class="font-label-sm text-label-sm mt-1">Deliver</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-14 text-on-surface-variant transition-colors" data-path="fleet" href="#"><span class="material-symbols-outlined text-[24px]">radar</span><span class="font-label-sm text-label-sm mt-1">Fleet</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[64px] h-14 transition-colors text-primary-container font-bold" data-path="analytics" href="#"><span class="material-symbols-outlined text-[24px]">analytics</span><span class="font-label-sm text-label-sm mt-1">Analytics</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-14 text-on-surface-variant transition-colors" data-path="customers" href="#"><span class="material-symbols-outlined text-[24px]">group</span><span class="font-label-sm text-label-sm mt-1">Customers</span></a></div></nav></body></html>
