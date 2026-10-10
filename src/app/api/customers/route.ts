@@ -221,20 +221,20 @@ export async function POST(req: NextRequest) {
         lng,
         formatted,
       },
-      productTier: body.productTier || '20L Mineral Can',
-      canQuota: Number(body.canQuota || 2),
-      packQuota: Number(body.packQuota || 0),
+      productTier: body.productTier || body.product_tier || '20L Mineral Can',
+      canQuota: Number(body.canQuota ?? body.can_quota ?? 2),
+      packQuota: Number(body.packQuota ?? body.pack_quota ?? 0),
       cadence: body.cadence || 'Daily',
-      deliveryDays: body.deliveryDays || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      balanceDue: Number(body.balanceDue || 0),
+      deliveryDays: body.deliveryDays || body.delivery_days || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      balanceDue: Number(body.balanceDue ?? body.balance_due ?? 0),
       slot: body.slot || '07 - 10 AM',
       emptiesBalance: {
-        clean: Number(body.canQuota || 2),
-        held: Number(body.canQuota || 2),
+        clean: Number(body.canQuota ?? body.can_quota ?? 2),
+        held: Number(body.canQuota ?? body.can_quota ?? 2),
         status: 'Clean',
       },
-      depositAmount: Number(body.depositAmount || 0),
-      whatsAppOptIn: body.whatsAppOptIn ?? true,
+      depositAmount: Number(body.depositAmount ?? body.deposit_amount ?? 0),
+      whatsAppOptIn: body.whatsAppOptIn ?? body.whatsapp_opt_in ?? true,
       status: 'Active',
     };
 
@@ -277,7 +277,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Customer ${newCustomer.name} onboarded successfully and exclusively assigned to ${newCustomer.assignedDriverName} (${newCustomer.assignedVanId})`,
-      customer: newCustomer,
+      customer: {
+        ...newCustomer,
+        latitude: newCustomer.coordinates.lat,
+        longitude: newCustomer.coordinates.lng,
+        delivery_days: newCustomer.deliveryDays,
+        balance_due: newCustomer.balanceDue,
+      },
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

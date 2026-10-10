@@ -10,7 +10,6 @@ import { useAuth } from '../../context/AuthContext';
 import { Icon } from '../common/Icon';
 import { toDms, parseCoordinates, EXACT_DEFAULT_LAT, EXACT_DEFAULT_LNG, EXACT_DEFAULT_DMS } from '../../lib/geoUtils';
 import { use5SecGpsCompiler } from '../../lib/use5SecGpsCompiler';
-import { GpsCompilationWidget } from '../common/GpsCompilationWidget';
 
 interface DriverProximityViewProps {
   onNotify: (msg: string) => void;
@@ -1419,18 +1418,11 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
                   <Icon name="auto_awesome" size={12} className="text-emerald-600 shrink-0" />
                   <span>
                     {language === 'hi'
-                      ? 'केवल पता दर्ज करें। नीचे 5-सेकंड GPS संग्रह से सटीक स्थान स्वतः लॉक होगा।'
-                      : 'Just enter address; precise GPS is auto-pinned from live 5s telemetry.'}
+                      ? 'सटीक डोरस्टेप GPS पंजीकरण पर स्वतः लॉक हो जाएगा।'
+                      : 'Precise doorstep GPS is automatically attached on registration.'}
                   </span>
                 </span>
               </div>
-
-              {/* 5-Second Accurate GPS Multi-Sample Compilation Widget */}
-              <GpsCompilationWidget
-                language={language}
-                compiler={gpsCompiler}
-                manualCoordsOverride={newCustGps}
-              />
 
               <div className="p-2.5 bg-surface-container-low rounded-xl border border-surface-container text-[11px] text-on-surface-variant flex items-center justify-between">
                 <span className="font-medium text-on-surface">

@@ -36,21 +36,19 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      customerId,
-      customerName,
-      deliveredCount,
-      emptiesReturned,
-      paymentMethod,
-      paymentAmount,
-      oldBalanceCollected,
-      currentDeliveryPaid,
-      creditApplied,
-      remainingBalance,
-      notes,
-      driverId,
-      vanId,
-    } = body;
+    const customerId = body.customerId || body.customer_id;
+    const customerName = body.customerName || body.customer_name;
+    const deliveredCount = Number(body.deliveredCount ?? body.delivered_quantity ?? body.deliveredQuantity ?? 2);
+    const emptiesReturned = Number(body.emptiesReturned ?? body.empties_returned ?? 0);
+    const paymentMethod = body.paymentMethod || body.payment_method || 'Cash';
+    const paymentAmount = Number(body.paymentAmount ?? body.payment_amount ?? 0);
+    const oldBalanceCollected = Number(body.oldBalanceCollected ?? body.old_balance_collected ?? 0);
+    const currentDeliveryPaid = body.currentDeliveryPaid ?? body.current_delivery_paid ?? true;
+    const creditApplied = Number(body.creditApplied ?? body.credit_applied ?? 0);
+    const remainingBalance = Number(body.remainingBalance ?? body.remaining_balance ?? 0);
+    const notes = body.notes || body.drop_off_notes || '';
+    const driverId = body.driverId || body.driver_id;
+    const vanId = body.vanId || body.van_id;
 
     const deliveryRecord: RouteStop = {
       id: customerId || `queue-${Date.now()}`,
@@ -187,7 +185,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Delivery recorded and customer ledger adjusted successfully',
-      delivery: deliveryRecord,
+      delivery: {
+        ...deliveryRecord,
+        delivered_quantity: deliveredCount,
+        old_balance_collected: oldBalanceCollected,
+        current_delivery_paid: currentDeliveryPaid,
+        credit_applied: creditApplied,
+        remaining_balance: remainingBalance,
+        payment_amount: paymentAmount,
+        payment_method: paymentMethod,
+      },
       settlement: newSettlement,
     });
   } catch (error: any) {

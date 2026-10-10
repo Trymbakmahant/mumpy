@@ -38,8 +38,26 @@ export async function GET() {
       }
     }
 
+    const totalRevenue = settlements.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+    const collectedToday = settlements
+      .filter((s) => s.status === 'Cleared' || s.status === 'Collected')
+      .reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+    const outstandingBalance = settlements
+      .filter((s) => s.status === 'Pending' || s.status === 'Due in 5d')
+      .reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+
+    const analyticsSummary = {
+      total_revenue: totalRevenue,
+      collected_today: collectedToday,
+      outstanding_balance: outstandingBalance,
+      settlements_count: settlements.length,
+      sector_hotspots: initialAreaHotspots,
+      recent_settlements: settlements,
+    };
+
     return NextResponse.json({
       success: true,
+      analytics: analyticsSummary,
       settlements,
       hotspots: initialAreaHotspots,
       weeklyTrend: weeklySalesTrend,

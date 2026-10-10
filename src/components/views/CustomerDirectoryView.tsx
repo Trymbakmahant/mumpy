@@ -8,7 +8,6 @@ import { useAuth } from '../../context/AuthContext';
 import { Icon } from '../common/Icon';
 import { parseCoordinates, toDms, EXACT_DEFAULT_LAT, EXACT_DEFAULT_LNG, EXACT_DEFAULT_DMS } from '../../lib/geoUtils';
 import { use5SecGpsCompiler } from '../../lib/use5SecGpsCompiler';
-import { GpsCompilationWidget } from '../common/GpsCompilationWidget';
 
 interface CustomerDirectoryViewProps {
   onNotify: (msg: string) => void;
@@ -882,13 +881,6 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                   </div>
                 )}
               </div>
-
-              {/* 5-Second Accurate GPS Multi-Sample Compilation Widget */}
-              <GpsCompilationWidget
-                language={language}
-                compiler={gpsCompiler}
-                manualCoordsOverride={gpsCoordinates}
-              />
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t border-surface-container">
