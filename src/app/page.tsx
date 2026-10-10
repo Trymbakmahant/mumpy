@@ -107,6 +107,7 @@ export default function Home() {
                     setSelectedHistoryAreaId(areaId || 'all');
                     setActiveTab('delivery-history');
                   }}
+                  onNotify={showToast}
                 />
               )}
 

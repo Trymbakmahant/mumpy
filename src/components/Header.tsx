@@ -99,14 +99,22 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-5 w-px bg-outline-variant/40 hidden sm:block" />
 
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed border border-secondary-container/40">
-          <span className="w-2 h-2 rounded-full bg-secondary animate-pulse shrink-0" />
-          <span className="font-label-sm uppercase tracking-wider font-bold text-[10px] sm:text-[11px] truncate max-w-[170px] sm:max-w-none">
-            {role === 'driver'
-              ? language === 'hi' ? `${driverVanShort} जीपीएस सक्रिय` : `${driverVanShort} GPS ACTIVE`
-              : t('hubLiveDispatch')}
-          </span>
-        </div>
+        {role === 'driver' ? (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed border border-secondary-container/40">
+            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse shrink-0" />
+            <span className="font-label-sm uppercase tracking-wider font-bold text-[10px] sm:text-[11px] truncate max-w-[170px] sm:max-w-none">
+              {language === 'hi' ? `${driverVanShort} जीपीएस सक्रिय` : `${driverVanShort} GPS ACTIVE`}
+            </span>
+          </div>
+        ) : (
+          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-xs font-semibold tracking-wide shadow-xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="tracking-wider">{language === 'hi' ? 'लाइव जल आपूर्ति' : 'LIVE WATER DELIVERIES'}</span>
+          </div>
+        )}
       </div>
 
       {/* Dispatched Telemetry Metrics on larger displays */}
@@ -127,16 +135,22 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </>
         ) : (
-          <>
-            <Icon name="water_drop" className="text-secondary" size={16} />
-            <span className="text-body-sm text-on-surface-variant">
-              {t('bottlesInTransit')}: <strong className="text-primary font-bold">420</strong>
-            </span>
-            <span className="text-outline-variant text-body-sm">|</span>
-            <span className="text-body-sm text-on-surface-variant">
-              {t('deliveredToday')}: <strong className="text-secondary font-bold">1,280</strong>
-            </span>
-          </>
+          <div className="flex items-center gap-4 text-xs font-medium text-slate-600">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-brand-500"></div>
+              <span>In Transit: <strong className="text-slate-900 font-bold font-mono">420</strong> units</span>
+            </div>
+            <div className="h-3.5 w-px bg-slate-300"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+              <span>Delivered Today: <strong className="text-slate-900 font-bold font-mono">1,620</strong></span>
+            </div>
+            <div className="h-3.5 w-px bg-slate-300"></div>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400">Plant RO Active:</span>
+              <strong className="text-brand-600 font-bold font-mono">18,400L (92%)</strong>
+            </div>
+          </div>
         )}
       </div>
 

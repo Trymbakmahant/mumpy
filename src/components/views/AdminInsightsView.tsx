@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { initialAreaHotspots, initialSettlements, weeklySalesTrend } from '../../data/mockData';
 import { AreaHotspot, PaymentSettlement } from '../../types';
@@ -13,21 +13,139 @@ interface AdminInsightsViewProps {
   grossRevenue: number;
   onDeployExtraReserve: () => void;
   onOpenHistory?: (areaId?: string) => void;
+  onNotify?: (msg: string) => void;
 }
+
+interface LedgerAccountItem {
+  id: string;
+  accountNo: string;
+  customerName: string;
+  sector: string;
+  deliveredVolume: string;
+  productType: string;
+  emptyJarsText: string;
+  emptyJarsClass: string;
+  amount: number;
+  paymentMode: string;
+  status: 'paid' | 'unpaid' | 'credit';
+  statusLabel: string;
+  statusClass: string;
+  isOverdue?: boolean;
+}
+
+const INITIAL_LEDGER_ACCOUNTS: LedgerAccountItem[] = [
+  {
+    id: 'CUST-4409',
+    accountNo: 'Account #CUST-4409',
+    customerName: 'Infosys Cafeteria #2',
+    sector: 'IT Park Tech Phase 2',
+    deliveredVolume: '120 Jars',
+    productType: '20L RO Water',
+    emptyJarsText: '120 / 120 Returned',
+    emptyJarsClass: 'text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[11px]',
+    amount: 4200,
+    paymentMode: 'UPI Autopay',
+    status: 'paid',
+    statusLabel: 'PAID & SETTLED',
+    statusClass: 'bg-emerald-100 text-emerald-800',
+  },
+  {
+    id: 'CUST-1048',
+    accountNo: 'Account #CUST-1048',
+    customerName: 'Lakeview Society Tower C',
+    sector: 'Lakeview Loop A',
+    deliveredVolume: '60 Jars',
+    productType: '20L RO Water',
+    emptyJarsText: '45 / 60 (15 Due)',
+    emptyJarsClass: 'text-amber-800 font-semibold bg-amber-100 px-2 py-0.5 rounded text-[11px]',
+    amount: 3000,
+    paymentMode: 'Credit Net-7',
+    status: 'credit',
+    statusLabel: 'DUE IN 2 DAYS',
+    statusClass: 'bg-amber-100 text-amber-900',
+  },
+  {
+    id: 'CUST-7721',
+    accountNo: 'Account #CUST-7721',
+    customerName: 'Aura Mart & General Store',
+    sector: 'High Street Commercial',
+    deliveredVolume: '40 Cartons',
+    productType: '1L Bottles',
+    emptyJarsText: '— (Non-returnable)',
+    emptyJarsClass: 'text-slate-400 text-[11px] font-medium',
+    amount: 1850,
+    paymentMode: 'Cash to Van #08',
+    status: 'paid',
+    statusLabel: 'DRIVER RECONCILED',
+    statusClass: 'bg-blue-100 text-blue-800',
+  },
+  {
+    id: 'CUST-9011',
+    accountNo: 'Account #CUST-9011',
+    customerName: 'Blue Horizon Fitness Gym',
+    sector: 'South Perimeter Ring',
+    deliveredVolume: '18 Jars',
+    productType: '20L RO Water',
+    emptyJarsText: '8 / 18 (10 Overdue)',
+    emptyJarsClass: 'text-rose-800 font-semibold bg-rose-100 px-2 py-0.5 rounded text-[11px]',
+    amount: 1440,
+    paymentMode: 'UPI Pending',
+    status: 'unpaid',
+    statusLabel: 'OVERDUE 4 DAYS',
+    statusClass: 'bg-rose-100 text-rose-800',
+    isOverdue: true,
+  },
+  {
+    id: 'CUST-0024',
+    accountNo: 'Account #CUST-0024',
+    customerName: 'Apex Heart Institute',
+    sector: 'Civil Lines Hospital Hub',
+    deliveredVolume: '160 Jars',
+    productType: '20L RO Pure',
+    emptyJarsText: '160 / 160 Returned',
+    emptyJarsClass: 'text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[11px]',
+    amount: 6400,
+    paymentMode: 'Corporate NEFT / UPI',
+    status: 'paid',
+    statusLabel: 'PAID & SETTLED',
+    statusClass: 'bg-emerald-100 text-emerald-800',
+  },
+];
 
 export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
   grossRevenue,
   onDeployExtraReserve,
   onOpenHistory,
+  onNotify,
 }) => {
   const { t, language } = useLanguage();
   const [isGstOpen, setIsGstOpen] = useState(false);
   const [isManifestOpen, setIsManifestOpen] = useState(false);
-  const [selectedDay, setSelectedDay] = useState<string>('Today');
+  const [timeFilter, setTimeFilter] = useState<'today' | 'week' | 'month' | 'year'>('today');
+  const [ledgerFilter, setLedgerFilter] = useState<'all' | 'paid' | 'unpaid' | 'credit'>('all');
   const [serverSyncTime, setServerSyncTime] = useState<string>('2 mins ago');
+  const [ledgerAccounts, setLedgerAccounts] = useState<LedgerAccountItem[]>(INITIAL_LEDGER_ACCOUNTS);
   const [settlements, setSettlements] = useState<PaymentSettlement[]>(initialSettlements);
+  const [systemTime, setSystemTime] = useState<string>('02:45 PM IST');
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setSystemTime(
+        now.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+          timeZone: 'Asia/Kolkata',
+        }) + ' IST'
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     fetch('/api/analytics')
       .then((res) => res.json())
       .then((data) => {
@@ -58,511 +176,996 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    if (onNotify) {
+      onNotify('Daily Sales CSV downloaded successfully.');
+    }
   };
 
+  const handleMarkPaid = (id: string) => {
+    setLedgerAccounts((prev) =>
+      prev.map((acc) =>
+        acc.id === id
+          ? {
+              ...acc,
+              status: 'paid',
+              statusLabel: 'PAID & SETTLED',
+              statusClass: 'bg-emerald-100 text-emerald-800',
+              isOverdue: false,
+            }
+          : acc
+      )
+    );
+    const target = ledgerAccounts.find((a) => a.id === id);
+    if (onNotify && target) {
+      onNotify(`Invoice of ₹${target.amount} for ${target.customerName} marked as PAID & SETTLED.`);
+    }
+  };
+
+  const handleSendReminder = (acc: LedgerAccountItem) => {
+    if (onNotify) {
+      onNotify(`Payment reminder link of ₹${acc.amount} sent via WhatsApp & SMS to ${acc.customerName}.`);
+    }
+  };
+
+  const handleCallOwner = (acc: LedgerAccountItem) => {
+    if (onNotify) {
+      onNotify(`Initiating call with Accounts Manager of ${acc.customerName}...`);
+    }
+  };
+
+  const filteredLedger = ledgerAccounts.filter((item) => {
+    if (ledgerFilter === 'paid') return item.status === 'paid';
+    if (ledgerFilter === 'unpaid') return item.status === 'unpaid';
+    if (ledgerFilter === 'credit') return item.status === 'credit';
+    return true;
+  });
+
+  const totalClearedAmount = ledgerAccounts
+    .filter((a) => a.status === 'paid')
+    .reduce((sum, a) => sum + a.amount, 0) + 31760; // offset for 128 accounts total
+
+  const totalOverdueAmount = ledgerAccounts
+    .filter((a) => a.status === 'unpaid' || a.status === 'credit')
+    .reduce((sum, a) => sum + a.amount, 0);
+
   return (
-    <div className="p-4 md:p-8 flex flex-col gap-6 max-w-[1600px] mx-auto w-full animate-in fade-in duration-300">
-      {/* Top Action Bar & Financial Pulse */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm uppercase tracking-wider font-bold">
-              {t('financialHub')}
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* BEGIN: HeaderAndDateRangeFilterBar */}
+      <section
+        className="bg-white rounded-2xl p-4 lg:p-6 border border-slate-200/90 shadow-2xs flex flex-col xl:flex-row xl:items-center justify-between gap-4"
+        data-purpose="header-and-filters"
+      >
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-brand-50 text-brand-700 uppercase tracking-wide">
+              {language === 'hi' ? 'वित्तीय केंद्र' : 'Financial Hub'}
             </span>
-            <span className="text-body-sm text-on-surface-variant flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              {t('realtimeLedgerSynced')}
+            <span className="text-xs text-slate-400">
+              • {language === 'hi' ? 'रीयल-टाइम बहीखाता सिंक्रनाइज़' : 'Real-time ledger synced'} {serverSyncTime}
             </span>
           </div>
-          <h1 className="text-headline-lg text-primary tracking-tight font-extrabold">
-            {t('revenueMatrixTitle')}
+          <h1 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
+            {language === 'hi' ? 'राजस्व और क्षेत्र खपत मैट्रिक्स' : 'Revenue & Area Consumption Matrix'}
           </h1>
-          <p className="text-body-md text-on-surface-variant">
-            {t('revenueMatrixSubtitle')}
+          <p className="text-xs lg:text-sm text-slate-500 mt-0.5 font-medium">
+            {language === 'hi'
+              ? 'लाइव टेलीमेट्री, खाली जार ट्रैकिंग और डिलीवरी मार्गों में संग्रह विभाजन'
+              : 'Live telemetry, empty jar tracking, and cash collection breakdown across delivery routes'}
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={exportCsv}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-low text-secondary hover:bg-surface-container-high transition-all font-title-md shadow-sm border border-surface-container hover:scale-105 active:scale-95"
-            id="btnExportCsv"
+        {/* Date Range Filter & Export Actions */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Time Segmented Pills */}
+          <div
+            className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/90 text-xs font-semibold text-slate-600"
+            data-purpose="date-segmented-control"
           >
-            <Icon name="download" className="text-lg" />
-            <span>{t('dailySalesCsv')}</span>
-          </button>
-          <button
-            onClick={() => setIsManifestOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-title-md shadow-sm border border-surface-container hover:scale-105 active:scale-95"
-            id="btnPrintManifest"
-          >
-            <Icon name="receipt_long" className="text-lg" />
-            <span>{t('manifest')}</span>
-          </button>
-          <button
-            onClick={() => setIsGstOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-container shadow-md transition-all font-title-md hover:scale-105 active:scale-95"
-            id="btnGstReport"
-          >
-            <Icon name="analytics" className="text-lg" />
-            <span>{t('gstSummary')}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Metric Overview Bento Cards (4 Cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Card 1: Revenue */}
-        <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container relative overflow-hidden flex flex-col justify-between group hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="font-label-sm text-on-surface-variant uppercase tracking-wider font-bold">
-                {t('grossRevenueToday')}
-              </span>
-              <span className="text-display text-primary tracking-tight font-extrabold">
-                ₹{grossRevenue.toLocaleString('en-IN')}
-              </span>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-primary-fixed flex items-center justify-center text-primary shadow-sm">
-              <Icon name="payments" className="text-2xl" />
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center justify-between border-t border-surface-container-low">
-            <div className="flex items-center gap-1.5 text-secondary font-label-md font-bold">
-              <Icon name="trending_up" className="text-base" />
-              <span>{t('vsYesterday')}</span>
-            </div>
-            <span className="text-body-sm text-on-surface-variant font-medium">
-              {t('target')}: ₹45,000
-            </span>
-          </div>
-        </div>
-
-        {/* Card 2: Total Volume Delivered */}
-        <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container relative overflow-hidden flex flex-col justify-between group hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="font-label-sm text-on-surface-variant uppercase tracking-wider font-bold">
-                {t('hydrationUnitsDispatched')}
-              </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-display text-secondary tracking-tight font-extrabold">
-                  1,620
-                </span>
-                <span className="text-title-md text-on-surface-variant font-medium">
-                  {language === 'hi' ? 'इकाइयां' : 'Units'}
-                </span>
-              </div>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-secondary-fixed flex items-center justify-center text-secondary shadow-sm">
-              <Icon name="water_bottle" className="text-2xl" />
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center gap-4 text-on-surface-variant text-body-sm font-medium">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-secondary" />
-              <span><strong>980</strong> {t('mumpyBottles')}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-primary-container" />
-              <span><strong>640</strong> {t('jars20L')}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 3: Digital vs Cash Ratio */}
-        <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container relative overflow-hidden flex flex-col justify-between group hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="font-label-sm text-on-surface-variant uppercase tracking-wider font-bold">
-                {t('paymentMix')}
-              </span>
-              <span className="text-display text-on-surface tracking-tight font-extrabold">
-                70.3%
-              </span>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-surface-container flex items-center justify-center text-primary shadow-sm">
-              <Icon name="qr_code_scanner" className="text-2xl" />
-            </div>
-          </div>
-          <div className="mt-4 flex flex-col gap-2">
-            <div className="w-full h-2.5 rounded-full bg-surface-container overflow-hidden flex shadow-inner">
-              <div className="h-full bg-secondary" style={{ width: '70%' }} title="UPI: ₹34,200" />
-              <div className="h-full bg-secondary-container" style={{ width: '24%' }} title="Cash: ₹11,450" />
-              <div className="h-full bg-amber-500" style={{ width: '6%' }} title="Credit: ₹3,000" />
-            </div>
-            <div className="flex justify-between items-center font-label-sm text-on-surface-variant">
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-secondary" /> UPI: ₹34.2k
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-secondary-container" /> {language === 'hi' ? 'कैश' : 'Cash'}: ₹11.4k
-              </span>
-              <span className="text-amber-700 font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> {language === 'hi' ? 'उधार' : 'Credit'}: ₹3k
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 4: Avg Proximity Stop */}
-        <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container relative overflow-hidden flex flex-col justify-between group hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="font-label-sm text-on-surface-variant uppercase tracking-wider font-bold">
-                {t('avgProximityStop')}
-              </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-display text-primary tracking-tight font-extrabold">
-                  18
-                </span>
-                <span className="text-body-sm text-on-surface-variant font-medium">
-                  {language === 'hi' ? 'मिनट/डिलीवरी' : 'mins/delivery'}
-                </span>
-              </div>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center text-tertiary shadow-sm">
-              <Icon name="schedule" className="text-2xl" />
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center justify-between border-t border-surface-container-low text-xs">
-            <span className="text-on-surface-variant">{t('fleetSpeedSla')}:</span>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold uppercase tracking-wider">
-              {t('optimal')}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid: Left Area Telemetry + Weekly Rhythm, Right Payment Stream + SKU Quality */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-        {/* Left Column (8 cols): Heatmap & Weekly Correlation */}
-        <div className="xl:col-span-8 flex flex-col gap-6">
-          {/* Area Water Consumption Heatmap */}
-          <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container flex flex-col gap-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-surface-container">
-              <div>
-                <h2 className="text-headline-sm text-primary font-bold">
-                  {t('areaHeatmapTitle')}
-                </h2>
-                <p className="text-body-sm text-on-surface-variant">
-                  {t('rankingDeliverySectors')}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                <span className="font-label-sm text-secondary uppercase font-bold tracking-wider">
-                  {t('liveRouteTelemetry')}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3.5">
-              {initialAreaHotspots.map((area) => (
-                <div
-                  key={area.id}
-                  onClick={() => onOpenHistory?.(area.id)}
-                  className="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container hover:border-primary/50 hover:bg-surface-container-low/60 hover:shadow-md cursor-pointer transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group"
-                  title={language === 'hi' ? 'क्लिक करके इतिहास और निपटान पृष्ठ खोलें' : 'Click to open History & Settlements page for this sector'}
-                >
-                  <div className="flex items-start gap-3.5">
-                    <span className="w-9 h-9 rounded-xl bg-primary-fixed text-primary font-extrabold flex items-center justify-center text-sm shadow-sm group-hover:scale-105 transition-transform">
-                      {area.rank}
-                    </span>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-bold text-on-surface text-base group-hover:text-primary transition-colors flex items-center gap-1.5">
-                          <span>{area.areaName}</span>
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-primary text-xs font-semibold flex items-center">
-                            → {language === 'hi' ? 'इतिहास पृष्ठ' : 'View History Page'}
-                          </span>
-                        </h4>
-                        <span className="text-xs text-outline font-medium">
-                          {area.routeTag}
-                        </span>
-                      </div>
-                      <span className="inline-block mt-1 text-xs text-on-surface-variant">
-                        {area.statusTag}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between md:justify-end gap-6">
-                    <div className="text-right">
-                      <div className="text-base font-extrabold text-primary">
-                        {area.bottlesCount}{' '}
-                        <span className="text-xs text-on-surface-variant font-normal">
-                          {language === 'hi' ? 'बोतलें' : 'bottles'} ({area.percentage}%)
-                        </span>
-                      </div>
-                      {area.actionNote && (
-                        <span className="text-[11px] font-bold text-secondary">
-                          {area.actionNote}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="w-24 bg-surface-container rounded-full h-2 overflow-hidden hidden sm:block">
-                      <div
-                        className="bg-primary h-full rounded-full"
-                        style={{ width: `${area.percentage * 3.2}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Weekly Revenue vs Bottle Volume (Bar Chart) */}
-          <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container flex flex-col gap-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h3 className="text-headline-sm text-primary font-bold">
-                  {t('weeklyRevenueChartTitle')}
-                </h3>
-                <p className="text-body-sm text-on-surface-variant">
-                  {t('weeklyRevenueSubtitle')}
-                </p>
-              </div>
-              <div className="flex items-center gap-4 text-xs font-semibold">
-                <span className="flex items-center gap-1.5 text-primary">
-                  <span className="w-3 h-3 rounded bg-primary" /> {t('revenueInr')}
-                </span>
-                <span className="flex items-center gap-1.5 text-secondary">
-                  <span className="w-3 h-3 rounded bg-secondary-container" /> {t('volumeUnits')}
-                </span>
-              </div>
-            </div>
-
-            {/* Interactive Bar Chart Representation */}
-            <div className="pt-6 pb-2">
-              <div className="grid grid-cols-7 gap-2 md:gap-4 items-end h-56 border-b border-surface-container pb-4 px-2">
-                {weeklySalesTrend.map((item) => {
-                  const maxRevenue = 55000;
-                  const heightPercent = (item.revenue / maxRevenue) * 100;
-                  const isSelected = selectedDay === item.day;
-
-                  return (
-                    <div
-                      key={item.day}
-                      onClick={() => setSelectedDay(item.day)}
-                      className="flex flex-col items-center gap-2 group cursor-pointer h-full justify-end"
-                    >
-                      <span className="text-[11px] font-bold text-on-surface transition-opacity group-hover:scale-110">
-                        {item.label}
-                      </span>
-                      <div className="w-full max-w-[48px] bg-surface-container-low rounded-t-xl overflow-hidden relative flex flex-col justify-end transition-all">
-                        <div
-                          className={`w-full rounded-t-xl transition-all duration-500 ${
-                            item.isToday
-                              ? 'bg-primary shadow-md'
-                              : item.isPeak
-                              ? 'bg-secondary'
-                              : isSelected
-                              ? 'bg-primary-container'
-                              : 'bg-surface-variant group-hover:bg-primary-fixed-dim'
-                          }`}
-                          style={{ height: `${heightPercent}%` }}
-                        />
-                      </div>
-                      <span
-                        className={`text-xs font-bold ${
-                          item.isToday ? 'text-primary' : 'text-on-surface-variant'
-                        }`}
-                      >
-                        {item.day === 'Today' && language === 'hi' ? 'आज' : item.day}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 flex flex-col sm:flex-row justify-between items-center text-xs text-on-surface-variant gap-2 pt-2">
-                <span className="flex items-center gap-1.5">
-                  <Icon name="lightbulb" className="text-secondary text-base" />
-                  {language === 'hi'
-                    ? 'सप्ताहांत पर आवासीय क्षेत्रों में पानी की मांग +26% बढ़ जाती है।'
-                    : 'Demand spikes by +26% on weekends in residential sectors.'}
-                </span>
-                <div className="flex gap-4 font-bold text-sm">
-                  <span>{t('total7DayRevenue')}: <strong className="text-primary">₹3,08,650</strong></span>
-                  <span>{t('totalVolume')}: <strong className="text-secondary">10,480 Units</strong></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column (4 cols): Payment Stream & SKU Quality */}
-        <div className="xl:col-span-4 flex flex-col gap-6">
-          {/* Payment Stream (Live Feed) */}
-          <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container flex flex-col gap-4">
-            <div className="flex items-center justify-between pb-3 border-b border-surface-container">
-              <div>
-                <h3 className="text-headline-sm text-primary font-bold">
-                  {t('paymentStreamTitle')}
-                </h3>
-                <span className="text-xs text-on-surface-variant">
-                  {language === 'hi' ? 'रीयल-टाइम भुगतान सत्यापन' : 'Real-time payment verification'}
-                </span>
-              </div>
-              <span className="font-label-sm uppercase tracking-wider font-extrabold text-secondary bg-secondary-fixed/50 px-2 py-0.5 rounded-full">
-                {t('liveFeed')}
-              </span>
-            </div>
-
-            <div className="divide-y divide-surface-container-low flex flex-col">
-              {settlements.map((tx) => {
-                const matchedArea = initialAreaHotspots.find((a) =>
-                  tx.location.toLowerCase().includes(a.areaName.toLowerCase().split(' ')[0]) ||
-                  (tx.clientName.toLowerCase().includes('infosys') && a.id === 'area-01') ||
-                  (tx.clientName.toLowerCase().includes('aura') && a.id === 'area-04') ||
-                  (tx.clientName.toLowerCase().includes('apex') && a.id === 'area-03') ||
-                  (tx.clientName.toLowerCase().includes('lakeview') && a.id === 'area-02') ||
-                  (tx.clientName.toLowerCase().includes('faculty') && a.id === 'area-05')
-                ) || initialAreaHotspots[0];
-
-                return (
-                  <div
-                    key={tx.id}
-                    onClick={() => onOpenHistory?.(matchedArea.id)}
-                    className="py-3 flex items-center justify-between gap-3 hover:bg-surface-container-low/60 rounded-xl px-2 transition-all cursor-pointer group"
-                    title={language === 'hi' ? 'क्लिक करके निपटान और इतिहास पृष्ठ देखें' : 'Click to inspect settlement ledger & history page'}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-primary text-sm shadow-xs group-hover:scale-105 transition-transform">
-                        <Icon name={tx.method.includes('UPI') ? 'bolt' : tx.method === 'Cash' ? 'store' : 'domain'} className="text-base" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-on-surface text-sm leading-tight group-hover:text-primary transition-colors">
-                          {tx.clientName}
-                        </h5>
-                        <span className="text-[11px] text-outline">
-                          {tx.location}
-                        </span>
-                      </div>
-                    </div>
-
-                  <div className="text-right">
-                    <span className="font-bold text-on-surface text-sm block">
-                      ₹{tx.amount.toLocaleString('en-IN')}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                        tx.status === 'Cleared'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : tx.status === 'Collected'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {tx.method} • {tx.status}
-                    </span>
-                  </div>
-                </div>
-                );
-              })}
-            </div>
-
             <button
-              onClick={() => onOpenHistory ? onOpenHistory('all') : alert(language === 'hi' ? 'सभी 142 दैनिक भुगतान खुल रहे हैं।' : 'Opening all 142 daily settlements table view.')}
-              className="w-full py-2.5 rounded-xl bg-surface-container-low text-primary font-bold text-xs hover:bg-surface-container transition-colors text-center"
+              onClick={() => setTimeFilter('today')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                timeFilter === 'today'
+                  ? 'bg-white text-brand-700 shadow-2xs font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+              type="button"
             >
-              {t('viewAllInvoices')}
+              {language === 'hi' ? 'आज (लाइव)' : 'Today (Live)'}
+            </button>
+            <button
+              onClick={() => setTimeFilter('week')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                timeFilter === 'week'
+                  ? 'bg-white text-brand-700 shadow-2xs font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+              type="button"
+            >
+              {language === 'hi' ? 'इस सप्ताह' : 'This Week'}
+            </button>
+            <button
+              onClick={() => setTimeFilter('month')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                timeFilter === 'month'
+                  ? 'bg-white text-brand-700 shadow-2xs font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+              type="button"
+            >
+              {language === 'hi' ? 'इस माह' : 'This Month'}
+            </button>
+            <button
+              onClick={() => setTimeFilter('year')}
+              className={`px-3 py-1.5 rounded-lg transition-all hidden sm:inline-block ${
+                timeFilter === 'year'
+                  ? 'bg-white text-brand-700 shadow-2xs font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+              type="button"
+            >
+              {language === 'hi' ? 'इस वर्ष' : 'This Year'}
             </button>
           </div>
 
-          {/* Packaging Unit Telemetry (Mumpy Mineral Pack SKU) */}
-          <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container flex flex-col gap-4">
-            <div className="flex items-center justify-between pb-3 border-b border-surface-container">
-              <div>
-                <span className="font-label-sm uppercase font-bold text-outline">
-                  {language === 'hi' ? 'इन्वेंट्री टेलीमेट्री' : 'Inventory Telemetry'}
-                </span>
-                <h4 className="font-bold text-base text-primary">
-                  {t('packagingUnitA')}
-                </h4>
+          {/* Date Picker Button */}
+          <button
+            onClick={() => setIsManifestOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+            type="button"
+          >
+            <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+            </svg>
+            <span>{language === 'hi' ? 'कस्टम दिनांक' : 'Custom Date'}</span>
+          </button>
+
+          {/* Export CSV / Print Manifest */}
+          <button
+            onClick={exportCsv}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-50 text-brand-700 border border-brand-200/80 text-xs font-bold hover:bg-brand-100 transition-colors cursor-pointer"
+            type="button"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+            </svg>
+            <span>{language === 'hi' ? 'दैनिक बिक्री CSV' : 'Daily Sales CSV'}</span>
+          </button>
+
+          <button
+            onClick={() => setIsGstOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-navy text-white text-xs font-bold hover:bg-slate-900 transition-colors shadow-xs cursor-pointer"
+            type="button"
+          >
+            <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+            </svg>
+            <span>{language === 'hi' ? 'GST सारांश' : 'GST Summary'}</span>
+          </button>
+        </div>
+      </section>
+      {/* END: HeaderAndDateRangeFilterBar */}
+
+      {/* BEGIN: KeyMetricsCards (4 Cards) */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" data-purpose="top-kpi-metrics">
+        {/* Card 1: Gross Revenue Today */}
+        <div className="bg-white rounded-2xl p-4 lg:p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              {language === 'hi' ? 'आज का कुल राजस्व' : 'Gross Revenue Today'}
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+              ₹{grossRevenue.toLocaleString('en-IN')}
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs">
+              <span className="text-emerald-600 font-bold flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                </svg>
+                +14.2% vs Yesterday
+              </span>
+              <span className="text-slate-400">Target: ₹45,000</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Hydration Units Dispatched */}
+        <div className="bg-white rounded-2xl p-4 lg:p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              {language === 'hi' ? 'प्रेषित जल इकाइयाँ' : 'Hydration Units Dispatched'}
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight leading-none">
+                1,620
+              </span>
+              <span className="text-xs font-semibold text-slate-500">
+                {language === 'hi' ? 'कुल इकाइयाँ' : 'Units Total'}
+              </span>
+            </div>
+            <div className="mt-2 flex items-center gap-4 text-xs text-slate-500">
+              <span className="inline-flex items-center gap-1.5 font-medium">
+                <span className="w-2 h-2 rounded-full bg-brand-500 shrink-0"></span>
+                <strong className="font-bold text-slate-700">980</strong> 1L Bottles
+              </span>
+              <span className="inline-flex items-center gap-1.5 font-medium">
+                <span className="w-2 h-2 rounded-full bg-cyan-500 shrink-0"></span>
+                <strong className="font-bold text-slate-700">640</strong> 20L Jars
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Payment Mix Today */}
+        <div className="bg-white rounded-2xl p-4 lg:p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              {language === 'hi' ? 'भुगतान संग्रह अनुपात' : 'Payment Collection Mix'}
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="flex items-baseline justify-between">
+              <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">70.3%</span>
+              <span className="text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">
+                UPI Verified
+              </span>
+            </div>
+            {/* Multi-colored payment progress strip */}
+            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden flex my-2">
+              <div className="bg-brand-500 h-full" style={{ width: '70.3%' }} title="UPI: 70.3%"></div>
+              <div className="bg-emerald-500 h-full" style={{ width: '23.5%' }} title="Cash: 23.5%"></div>
+              <div className="bg-amber-400 h-full" style={{ width: '6.2%' }} title="Credit: 6.2%"></div>
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+              <span>UPI: <strong>₹34.2k</strong></span>
+              <span>Cash: <strong>₹11.4k</strong></span>
+              <span className="text-amber-700 font-bold">Credit: <strong>₹3.0k</strong></span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4: Empty Jar Telemetry & Loss */}
+        <div
+          className="bg-white rounded-2xl p-4 lg:p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow"
+          id="jar-inventory"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              {language === 'hi' ? 'जार वापसी टेलीमेट्री' : 'Jar Return Telemetry'}
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="flex items-baseline justify-between">
+              <div className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+                1,480 <span className="text-xs font-normal text-slate-500">/ 1,620</span>
               </div>
-              <span className="text-xs bg-primary-fixed text-primary font-bold px-2 py-0.5 rounded-full">
-                {t('primarySku')}
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                91.3% In
+              </span>
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+              <span className="font-medium text-amber-700">
+                {language === 'hi' ? 'बकाया वापसी: 140 जार' : 'Pending Return: 140 Jars'}
+              </span>
+              <span className="text-slate-400">
+                Loss Rate: <strong className="text-slate-700">1.2%</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* END: KeyMetricsCards */}
+
+      {/* BEGIN: MidSectionGrid (Area Consumption & Live Payment Stream) */}
+      <section className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        {/* Area Water Consumption Heatmap & Route Ranking (Col 7) */}
+        <div
+          className="xl:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 flex flex-col justify-between"
+          id="live-routes"
+        >
+          <div>
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <span>{language === 'hi' ? 'क्षेत्रीय जल खपत हीटमैप' : 'Area Water Consumption Heatmap'}</span>
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {language === 'hi'
+                    ? 'दैनिक कार्टन और जार घनत्व के अनुसार वितरण क्षेत्रों की रैंकिंग'
+                    : 'Ranking delivery sectors by daily carton & jar density'}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200/60">
+                <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span>
+                {language === 'hi' ? 'लाइव रूट टेलीमेट्री' : 'LIVE ROUTE TELEMETRY'}
               </span>
             </div>
 
-            <div className="flex items-center gap-4 p-3 bg-surface-container-low rounded-2xl">
-              <div className="relative w-20 h-28 rounded-xl overflow-hidden bg-white shadow-sm border border-surface-container shrink-0">
-                <Image
-                  src="/images/mumpy-bottles.png"
-                  alt="Mumpy Packaged Drinking Water with Added Minerals"
-                  fill
-                  sizes="80px"
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-1 text-xs">
-                <strong className="text-on-surface text-sm">Mumpy Mineral Pack</strong>
-                <p className="text-[11px] text-on-surface-variant leading-tight">
-                  {t('mumpyMineralPackDesc')}
-                </p>
-                <div className="flex items-center gap-3 pt-1">
-                  <div>
-                    <span className="text-[10px] text-outline block">{t('currentStock')}</span>
-                    <strong className="text-primary font-bold">4,850 Carts</strong>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-outline block">{t('bufferRate')}</span>
-                    <strong className="text-emerald-600 font-bold">96.4%</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-surface-container-low rounded-xl">
-                <span className="text-[11px] text-outline block">{t('mineralTdsLevel')}</span>
-                <strong className="text-on-surface text-sm font-extrabold">115 PPM</strong>
-                <span className="text-[10px] text-secondary font-bold block">(Optimal)</span>
-              </div>
-              <div className="p-3 bg-surface-container-low rounded-xl">
-                <span className="text-[11px] text-outline block">{t('phPurityMetric')}</span>
-                <strong className="text-on-surface text-sm font-extrabold">7.2 Neutral</strong>
-                <span className="text-[10px] text-emerald-600 font-bold block">BIS Certified</span>
-              </div>
-              <div className="p-3 bg-surface-container-low rounded-xl">
-                <span className="text-[11px] text-outline block">{t('cappingVelocity')}</span>
-                <strong className="text-on-surface text-sm font-extrabold">120 Bpm</strong>
-              </div>
-              <div className="p-3 bg-surface-container-low rounded-xl">
-                <span className="text-[11px] text-outline block">{t('microFiltrationLog')}</span>
-                <strong className="text-emerald-700 text-sm font-extrabold">{t('verifiedClean')}</strong>
-              </div>
-            </div>
-
-            {/* Deploy Extra Reserve Banner */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-primary to-primary-container text-white flex items-center justify-between gap-3 shadow-md">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                  <Icon name="water" className="text-2xl text-secondary-fixed" />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase tracking-wider text-secondary-fixed font-bold block">
-                    {t('bottlingReserveFleet')}
-                  </span>
-                  <span className="font-extrabold text-sm">
-                    {t('hubAvailable')}
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={onDeployExtraReserve}
-                className="px-3.5 py-1.5 rounded-xl bg-secondary-container text-on-secondary-container font-extrabold text-xs hover:bg-white transition-all shadow-sm shrink-0"
+            {/* Route ranking rows */}
+            <div className="mt-4 space-y-3.5">
+              {/* Sector 1 */}
+              <div
+                onClick={() => onOpenHistory?.('area-01')}
+                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
               >
-                {t('deployExtra')}
+                <div className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                    01
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        IT Park & Tech Phase 2
+                      </h4>
+                      <span className="px-2 py-0.2 text-[10px] rounded bg-emerald-100 text-emerald-800 font-semibold">
+                        High Demand Peak
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                      Hub Route: Express North #4 • 11:00 AM - 2:00 PM
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
+                  <div>
+                    <div className="text-xs font-bold font-mono text-slate-900">
+                      450 bottles <span className="text-slate-400 font-normal">(28%)</span>
+                    </div>
+                    <div className="text-[11px] text-brand-600 font-medium">
+                      Auto-restock +120 Jars Dispatched
+                    </div>
+                  </div>
+                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
+                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sector 2 */}
+              <div
+                onClick={() => onOpenHistory?.('area-02')}
+                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                    02
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        Lakeview Residential Towers
+                      </h4>
+                      <span className="px-2 py-0.2 text-[10px] rounded bg-blue-100 text-blue-800 font-semibold">
+                        Morning Run Completed
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Hub Route: Lakeside Loop A</p>
+                  </div>
+                </div>
+                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
+                  <div>
+                    <div className="text-xs font-bold font-mono text-slate-900">
+                      380 bottles <span className="text-slate-400 font-normal">(23%)</span>
+                    </div>
+                    <div className="text-[11px] text-emerald-600 font-medium">Buffer: 40 Units Available</div>
+                  </div>
+                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
+                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '72%' }}></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sector 3 */}
+              <div
+                onClick={() => onOpenHistory?.('area-03')}
+                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                    03
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        Civil Lines & Care Hospitals
+                      </h4>
+                      <span className="px-2 py-0.2 text-[10px] rounded bg-rose-100 text-rose-800 font-semibold">
+                        Strict Quality Verified
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                      Hub Route: MedCorridor Quick • TDS: 110ppm Checked
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
+                  <div>
+                    <div className="text-xs font-bold font-mono text-slate-900">
+                      310 bottles <span className="text-slate-400 font-normal">(19%)</span>
+                    </div>
+                    <div className="text-[11px] text-rose-600 font-medium">Critical Priority Stop</div>
+                  </div>
+                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
+                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sector 4 */}
+              <div
+                onClick={() => onOpenHistory?.('area-04')}
+                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                    04
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        High Street Commercial Plaza
+                      </h4>
+                      <span className="px-2 py-0.2 text-[10px] rounded bg-amber-100 text-amber-800 font-semibold">
+                        Evening Refresh Pending
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Hub Route: Retail Transit #1</p>
+                  </div>
+                </div>
+                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
+                  <div>
+                    <div className="text-xs font-bold font-mono text-slate-900">
+                      260 bottles <span className="text-slate-400 font-normal">(16%)</span>
+                    </div>
+                    <div className="text-[11px] text-brand-600 font-medium">Van 08 Dispatched</div>
+                  </div>
+                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
+                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '48%' }}></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sector 5 */}
+              <div
+                onClick={() => onOpenHistory?.('area-05')}
+                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                    05
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        University Campus Hostels
+                      </h4>
+                      <span className="px-2 py-0.2 text-[10px] rounded bg-purple-100 text-purple-800 font-semibold">
+                        Bulk Discount Applied
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Hub Route: South Perimeter Ring</p>
+                  </div>
+                </div>
+                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
+                  <div>
+                    <div className="text-xs font-bold font-mono text-slate-900">
+                      220 bottles <span className="text-slate-400 font-normal">(14%)</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 font-medium">Next Delivery 4:30 PM</div>
+                  </div>
+                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
+                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '38%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Fleet Proximity Footer */}
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+            <span className="flex items-center gap-1.5 font-medium">
+              <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+              Avg Proximity Stop Time: <strong className="text-slate-900 font-mono">18 mins/delivery</strong>
+            </span>
+            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+              FLEET SPEED SLA: OPTIMAL
+            </span>
+          </div>
+        </div>
+
+        {/* Real-Time Payment Stream & Verification (Col 5) */}
+        <div
+          className="xl:col-span-5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 flex flex-col justify-between"
+          id="financial-hub"
+        >
+          <div>
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">
+                  {language === 'hi' ? 'भुगतान प्रवाह' : 'Payment Stream'}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {language === 'hi' ? 'रीयल-टाइम भुगतान सत्यापन फ़ीड' : 'Real-time payment verification feed'}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700">
+                {language === 'hi' ? 'लाइव फ़ीड' : 'LIVE FEED'}
+              </span>
+            </div>
+
+            {/* Mini List of Transactions */}
+            <div className="mt-4 space-y-3">
+              {/* Payment item 1 */}
+              <div
+                onClick={() => onOpenHistory?.('area-01')}
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
+                      Infosys Cafeteria #2
+                    </h5>
+                    <p className="text-[11px] text-slate-500 mt-1">IT Park • INV-9821</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-extrabold font-mono text-slate-900">₹4,200</span>
+                  <div className="mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                      UPI Auto • Cleared
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment item 2 */}
+              <div
+                onClick={() => onOpenHistory?.('area-04')}
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
+                      Aura Mart & General Store
+                    </h5>
+                    <p className="text-[11px] text-slate-500 mt-1">High Street • INV-9820</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-extrabold font-mono text-slate-900">₹1,850</span>
+                  <div className="mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
+                      Cash • Collected
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment item 3 */}
+              <div
+                onClick={() => onOpenHistory?.('area-03')}
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
+                      Apex Heart Institute
+                    </h5>
+                    <p className="text-[11px] text-slate-500 mt-1">Civil Lines • INV-9819</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-extrabold font-mono text-slate-900">₹6,400</span>
+                  <div className="mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                      UPI QR • Cleared
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment item 4: Credit Overdue */}
+              <div
+                onClick={() => onOpenHistory?.('area-02')}
+                className="flex items-center justify-between p-2.5 rounded-xl bg-amber-50/60 hover:bg-amber-50 border border-amber-200/50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-amber-900 transition-colors">
+                      Lakeview Society Tower C
+                    </h5>
+                    <p className="text-[11px] text-amber-800 mt-1">Lakeview • INV-9818</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-extrabold font-mono text-slate-900">₹3,000</span>
+                  <div className="mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
+                      Credit Net-7 • Due in 5d
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment item 5 */}
+              <div
+                onClick={() => onOpenHistory?.('area-05')}
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
+                      Engineering Faculty Mess
+                    </h5>
+                    <p className="text-[11px] text-slate-500 mt-1">University • INV-9817</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-extrabold font-mono text-slate-900">₹2,100</span>
+                  <div className="mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                      UPI QR • Cleared
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment item 6 */}
+              <div
+                onClick={() => onOpenHistory?.('area-01')}
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
+                      Sharma Residency - Flat 402
+                    </h5>
+                    <p className="text-[11px] text-slate-500 mt-1">IT Corridor • INV-9816</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-extrabold font-mono text-slate-900">₹240</span>
+                  <div className="mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                      UPI QR • Cleared
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Button */}
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <button
+              onClick={() => onOpenHistory?.('all')}
+              className="w-full py-2 px-3 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              type="button"
+            >
+              <span>{language === 'hi' ? 'आज के सभी 142 चालान देखें' : 'View All 142 Invoices Today'}</span>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M14 5l7 7m0 0l-7 7m7-7H3" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+      {/* END: MidSectionGrid */}
+
+      {/* BEGIN: CustomerLedgerSection ("Who Paid vs Who Didn't") */}
+      <section
+        className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 lg:p-6"
+        data-purpose="customer-payment-ledger"
+        id="customer-directory"
+      >
+        {/* Header & Detailed Tab Filters */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900">
+                {language === 'hi' ? 'ग्राहक निपटान बहीखाता' : 'Customer Settlement Ledger'}
+              </h2>
+              <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-slate-100 text-slate-700">
+                342 Active Accounts
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {language === 'hi'
+                ? 'किसने भुगतान किया, लंबित क्रेडिट, वैन में नकदी और वन-क्लिक रिमाइंडर फ़िल्टर करें'
+                : "Filter who has paid, pending credit aging, cash held with delivery vans, and one-click reminders"}
+            </p>
+          </div>
+
+          {/* "Who Paid vs Who Didn't" Filter Tabs */}
+          <div className="flex items-center flex-wrap gap-2">
+            <div
+              className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/90 text-xs font-semibold"
+              data-purpose="payment-status-filter-pills"
+            >
+              <button
+                onClick={() => setLedgerFilter('all')}
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  ledgerFilter === 'all'
+                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                type="button"
+              >
+                All Records
+              </button>
+              <button
+                onClick={() => setLedgerFilter('paid')}
+                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${
+                  ledgerFilter === 'paid'
+                    ? 'bg-white text-emerald-900 shadow-2xs font-bold'
+                    : 'text-emerald-700 hover:text-emerald-900 font-semibold'
+                }`}
+                type="button"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Paid / Cleared (128)
+              </button>
+              <button
+                onClick={() => setLedgerFilter('unpaid')}
+                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${
+                  ledgerFilter === 'unpaid'
+                    ? 'bg-white text-rose-900 shadow-2xs font-bold'
+                    : 'text-rose-700 hover:text-rose-900 font-semibold'
+                }`}
+                type="button"
+              >
+                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                Unpaid / Due (14)
+              </button>
+              <button
+                onClick={() => setLedgerFilter('credit')}
+                className={`px-3 py-1.5 rounded-lg transition-colors hidden sm:flex items-center gap-1 cursor-pointer ${
+                  ledgerFilter === 'credit'
+                    ? 'bg-white text-amber-900 shadow-2xs font-bold'
+                    : 'text-amber-700 hover:text-amber-900 font-semibold'
+                }`}
+                type="button"
+              >
+                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                Credit / Net-7 (8)
               </button>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Ledger Table */}
+        <div className="overflow-x-auto mt-4 -mx-5 px-5">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="border-b border-slate-200/80 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th className="py-3 px-3">Customer / Facility</th>
+                <th className="py-3 px-3">Sector / Route</th>
+                <th className="py-3 px-3">Delivered Volume</th>
+                <th className="py-3 px-3">Empty Jars Return</th>
+                <th className="py-3 px-3">Amount</th>
+                <th className="py-3 px-3">Payment Mode</th>
+                <th className="py-3 px-3">Status</th>
+                <th className="py-3 px-3 text-right">Quick Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredLedger.map((row) => (
+                <tr
+                  key={row.id}
+                  className={`transition-colors ${
+                    row.isOverdue
+                      ? 'bg-rose-50/40 hover:bg-rose-50/70'
+                      : row.status === 'credit'
+                      ? 'bg-amber-50/30 hover:bg-amber-50/60'
+                      : 'hover:bg-slate-50/80'
+                  }`}
+                >
+                  <td className="py-3.5 px-3">
+                    <div className="font-bold text-slate-900">{row.customerName}</div>
+                    <div className="text-[11px] text-slate-400">{row.accountNo}</div>
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-600 font-medium">{row.sector}</td>
+                  <td className="py-3.5 px-3">
+                    <span className="font-mono font-bold text-slate-800">{row.deliveredVolume}</span>
+                    <span className="text-[10px] text-slate-400 block">{row.productType}</span>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <span className={row.emptyJarsClass}>{row.emptyJarsText}</span>
+                  </td>
+                  <td
+                    className={`py-3.5 px-3 font-mono font-bold text-sm ${
+                      row.isOverdue || row.status === 'unpaid' ? 'text-rose-700' : 'text-slate-900'
+                    }`}
+                  >
+                    ₹{row.amount.toLocaleString('en-IN')}
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-600 font-medium">{row.paymentMode}</td>
+                  <td className="py-3.5 px-3">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${row.statusClass}`}
+                    >
+                      {row.status === 'paid' && (
+                        <svg className="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            clipRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            fillRule="evenodd"
+                          ></path>
+                        </svg>
+                      )}
+                      {(row.status === 'credit' || row.isOverdue) && (
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            row.isOverdue ? 'bg-rose-600' : 'bg-amber-600'
+                          }`}
+                        />
+                      )}
+                      {row.statusLabel}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3 text-right space-x-1.5 whitespace-nowrap">
+                    {row.status === 'paid' ? (
+                      <button
+                        onClick={() => setIsGstOpen(true)}
+                        className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:text-brand-700 hover:border-brand-300 font-semibold text-[11px] transition-colors cursor-pointer"
+                        type="button"
+                      >
+                        Receipt
+                      </button>
+                    ) : row.status === 'credit' ? (
+                      <>
+                        <button
+                          onClick={() => handleSendReminder(row)}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-xs transition-colors cursor-pointer"
+                          type="button"
+                        >
+                          WhatsApp Link
+                        </button>
+                        <button
+                          onClick={() => handleMarkPaid(row.id)}
+                          className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-white font-semibold text-[11px] transition-colors cursor-pointer"
+                          type="button"
+                        >
+                          Mark Paid
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleSendReminder(row)}
+                          className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] shadow-xs transition-colors cursor-pointer"
+                          type="button"
+                        >
+                          Send Reminder
+                        </button>
+                        <button
+                          onClick={() => handleCallOwner(row)}
+                          className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-white font-semibold text-[11px] transition-colors cursor-pointer"
+                          type="button"
+                        >
+                          Call Owner
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Ledger Pagination & Quick Stats Footer */}
+        <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <div className="flex items-center gap-4">
+            <span>
+              Showing <strong>{filteredLedger.length}</strong> of <strong>342</strong> accounts
+            </span>
+            <span className="text-emerald-700 font-semibold">
+              Total Cleared Today: ₹{totalClearedAmount.toLocaleString('en-IN')}
+            </span>
+            <span className="text-rose-700 font-semibold">
+              Total Overdue: ₹{totalOverdueAmount.toLocaleString('en-IN')}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+              Previous
+            </button>
+            <button className="px-2.5 py-1 rounded-lg bg-brand-navy text-white text-xs font-bold cursor-pointer" type="button">
+              1
+            </button>
+            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+              2
+            </button>
+            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+              3
+            </button>
+            <span className="px-1 text-slate-400">...</span>
+            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+              68
+            </button>
+            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
+      {/* END: CustomerLedgerSection */}
+
+      {/* BEGIN: BottomStatusBar */}
+      <footer className="bg-white rounded-2xl border border-slate-200/90 py-3 px-4 lg:px-6 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <span className="font-bold text-slate-800">Mumpy Central Operating System v4.2</span>
+          <span>•</span>
+          <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            All 8 Delivery Vans Connected (GPS Telemetry Live)
+          </span>
+        </div>
+        <div className="flex items-center gap-4 text-slate-500">
+          <span>
+            Driver Cash Handover Reconciled: <strong className="text-slate-800">₹11,400</strong>
+          </span>
+          <span>•</span>
+          <span className="text-slate-400 font-mono">System Time: {systemTime}</span>
+        </div>
+      </footer>
+      {/* END: BottomStatusBar */}
 
       {/* Modals */}
       <GstSummaryModal
