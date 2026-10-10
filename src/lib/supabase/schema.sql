@@ -178,24 +178,59 @@ ALTER TABLE public.area_clients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.area_client_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.financial_records ENABLE ROW LEVEL SECURITY;
 
--- Allow read/write access for authenticated and anon users in demo
+-- Allow read/write access for authenticated and anon users in demo (Idempotent: drops if already exists)
+DROP POLICY IF EXISTS "Public profiles read" ON public.profiles;
 CREATE POLICY "Public profiles read" ON public.profiles FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public vans read" ON public.vans;
 CREATE POLICY "Public vans read" ON public.vans FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public customers read" ON public.customers;
 CREATE POLICY "Public customers read" ON public.customers FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public customers insert" ON public.customers;
 CREATE POLICY "Public customers insert" ON public.customers FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public customers update" ON public.customers;
 CREATE POLICY "Public customers update" ON public.customers FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Public deliveries read" ON public.deliveries;
 CREATE POLICY "Public deliveries read" ON public.deliveries FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public deliveries insert" ON public.deliveries;
 CREATE POLICY "Public deliveries insert" ON public.deliveries FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public settlements read" ON public.payment_settlements;
 CREATE POLICY "Public settlements read" ON public.payment_settlements FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public settlements insert" ON public.payment_settlements;
 CREATE POLICY "Public settlements insert" ON public.payment_settlements FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public settlements update" ON public.payment_settlements;
 CREATE POLICY "Public settlements update" ON public.payment_settlements FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Public area_clients read" ON public.area_clients;
 CREATE POLICY "Public area_clients read" ON public.area_clients FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public area_clients insert" ON public.area_clients;
 CREATE POLICY "Public area_clients insert" ON public.area_clients FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public area_clients update" ON public.area_clients;
 CREATE POLICY "Public area_clients update" ON public.area_clients FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Public area_history read" ON public.area_client_history;
 CREATE POLICY "Public area_history read" ON public.area_client_history FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public area_history insert" ON public.area_client_history;
 CREATE POLICY "Public area_history insert" ON public.area_client_history FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public financial read" ON public.financial_records;
 CREATE POLICY "Public financial read" ON public.financial_records FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public financial insert" ON public.financial_records;
 CREATE POLICY "Public financial insert" ON public.financial_records FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public financial update" ON public.financial_records;
 CREATE POLICY "Public financial update" ON public.financial_records FOR UPDATE USING (true);
 
 -- Unique Constraints: Anti-Duplication Enforcement
