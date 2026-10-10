@@ -747,497 +747,478 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
       {/* Log Drop-off Entry Modal */}
       {isDropOffModalOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in"
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in"
           onClick={() => setIsDropOffModalOpen(false)}
         >
-          <div 
-            className="bg-surface-container-lowest max-w-lg w-full rounded-3xl p-6 shadow-2xl border-2 border-primary/20 relative flex flex-col gap-4 max-h-[90vh] overflow-y-auto"
+          {/* BEGIN: ModalContainer / Sheet */}
+          <main 
+            className="relative z-20 w-full max-w-[420px] bg-white rounded-t-[34px] sm:rounded-[34px] shadow-modal pt-2 pb-6 px-4 flex flex-col max-h-[90vh] overflow-hidden" 
+            data-purpose="drop-off-sheet"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-surface-container shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
-                  <Icon name="local_shipping" className="text-xl" />
+            {/* Top Pull Bar & Close Row */}
+            <div className="flex flex-col items-center mb-1">
+              <div className="w-9 h-1 bg-slate-300 rounded-full mb-1"></div>
+            </div>
+
+            {/* BEGIN: ModalHeader */}
+            <header className="flex items-start justify-between pb-3 px-1 border-b border-slate-100">
+              <div className="flex items-start space-x-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-brand-navy flex items-center justify-center text-white shadow-sm shrink-0 mt-0.5">
+                  {/* Delivery Truck Icon */}
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M18 18.5a2.5 2.5 0 0 1-2.5-2.5c0-.18.02-.35.06-.52H8.44c.04.17.06.34.06.52A2.5 2.5 0 1 1 6 13.5h.39A4.47 4.47 0 0 1 10 10h5V6H3a1 1 0 0 0-1 1v10h1.56A2.5 2.5 0 0 1 6 18.5a2.5 2.5 0 0 1 2.5-2.5c0-.18-.02-.35-.06-.52h7.02c-.04.17-.06.34-.06.52a2.5 2.5 0 0 0 2.5 2.5m1.5-12.5h-3.5v5H21l-1.5-5zM20 15h1a1 1 0 0 0 1-1v-2.22c0-.36-.13-.7-.37-.96L19.42 8.3c-.26-.28-.62-.43-.99-.43H18v7.13A2.48 2.48 0 0 1 19.5 15z"></path>
+                  </svg>
                 </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-secondary tracking-wider block">
-                    {language === 'hi' ? 'लाइव डिलीवरी एंट्री' : 'Log Delivery Drop-off'}
-                  </span>
-                  <h3 className="font-extrabold text-title-lg text-primary">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[11px] font-bold tracking-wider text-sky-600 uppercase">
+                      {language === 'hi' ? 'लाइव डिलीवरी ड्रॉप-ऑफ' : 'Log Delivery Drop-Off'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+                      {selectedStop.distance || '350m away'}
+                    </span>
+                  </div>
+                  <h1 className="text-[18px] font-bold text-slate-900 tracking-tight leading-snug truncate">
                     {selectedStop.customerName}
-                  </h3>
+                  </h1>
+                  <p className="text-[12px] text-slate-500 flex items-center mt-0.5">
+                    <svg className="w-3.5 h-3.5 mr-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                      <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                    <span className="truncate">{selectedStop.address}</span>
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs bg-secondary-fixed text-on-secondary-fixed font-bold px-2.5 py-1 rounded-full">
-                  {selectedStop.distance}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsDropOffModalOpen(false)}
-                  className="p-1.5 rounded-xl text-outline hover:bg-surface-container transition-colors"
-                >
-                  <Icon name="close" size={18} />
-                </button>
-              </div>
-            </div>
 
-            {/* Stop Address & Navigation Link */}
-            <div className="flex items-center justify-between gap-3 p-3 bg-surface-container-low rounded-2xl border border-surface-container shrink-0">
-              <div className="flex items-start gap-2 min-w-0">
-                <Icon name="location_on" className="text-sm text-outline shrink-0 mt-0.5" />
-                <span className="text-xs text-on-surface truncate">{selectedStop.address}</span>
-              </div>
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedStop.address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-bold text-xs hover:bg-secondary hover:text-white transition-all shadow-2xs flex items-center gap-1 shrink-0"
-                title="Start GPS"
+              {/* Dismiss Button */}
+              <button 
+                aria-label="Close" 
+                type="button" 
+                onClick={() => setIsDropOffModalOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition shrink-0 ml-2" 
               >
-                <Icon name="directions" size={13} />
-                <span>{language === 'hi' ? 'GPS' : 'GPS'}</span>
-              </a>
-            </div>
+                <svg className="w-4 h-4 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
+                  <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round"></path>
+                </svg>
+              </button>
+            </header>
+            {/* END: ModalHeader */}
 
-            {/* Packaging Verification Banner */}
-            <div className="p-3 bg-surface-container-low rounded-2xl flex items-center gap-3 border border-surface-container shrink-0">
-              <div className="relative w-12 h-14 rounded-xl overflow-hidden bg-white shadow-xs shrink-0">
-                <Image
-                  src="/images/mumpy-bottles.png"
-                  alt="Mumpy Bottle Verification"
-                  fill
-                  sizes="48px"
-                  className="object-cover"
-                />
-              </div>
-              <div className="text-xs">
-                <strong className="text-primary font-bold block">
-                  Mumpy Pure Mineral Water
-                </strong>
-                <p className="text-[11px] text-on-surface-variant leading-tight">
-                  {t('mumpyMineralPackDesc')}
-                </p>
-                <div className="flex items-center gap-2 mt-1 font-bold text-[10px]">
-                  <span className="text-outline">BATCH #MP-2024-88A</span>
-                  <span className="text-emerald-600">✓ {t('verifiedSealed')}</span>
+            {/* Scrollable Modal Body */}
+            <div className="flex-1 overflow-y-auto space-y-3.5 pt-3 pb-2 pr-0.5 no-scrollbar">
+              {/* BEGIN: ProductBadgeCard */}
+              <article className="bg-slate-50/90 border border-slate-100 rounded-2xl p-2.5 flex items-center space-x-3" data-purpose="product-badge">
+                <div className="w-12 h-12 bg-white rounded-xl border border-slate-200/60 p-1 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden relative">
+                  <Image 
+                    alt="Mumpy Pure Mineral Water" 
+                    className="w-full h-full object-cover rounded-lg" 
+                    src="/images/mumpy-bottles.png"
+                    fill
+                    sizes="48px"
+                  />
                 </div>
-              </div>
-            </div>
-
-            {/* Counters for Delivered Cans & Empties Recovered */}
-            <div className="grid grid-cols-2 gap-3 text-center shrink-0">
-              {/* Delivered */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col gap-1.5 border border-surface-container">
-                <span className="text-xs font-bold text-primary flex items-center justify-center gap-1">
-                  <Icon name="water_bottle" className="text-sm" />
-                  {t('deliveredCount')}
-                </span>
-                <span className="text-[10px] text-outline">{t('fullMumpyCans')}</span>
-                <div className="flex items-center justify-between bg-white rounded-xl p-1.5 mt-1 border border-surface-container">
-                  <button
-                    type="button"
-                    onClick={() => setCansDelivered(Math.max(1, cansDelivered - 1))}
-                    className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-bold text-base hover:bg-surface-container-high transition-colors"
-                  >
-                    -
-                  </button>
-                  <span className="font-display text-xl font-extrabold text-primary">
-                    {cansDelivered}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setCansDelivered(cansDelivered + 1)}
-                    className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-bold text-base hover:bg-surface-container-high transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              {/* Empties Returned */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col gap-1.5 border border-surface-container">
-                <span className="text-xs font-bold text-secondary flex items-center justify-center gap-1">
-                  <Icon name="autorenew" className="text-sm" />
-                  {t('emptiesReturned')}
-                </span>
-                <span className="text-[10px] text-outline">{t('cleanReturnableCans')}</span>
-                <div className="flex items-center justify-between bg-white rounded-xl p-1.5 mt-1 border border-surface-container">
-                  <button
-                    type="button"
-                    onClick={() => setEmptiesCollected(Math.max(0, emptiesCollected - 1))}
-                    className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-bold text-base hover:bg-surface-container-high transition-colors"
-                  >
-                    -
-                  </button>
-                  <span className="font-display text-xl font-extrabold text-secondary">
-                    {emptiesCollected}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setEmptiesCollected(emptiesCollected + 1)}
-                    className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-bold text-base hover:bg-surface-container-high transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Customer Ledger & Old Balance / Credits Card */}
-            <div className="rounded-2xl border transition-all overflow-hidden bg-surface-container-low border-surface-container shrink-0">
-              {selectedStop.balanceDue > 0 ? (
-                <div className="p-3.5 flex flex-col gap-3">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
-                        <Icon name="history_edu" className="text-base" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] uppercase font-bold text-amber-700 tracking-wider block">
-                          {t('previousOutstandingBalance')}
-                        </span>
-                        <span className="text-xs text-on-surface-variant font-medium">
-                          {language === 'hi' ? 'पूर्व डिलीवरी का बकाया खाता' : 'Unpaid balance from past deliveries'}
-                        </span>
-                      </div>
+                    <h2 className="text-xs font-bold text-slate-900 truncate">Mumpy Pure Mineral Water</h2>
+                    <span className="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 shrink-0">
+                      <svg className="w-2.5 h-2.5 mr-1 fill-emerald-600" viewBox="0 0 20 20">
+                        <path clipRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fillRule="evenodd"></path>
+                      </svg>
+                      {t('verifiedSealed')}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                    {t('mumpyMineralPackDesc')}
+                  </p>
+                  <div className="text-[10px] text-slate-400 mt-0.5 font-mono">BATCH #MP-2024-88A</div>
+                </div>
+              </article>
+              {/* END: ProductBadgeCard */}
+
+              {/* BEGIN: CounterSection */}
+              <section aria-label="Delivered and Returned Quantities" className="grid grid-cols-2 gap-2.5">
+                {/* Delivered Counter */}
+                <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-3 flex flex-col justify-between">
+                  <div className="flex items-center space-x-1.5 mb-2">
+                    <div className="w-5 h-5 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center">
+                      <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
                     </div>
-                    <div className="text-right shrink-0">
-                      <span className="px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 font-extrabold text-sm inline-block shadow-2xs border border-amber-200">
-                        ₹{selectedStop.balanceDue.toFixed(2)}
-                      </span>
+                    <div>
+                      <div className="text-[12px] font-bold text-slate-900 leading-none">{t('deliveredCount')}</div>
+                      <div className="text-[10px] text-slate-500">{t('fullMumpyCans')}</div>
                     </div>
                   </div>
+                  <div className="flex items-center justify-between bg-white rounded-xl p-1 shadow-xs border border-blue-100/70">
+                    <button 
+                      aria-label="Decrease Delivered" 
+                      type="button"
+                      onClick={() => setCansDelivered(Math.max(1, cansDelivered - 1))}
+                      className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-lg active:scale-95 transition"
+                    >
+                      -
+                    </button>
+                    <span className="text-lg font-bold text-slate-900 font-sans">{cansDelivered}</span>
+                    <button 
+                      aria-label="Increase Delivered" 
+                      type="button"
+                      onClick={() => setCansDelivered(cansDelivered + 1)}
+                      className="w-8 h-8 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold flex items-center justify-center text-lg active:scale-95 transition"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-                  {/* Pay Old Balance Toggle / Action */}
-                  <div
-                    className={`rounded-xl border transition-all shadow-2xs overflow-hidden ${
+                {/* Return Counter */}
+                <div className="bg-teal-50/40 border border-teal-100 rounded-2xl p-3 flex flex-col justify-between">
+                  <div className="flex items-center space-x-1.5 mb-2">
+                    <div className="w-5 h-5 rounded-md bg-teal-100 text-teal-700 flex items-center justify-center">
+                      <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"></path></svg>
+                    </div>
+                    <div>
+                      <div className="text-[12px] font-bold text-slate-900 leading-none">{t('emptiesReturned')}</div>
+                      <div className="text-[10px] text-slate-500">{t('cleanReturnableCans')}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between bg-white rounded-xl p-1 shadow-xs border border-teal-100/70">
+                    <button 
+                      aria-label="Decrease Returned" 
+                      type="button"
+                      onClick={() => setEmptiesCollected(Math.max(0, emptiesCollected - 1))}
+                      className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-lg active:scale-95 transition"
+                    >
+                      -
+                    </button>
+                    <span className="text-lg font-bold text-slate-900 font-sans">{emptiesCollected}</span>
+                    <button 
+                      aria-label="Increase Returned" 
+                      type="button"
+                      onClick={() => setEmptiesCollected(emptiesCollected + 1)}
+                      className="w-8 h-8 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-lg active:scale-95 transition"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </section>
+              {/* END: CounterSection */}
+
+              {/* BEGIN: OutstandingBalanceNotice */}
+              {selectedStop.balanceDue > 0 ? (
+                <section aria-label="Outstanding Dues" className="bg-amberSoft border border-amberBorder/80 rounded-2xl p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-6 h-6 rounded-full bg-amber-100 text-amberText flex items-center justify-center font-bold text-xs">!</div>
+                      <div>
+                        <span className="text-[11px] font-bold text-amber-900 uppercase tracking-wide">
+                          {t('previousOutstandingBalance')}
+                        </span>
+                        <p className="text-[10px] text-amber-700">
+                          {language === 'hi' ? 'पूर्व डिलीवरी का बकाया खाता' : 'Past unpaid delivery dues'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-xl bg-amber-100/80 font-bold text-xs text-amber-900">
+                      ₹{selectedStop.balanceDue.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* Collect Now Checkbox Pill */}
+                  <label 
+                    onClick={handleTogglePayPastBalance}
+                    className={`mt-2.5 flex items-center justify-between rounded-xl px-3 py-2 border cursor-pointer shadow-2xs transition-all ${
                       payPastBalance
-                        ? 'bg-amber-50/90 border-amber-300'
-                        : 'bg-white border-amber-200/70 hover:border-amber-300'
+                        ? 'bg-amber-100/60 border-amber-300'
+                        : 'bg-white/95 border-amber-200 hover:border-amber-300'
                     }`}
                   >
-                    <button
-                      type="button"
-                      onClick={handleTogglePayPastBalance}
-                      className="w-full p-3 flex items-center justify-between gap-2.5 text-left transition-colors cursor-pointer"
+                    <div className="flex items-center space-x-2.5">
+                      <input 
+                        type="checkbox"
+                        checked={payPastBalance}
+                        onChange={() => {}} // handled by parent onClick
+                        className="w-4 h-4 rounded text-brand-navy focus:ring-0 focus:ring-offset-0 border-slate-300 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-slate-800">
+                          {t('collectOldBalance')}
+                        </span>
+                        <span className="text-[10px] text-slate-500">
+                          {language === 'hi' ? `आज ₹${selectedStop.balanceDue} बकाया वसूल करें` : `Include ₹${selectedStop.balanceDue} past dues today`}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-bold text-brand-navy bg-slate-100 px-2 py-0.5 rounded-lg">
+                      +₹{(pastPaymentAmount || selectedStop.balanceDue).toFixed(2)}
+                    </span>
+                  </label>
+
+                  {/* Optional partial amount adjustment input when checked */}
+                  {payPastBalance && (
+                    <div 
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 pt-2 border-t border-amber-200/80 flex items-center gap-2"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div
-                          className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
-                            payPastBalance
-                              ? 'bg-amber-600 text-white shadow-2xs'
-                              : 'border-2 border-outline/50 bg-white'
-                          }`}
-                        >
-                          {payPastBalance && <Icon name="check" size={14} className="font-black" />}
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-xs font-bold text-on-surface block leading-tight">
-                            {t('collectOldBalance')}
-                          </span>
-                          <span className="text-[10px] text-on-surface-variant font-medium block truncate">
-                            {payPastBalance
-                              ? language === 'hi'
-                                ? 'हटाने के लिए फिर से क्लिक करें'
-                                : 'Click to uncheck / remove'
-                              : language === 'hi'
-                              ? 'आज की वसूली में जोड़ने के लिए चुनें'
-                              : 'Include past dues in today’s collection'}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="text-right shrink-0">
-                        <span
-                          className={`text-xs font-extrabold px-2.5 py-1 rounded-lg inline-block ${
-                            payPastBalance
-                              ? 'bg-amber-200/90 text-amber-950 border border-amber-300'
-                              : 'text-amber-800 bg-amber-50 border border-amber-200/60'
-                          }`}
-                        >
-                          {payPastBalance
-                            ? `+₹${(pastPaymentAmount || 0).toFixed(2)}`
-                            : language === 'hi'
-                            ? `₹${selectedStop.balanceDue.toFixed(2)} बकाया`
-                            : `₹${selectedStop.balanceDue.toFixed(2)} Due`}
-                        </span>
-                      </div>
-                    </button>
-
-                    {payPastBalance && (
-                      <div
-                        onClick={(e) => e.stopPropagation()}
-                        className="px-3 pb-3 pt-2.5 border-t border-amber-200/80 flex items-center gap-2 animate-in fade-in duration-150 bg-white/60"
-                      >
-                        <span className="text-[11px] text-on-surface-variant font-medium shrink-0">
-                          {language === 'hi' ? 'जमा राशि:' : 'Amount to clear:'}
-                        </span>
-                        <div className="relative flex-1">
-                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-outline">
-                            ₹
-                          </span>
-                          <input
-                            type="number"
-                            min="1"
-                            max={selectedStop.balanceDue}
-                            value={pastPaymentAmount || ''}
-                            onChange={(e) => {
-                              const val = Number(e.target.value);
-                              setPastPaymentAmount(val);
-                              if (paymentMethod === 'Ledger') {
-                                setPaymentMethod('UPI QR');
-                              }
-                            }}
-                            className="w-full pl-6 pr-2 py-1.5 rounded-lg bg-white border border-amber-300 text-xs font-bold text-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                            placeholder={selectedStop.balanceDue.toString()}
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPastPaymentAmount(selectedStop.balanceDue);
+                      <span className="text-[10px] font-semibold text-amber-900 shrink-0">
+                        {language === 'hi' ? 'जमा राशि:' : 'Amount to clear:'}
+                      </span>
+                      <div className="relative flex-1">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">₹</span>
+                        <input
+                          type="number"
+                          min="1"
+                          max={selectedStop.balanceDue}
+                          value={pastPaymentAmount || ''}
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            setPastPaymentAmount(val);
                             if (paymentMethod === 'Ledger') {
                               setPaymentMethod('UPI QR');
                             }
                           }}
-                          className="px-2.5 py-1.5 rounded-lg bg-amber-200/80 hover:bg-amber-300 text-[10px] font-bold text-amber-950 transition-colors shrink-0 shadow-2xs"
-                        >
-                          {language === 'hi' ? 'पूरा चुकता' : 'Full (₹' + selectedStop.balanceDue + ')'}
-                        </button>
+                          className="w-full pl-6 pr-2 py-1 bg-white border border-amber-300 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-600"
+                          placeholder={selectedStop.balanceDue.toString()}
+                        />
                       </div>
-                    )}
-                  </div>
-                </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPastPaymentAmount(selectedStop.balanceDue);
+                          if (paymentMethod === 'Ledger') {
+                            setPaymentMethod('UPI QR');
+                          }
+                        }}
+                        className="px-2 py-1 rounded-lg bg-amber-200/80 hover:bg-amber-300 text-[10px] font-bold text-amber-950 transition-colors shrink-0"
+                      >
+                        {language === 'hi' ? 'पूरा चुकता' : 'Full (₹' + selectedStop.balanceDue + ')'}
+                      </button>
+                    </div>
+                  )}
+                </section>
               ) : selectedStop.balanceDue < 0 ? (
-                <div className="p-3.5 flex flex-col gap-2.5">
+                <section aria-label="Advance Credit" className="bg-sky-50/70 border border-sky-100 rounded-2xl p-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                        <Icon name="savings" className="text-base" />
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-xs">₹</div>
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-blue-700 tracking-wider block">
+                        <span className="text-[11px] font-bold text-sky-900 uppercase tracking-wide">
                           {t('creditAvailable')}
                         </span>
-                        <span className="text-xs text-on-surface-variant font-medium">
+                        <p className="text-[10px] text-sky-600">
                           {language === 'hi' ? 'ग्राहक के पास अग्रिम क्रेडिट है' : 'Advance balance on file'}
-                        </span>
+                        </p>
                       </div>
                     </div>
-                    <span className="px-2.5 py-1 rounded-xl bg-blue-100 text-blue-900 font-extrabold text-sm">
+                    <span className="px-2.5 py-1 rounded-xl bg-sky-100/80 font-bold text-xs text-sky-900">
                       ₹{Math.abs(selectedStop.balanceDue).toFixed(2)}
                     </span>
                   </div>
-
-                  <label className="flex items-center gap-2 cursor-pointer bg-white/90 p-2.5 rounded-xl border border-blue-200/60 select-none">
-                    <input
-                      type="checkbox"
-                      checked={applyCredit}
-                      onChange={(e) => setApplyCredit(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 accent-blue-600 cursor-pointer"
-                    />
-                    <span className="text-xs font-bold text-on-surface">
-                      {t('applyCredit')} (-₹{Math.min(cansDelivered * 70, Math.abs(selectedStop.balanceDue)).toFixed(2)})
-                    </span>
-                  </label>
-                </div>
-              ) : (
-                <div className="p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                      <Icon name="check_circle" className="text-base" />
+                  <label className="mt-2 flex items-center justify-between bg-white rounded-xl px-3 py-2 border border-sky-200 cursor-pointer shadow-2xs">
+                    <div className="flex items-center space-x-2.5">
+                      <input
+                        type="checkbox"
+                        checked={applyCredit}
+                        onChange={(e) => setApplyCredit(e.target.checked)}
+                        className="w-4 h-4 text-sky-600 rounded focus:ring-0"
+                      />
+                      <span className="text-xs font-semibold text-slate-800">
+                        {t('applyCredit')} (-₹{Math.min(cansDelivered * 70, Math.abs(selectedStop.balanceDue)).toFixed(2)})
+                      </span>
                     </div>
+                  </label>
+                </section>
+              ) : (
+                <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-2.5 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">✓</div>
                     <div>
-                      <span className="text-xs font-bold text-emerald-900 block">
-                        {t('accountAllClear')}
-                      </span>
-                      <span className="text-[11px] text-on-surface-variant">
-                        {language === 'hi' ? 'पूर्व बिलों का कोई बकाया नहीं है' : 'No previous dues or pending balance'}
-                      </span>
+                      <span className="text-xs font-bold text-emerald-900 block">{t('accountAllClear')}</span>
+                      <p className="text-[10px] text-emerald-600">
+                        {language === 'hi' ? 'पूर्व बिलों का कोई बकाया नहीं है' : 'No past dues or pending balance'}
+                      </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
-                    ₹0.00
-                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">₹0.00</span>
                 </div>
               )}
-            </div>
+              {/* END: OutstandingBalanceNotice */}
 
-            {/* Payment Amount Breakdown & Method Selector */}
-            <div className="flex flex-col gap-2.5 shrink-0">
-              <div className="p-3.5 bg-surface-container-low rounded-2xl border border-surface-container flex flex-col gap-2 text-xs">
-                {/* Current Delivery Row with Interactive Pay Toggle Button */}
-                <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white/80 border border-surface-container">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
+              {/* BEGIN: PaymentSummary */}
+              <section className="bg-slate-50 border border-slate-100 rounded-2xl p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-600">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                    <button 
+                      type="button" 
                       onClick={() => setPayCurrentDelivery((prev) => !prev)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ${
-                        payCurrentDelivery
-                          ? 'bg-primary text-white shadow-xs'
-                          : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
-                      }`}
+                      className="flex items-center gap-1.5 text-left font-medium hover:text-slate-900 transition"
                       title={payCurrentDelivery ? 'Click to defer payment' : 'Click to pay now'}
                     >
-                      <Icon
-                        name={payCurrentDelivery ? 'check_box' : 'check_box_outline_blank'}
-                        className="text-sm"
-                      />
-                      <span>{t('payCurrentDelivery')}</span>
-                    </button>
-                    <span className="text-[11px] text-on-surface-variant font-medium">
-                      ({cansDelivered} × ₹70)
-                    </span>
-                  </div>
-
-                  <div className="text-right">
-                    <span
-                      className={`font-extrabold text-xs ${
-                        payCurrentDelivery ? 'text-on-surface' : 'text-outline line-through'
-                      }`}
-                    >
-                      ₹{fullCurrentDeliveryCost.toFixed(2)}
-                    </span>
-                    {!payCurrentDelivery && (
-                      <span className="block text-[10px] text-amber-700 font-semibold">
-                        {t('deferToLedger')}
+                      <span className={`w-3.5 h-3.5 rounded flex items-center justify-center text-[9px] border font-bold ${payCurrentDelivery ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-300 bg-white'}`}>
+                        {payCurrentDelivery ? '✓' : ''}
                       </span>
-                    )}
+                      <span>Current Delivery ({cansDelivered} × ₹70)</span>
+                    </button>
                   </div>
+                  <span className={`font-semibold ${payCurrentDelivery ? 'text-slate-900' : 'text-slate-400 line-through'}`}>
+                    ₹{fullCurrentDeliveryCost.toFixed(2)}
+                  </span>
                 </div>
 
                 {payPastBalance && getEffectivePastPayment() > 0 && (
-                  <div className="flex justify-between items-center text-amber-800 font-semibold px-1">
-                    <span className="flex items-center gap-1">
-                      <Icon name="history" className="text-xs" />
-                      {t('oldBalanceSettled')}
-                    </span>
-                    <span>+₹{getEffectivePastPayment().toFixed(2)}</span>
+                  <div className="flex items-center justify-between text-xs text-amber-700">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      <span>{t('oldBalanceSettled')}</span>
+                    </div>
+                    <span className="font-semibold">+₹{getEffectivePastPayment().toFixed(2)}</span>
                   </div>
                 )}
 
                 {applyCredit && getEffectiveCreditApplied() > 0 && (
-                  <div className="flex justify-between items-center text-blue-800 font-semibold px-1">
-                    <span className="flex items-center gap-1">
-                      <Icon name="redeem" className="text-xs" />
-                      {language === 'hi' ? 'क्रेडिट कटौती' : 'Credit Applied'}
-                    </span>
-                    <span>-₹{getEffectiveCreditApplied().toFixed(2)}</span>
+                  <div className="flex items-center justify-between text-xs text-sky-600">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                      <span>{language === 'hi' ? 'क्रेडिट कटौती' : 'Credit Applied'}</span>
+                    </div>
+                    <span className="font-semibold">-₹{getEffectiveCreditApplied().toFixed(2)}</span>
                   </div>
                 )}
 
-                <div className="pt-2 border-t border-surface-container flex justify-between items-center px-1">
-                  <span className="font-extrabold text-xs text-on-surface uppercase tracking-wide">
-                    {t('totalToCollect')}
-                  </span>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/70">
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t('totalToCollect')}</span>
                   <div className="text-right">
-                    <span className="font-black text-primary text-base">
-                      ₹{calculateAmount().toFixed(2)}
-                    </span>
+                    <span className="text-lg font-black text-brand-navy tracking-tight">₹{calculateAmount().toFixed(2)}</span>
                     {paymentMethod === 'Ledger' && !payPastBalance && (
-                      <span className="text-[10px] text-primary block font-medium">
+                      <span className="text-[10px] text-sky-700 block font-medium">
                         {language === 'hi' ? '(मासिक बहीखाते में दर्ज)' : '(Billed to Monthly Ledger)'}
                       </span>
                     )}
                   </div>
                 </div>
-              </div>
+              </section>
+              {/* END: PaymentSummary */}
 
-              {/* Payment Method Selector - Only Cash & UPI QR when old balance is on */}
-              <div className="flex flex-col gap-1.5">
-                <div className={`grid ${payPastBalance ? 'grid-cols-2' : 'grid-cols-3'} gap-2`}>
-                  <button
+              {/* BEGIN: PaymentMethods */}
+              <fieldset className="space-y-1.5">
+                <legend className="text-[11px] font-bold uppercase tracking-wider text-slate-500 ml-1">Payment Method</legend>
+                <div className="grid grid-cols-3 gap-2">
+                  {/* Cash */}
+                  <button 
                     type="button"
                     onClick={() => setPaymentMethod('Cash')}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`flex flex-col items-center justify-center p-2.5 rounded-2xl border transition cursor-pointer ${
                       paymentMethod === 'Cash'
-                        ? 'border-primary bg-primary text-white shadow-sm'
-                        : 'border-surface-container bg-surface-container-low text-on-surface hover:bg-surface-container'
+                        ? 'border-2 border-sky-600 bg-brand-navy text-white shadow-xs'
+                        : 'border-slate-200 bg-white hover:border-slate-300 text-slate-600'
                     }`}
                   >
-                    <Icon name="payments" className="text-base" />
-                    {t('cash')}
+                    <svg className="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <rect height="12" rx="2" strokeWidth="2" width="20" x="2" y="6"></rect>
+                      <circle cx="12" cy="12" r="2" strokeWidth="2"></circle>
+                    </svg>
+                    <span className="text-[11px] font-semibold">{t('cash')}</span>
                   </button>
-                  <button
+
+                  {/* UPI QR (Active default) */}
+                  <button 
                     type="button"
                     onClick={() => setPaymentMethod('UPI QR')}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`flex flex-col items-center justify-center p-2.5 rounded-2xl border transition cursor-pointer ${
                       paymentMethod === 'UPI QR'
-                        ? 'border-secondary bg-secondary text-white shadow-sm'
-                        : 'border-surface-container bg-surface-container-low text-on-surface hover:bg-surface-container'
+                        ? 'border-2 border-sky-600 bg-brand-navy text-white shadow-xs'
+                        : 'border-slate-200 bg-white hover:border-slate-300 text-slate-600'
                     }`}
                   >
-                    <Icon name="qr_code_2" className="text-base" />
-                    {t('upiQr')}
+                    <svg className="w-5 h-5 mb-1 fill-current" viewBox="0 0 24 24">
+                      <path d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v3h-3zm-5 5h3v3h-3zm3 0h3v3h-3zm2-3h3v3h-3z"></path>
+                    </svg>
+                    <span className="text-[11px] font-bold">{t('upiQr')}</span>
                   </button>
-                  {!payPastBalance && (
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('Ledger')}
-                      className={`py-2 px-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
-                        paymentMethod === 'Ledger'
-                          ? 'border-primary-container bg-primary-container text-white shadow-sm'
-                          : 'border-surface-container bg-surface-container-low text-on-surface hover:bg-surface-container'
-                      }`}
-                    >
-                      <Icon name="menu_book" className="text-base" />
-                      {t('monthlyLedger')}
-                    </button>
-                  )}
-                </div>
 
+                  {/* Monthly Ledger */}
+                  <button 
+                    type="button"
+                    disabled={payPastBalance}
+                    onClick={() => {
+                      if (!payPastBalance) setPaymentMethod('Ledger');
+                    }}
+                    className={`flex flex-col items-center justify-center p-2.5 rounded-2xl border transition ${
+                      payPastBalance
+                        ? 'border-slate-100 bg-slate-100/60 text-slate-300 cursor-not-allowed opacity-60'
+                        : paymentMethod === 'Ledger'
+                          ? 'border-2 border-sky-600 bg-brand-navy text-white shadow-xs cursor-pointer'
+                          : 'border-slate-200 bg-white hover:border-slate-300 text-slate-600 cursor-pointer'
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                    </svg>
+                    <span className="text-[11px] font-semibold truncate w-full text-center">{t('monthlyLedger')}</span>
+                  </button>
+                </div>
                 {payPastBalance && (
-                  <span className="text-[11px] text-amber-800 flex items-center gap-1 font-medium bg-amber-50 border border-amber-200/70 rounded-xl px-2.5 py-1.5">
+                  <span className="text-[10px] text-amber-800 flex items-center gap-1 font-medium bg-amber-50 border border-amber-200/70 rounded-xl px-2.5 py-1.5 mt-1">
                     <Icon name="info" className="text-xs shrink-0" />
                     {t('instantPaymentRequiredForDues')}
                   </span>
                 )}
+              </fieldset>
+              {/* END: PaymentMethods */}
+
+              {/* BEGIN: DropOffNotes */}
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1" htmlFor="drop-note">
+                  {language === 'hi' ? 'ड्रॉप-ऑफ नोट / सुरक्षा गार्ड संदर्भ' : 'Drop-off Note / Gate Reference'}
+                </label>
+                <input 
+                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-navy focus:ring-1 focus:ring-brand-navy text-slate-800 transition" 
+                  id="drop-note" 
+                  placeholder={t('dropOffNotePlaceholder') || 'e.g. Handed to security guard Mohan / Left at flat'} 
+                  type="text"
+                  value={gateNote}
+                  onChange={(e) => setGateNote(e.target.value)}
+                />
               </div>
+              {/* END: DropOffNotes */}
             </div>
 
-            {/* Drop-off Notes */}
-            <div className="flex flex-col gap-1 text-xs shrink-0">
-              <label className="font-semibold text-on-surface">
-                {language === 'hi' ? 'ड्रॉप-ऑफ नोट / सुरक्षा गार्ड संदर्भ' : 'Drop-off Note / Security Gate Reference (Optional)'}
-              </label>
-              <input
-                type="text"
-                value={gateNote}
-                onChange={(e) => setGateNote(e.target.value)}
-                placeholder={t('dropOffNotePlaceholder')}
-                className="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary text-xs"
-              />
-            </div>
+            {/* BEGIN: ActionButtons */}
+            <footer className="pt-3 border-t border-slate-100 flex flex-col space-y-2 shrink-0">
+              <div className="flex items-center space-x-2">
+                <button 
+                  className="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition active:scale-98 cursor-pointer" 
+                  type="button"
+                  onClick={() => setIsDropOffModalOpen(false)}
+                >
+                  {language === 'hi' ? 'रद्द करें' : 'Cancel'}
+                </button>
+                <button 
+                  className="flex-1 py-3 px-3 rounded-2xl bg-brand-navy hover:bg-brand-900 text-white text-xs font-bold shadow-btn flex items-center justify-center space-x-2 active:scale-98 transition cursor-pointer" 
+                  type="button"
+                  onClick={handleConfirmDrop}
+                >
+                  <svg className="w-4 h-4 fill-white" viewBox="0 0 20 20">
+                    <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fillRule="evenodd"></path>
+                  </svg>
+                  <span className="tracking-tight">{t('confirmAndGenerateSms') || 'Confirm & Send Instant SMS Receipt'}</span>
+                </button>
+              </div>
+              <p className="text-[10px] text-center text-slate-400 font-medium">
+                {language === 'hi'
+                  ? 'ग्राहक सदस्यता पासबुक और डिस्पैच बैलेंस स्वतः अपडेट होता है'
+                  : 'Auto-updates customer subscription passbook & plant ledger'}
+              </p>
+            </footer>
+            {/* END: ActionButtons */}
 
-            {/* Modal Actions */}
-            <div className="flex items-center gap-2 pt-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsDropOffModalOpen(false)}
-                className="px-4 py-3 rounded-2xl bg-surface-container text-on-surface font-bold text-xs hover:bg-surface-container-high transition-colors"
-              >
-                {language === 'hi' ? 'रद्द करें' : 'Cancel'}
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDrop}
-                className="flex-1 py-3 rounded-2xl bg-primary text-white font-extrabold text-sm hover:bg-primary-container shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
-              >
-                <Icon name="check_circle" className="text-lg" />
-                {t('confirmAndGenerateSms')}
-              </button>
-            </div>
-
-            <span className="text-[11px] text-center text-outline flex items-center justify-center gap-1 shrink-0 pb-1">
-              <Icon name="sync" className="text-sm text-emerald-600" />
-              {language === 'hi'
-                ? 'ग्राहक सदस्यता पासबुक और डिस्पैच बैलेंस स्वतः अपडेट होता है'
-                : 'Auto-updates customer subscription passbook & plant dispatch balance'}
-            </span>
-          </div>
+            {/* iOS Home Bar Indicator */}
+            <div className="w-32 h-1 bg-slate-300 rounded-full mx-auto mt-2 shrink-0"></div>
+          </main>
+          {/* END: ModalContainer */}
         </div>
       )}
 
