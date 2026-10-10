@@ -1,4 +1,4 @@
-export type TabType = 'admin-insights' | 'driver-delivery' | 'customer-directory';
+export type TabType = 'admin-insights' | 'driver-delivery' | 'customer-directory' | 'delivery-history';
 
 export interface CustomerAccount {
   id: string;
@@ -20,7 +20,9 @@ export interface CustomerAccount {
   productTier: '20L Mineral Can' | '1L Case (12 Pcs)' | 'Combo 20L + 1L';
   canQuota: number;
   packQuota: number;
-  cadence: 'Daily' | 'Alternate Days' | 'Weekly Mon' | 'Weekly Thu' | 'Weekly Sat';
+  cadence: 'Daily' | 'Alternate Days' | 'Weekly Mon' | 'Weekly Thu' | 'Weekly Sat' | string;
+  deliveryDays?: string[];
+  balanceDue?: number;
   slot: '07 - 10 AM' | '10 - 01 PM' | '02 - 05 PM' | '05 - 08 PM';
   emptiesBalance: {
     clean: number;
@@ -75,6 +77,7 @@ export interface RouteStop {
   etaOrCompletedTime: string;
   gateNotes?: string;
   phone?: string;
+  deliveryDays?: string[];
 }
 
 export interface PaymentSettlement {

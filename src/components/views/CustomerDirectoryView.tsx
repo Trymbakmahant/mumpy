@@ -6,6 +6,9 @@ import { CustomerAccount } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { Icon } from '../common/Icon';
+import { parseCoordinates, toDms, EXACT_DEFAULT_LAT, EXACT_DEFAULT_LNG, EXACT_DEFAULT_DMS } from '../../lib/geoUtils';
+import { use5SecGpsCompiler } from '../../lib/use5SecGpsCompiler';
+import { GpsCompilationWidget } from '../common/GpsCompilationWidget';
 
 interface CustomerDirectoryViewProps {
   onNotify: (msg: string) => void;
@@ -55,8 +58,46 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
   const [isFetchingGps, setIsFetchingGps] = useState(false);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [gpsError, setGpsError] = useState<string | null>(null);
+
+  // 5-second multi-sample compilation GPS engine (compiles multiple fixes into high-accuracy centroid)
+  const gpsCompiler = use5SecGpsCompiler();
+  const [showManualGpsInput, setShowManualGpsInput] = useState<boolean>(false);
+
   const [productTier, setProductTier] = useState<'20L' | '1L'>('20L');
   const [dropQuantity, setDropQuantity] = useState(6);
+  const WEEK_DAYS = [
+    { key: 'Mon', en: 'Mon', hi: 'सोम' },
+    { key: 'Tue', en: 'Tue', hi: 'मंगल' },
+    { key: 'Wed', en: 'Wed', hi: 'बुध' },
+    { key: 'Thu', en: 'Thu', hi: 'गुरु' },
+    { key: 'Fri', en: 'Fri', hi: 'शुक्र' },
+    { key: 'Sat', en: 'Sat', hi: 'शनि' },
+    { key: 'Sun', en: 'Sun', hi: 'रवि' },
+  ];
+  const [selectedDeliveryDays, setSelectedDeliveryDays] = useState<string[]>([
+    'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
+  ]);
+
+  const handleToggleDeliveryDay = (dayKey: string) => {
+    setSelectedDeliveryDays((prev) => {
+      if (prev.includes(dayKey)) {
+        return prev.filter((d) => d !== dayKey);
+      } else {
+        const order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const next = [...prev, dayKey];
+        return order.filter((d) => next.includes(d));
+      }
+    });
+  };
+
+  const handleToggleAllDeliveryDays = () => {
+    if (selectedDeliveryDays.length === 7) {
+      setSelectedDeliveryDays([]);
+    } else {
+      setSelectedDeliveryDays(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+    }
+  };
+
   const [cadence, setCadence] = useState<'Daily' | 'Alternate Days' | 'Weekly Mon'>('Daily');
   const [slot, setSlot] = useState<'07 - 10 AM' | '10 - 01 PM' | '02 - 05 PM'>('07 - 10 AM');
 
@@ -67,19 +108,6 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
   } | null>(null);
 
   const depositTotal = productTier === '20L' ? dropQuantity * 150 : 0;
-
-  const parseCoordinates = (coordStr: string) => {
-    if (!coordStr || !coordStr.trim()) return { lat: 0, lng: 0, formatted: '' };
-    const cleaned = coordStr.replace(/[°NSEWnsew]/g, '').trim();
-    const parts = cleaned.split(/[, ]+/).filter(Boolean);
-    const lat = parseFloat(parts[0]) || 0;
-    const lng = parseFloat(parts[1]) || 0;
-    return {
-      lat,
-      lng,
-      formatted: coordStr.trim(),
-    };
-  };
 
   const handleFetchCoordinates = () => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
@@ -209,7 +237,9 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
     const assignedVanPlate = isDriver2 ? 'MH-12-BR-3041' : 'MH-12-BR-3042';
     const assignedDriverName = isDriver2 ? 'Suresh Kumar (Driver 2)' : 'Rajesh Patil (Driver 1)';
 
-    const parsedCoords = parseCoordinates(gpsCoordinates);
+    // Automatically generate / attach GPS: if manual coords not provided, use compiled 5s GPS
+    const finalGpsCoords = gpsCoordinates.trim() || gpsCompiler.gpsCoords;
+    const parsedCoords = parseCoordinates(finalGpsCoords);
     const newCust: CustomerAccount = {
       id: `MUM-${Math.floor(8900 + Math.random() * 900)}`,
       name: custName.trim(),
@@ -221,12 +251,22 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
       assignedVanId: assignedVanId,
       assignedVanPlate: assignedVanPlate,
       assignedDriverName: assignedDriverName,
-      premises: premises || 'Town Delivery Point',
+      premises: premises.trim() || 'Direct Doorstep Delivery',
       coordinates: parsedCoords,
       productTier: productTier === '20L' ? '20L Mineral Can' : '1L Case (12 Pcs)',
       canQuota: productTier === '20L' ? dropQuantity : 0,
       packQuota: productTier === '1L' ? dropQuantity : 0,
-      cadence: cadence,
+      cadence:
+        selectedDeliveryDays.length === 7
+          ? 'Daily'
+          : !selectedDeliveryDays.includes('Sun') && selectedDeliveryDays.length === 6
+          ? 'Except Sunday (Mon - Sat)'
+          : selectedDeliveryDays.length === 5 &&
+            !selectedDeliveryDays.includes('Sat') &&
+            !selectedDeliveryDays.includes('Sun')
+          ? 'Weekdays (Mon - Fri)'
+          : `${selectedDeliveryDays.join(', ')}`,
+      deliveryDays: selectedDeliveryDays,
       slot: slot,
       emptiesBalance: {
         clean: dropQuantity,
@@ -258,7 +298,11 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
     }
 
     setCustomers([newCust, ...customers]);
-    onNotify(`Account created for ${custName}! Exclusively assigned to ${assignedDriverName} (${assignedVanId}).`);
+    onNotify(
+      language === 'hi'
+        ? `ग्राहक "${custName}" का खाता बना! GPS [${finalGpsCoords}] जनरेट कर ${assignedDriverName} (${assignedVanId}) को सौंपा गया।`
+        : `Account created for ${custName}! Auto-pinned to GPS [${finalGpsCoords}] and assigned to ${assignedDriverName} (${assignedVanId}).`
+    );
 
     // Reset Form
     setCustName('');
@@ -268,6 +312,7 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
     setGpsCoordinates('');
     setGpsAccuracy(null);
     setGpsError(null);
+    setSelectedDeliveryDays(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
   };
 
   const handleExportRunSheet = () => {
@@ -583,120 +628,75 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="font-semibold text-on-surface">{t('premisesUnit')}</label>
-                  <input
-                    type="text"
-                    value={premises}
-                    onChange={(e) => setPremises(e.target.value)}
-                    placeholder="Tower B, Suite 402, Quantum Heights"
-                    className="px-3 py-2 rounded-xl bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary text-xs"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5 mt-1">
                   <div className="flex items-center justify-between">
-                    <label className="font-semibold text-on-surface text-xs flex items-center gap-1">
-                      <Icon name="my_location" className="text-secondary text-sm" />
-                      <span>{language === 'hi' ? 'जीपीएस स्थान (निर्देशांक)' : 'GPS Coordinates'}</span>
+                    <label className="font-semibold text-on-surface">
+                      {language === 'hi' ? 'पता / परिसर / फ्लैट नं.' : 'Address / Premises / Flat No.'} <span className="text-error">*</span>
                     </label>
-                    {gpsAccuracy !== null && (
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                          gpsAccuracy <= 15
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-sky-100 text-sky-800'
-                        }`}
-                        title={
-                          gpsAccuracy <= 15
-                            ? 'High Precision Satellite GPS'
-                            : 'Estimated via Wi-Fi network. Smart phones outdoors achieve ±5m satellite GPS.'
-                        }
-                      >
-                        {gpsAccuracy <= 15 ? (
-                          <>
-                            <span>✓</span>
-                            <span>{language === 'hi' ? `उपग्रह GPS (±${gpsAccuracy}m)` : `Satellite GPS (±${gpsAccuracy}m)`}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Icon name="wifi" size={10} />
-                            <span>{language === 'hi' ? `वाई-फ़ाई स्थान (±${gpsAccuracy}m)` : `Network/Wi-Fi Fix (±${gpsAccuracy}m)`}</span>
-                          </>
-                        )}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <input
-                        type="text"
-                        value={gpsCoordinates}
-                        onChange={(e) => {
-                          setGpsCoordinates(e.target.value);
-                          setGpsError(null);
-                        }}
-                        placeholder={language === 'hi' ? 'उदा: 20.5937, 78.9629 या लाइव प्राप्त करें' : 'e.g. 20.5937, 78.9629 or tap fetch'}
-                        className="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-surface-container text-on-surface font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                    </div>
-
                     <button
                       type="button"
-                      onClick={handleFetchCoordinates}
-                      disabled={isFetchingGps}
-                      className="px-3.5 py-2 rounded-xl bg-secondary text-white hover:bg-secondary-dim font-bold text-xs shadow-xs flex items-center gap-1.5 shrink-0 transition-all disabled:opacity-50"
-                      title="Fetch current device location via GPS"
+                      onClick={() => setShowManualGpsInput(!showManualGpsInput)}
+                      className="text-secondary hover:underline text-[11px] font-bold flex items-center gap-1"
                     >
-                      {isFetchingGps ? (
-                        <>
-                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>{language === 'hi' ? 'सटीक खोज...' : 'Refining...'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Icon name="my_location" className="text-sm" />
-                          <span>{language === 'hi' ? 'लाइव GPS लें' : 'Get Live GPS'}</span>
-                        </>
-                      )}
+                      <Icon name="tune" size={12} />
+                      <span>
+                        {showManualGpsInput
+                          ? (language === 'hi' ? 'मैन्युअल छिपाएं' : 'Hide override')
+                          : (language === 'hi' ? 'मैन्युअल GPS बदलें' : 'Manual GPS override')}
+                      </span>
                     </button>
                   </div>
-
-                  {gpsAccuracy !== null && gpsAccuracy > 20 && (
-                    <div className="p-2 rounded-xl bg-surface-container-low border border-surface-container text-[10.5px] text-on-surface-variant flex items-center gap-1.5">
-                      <Icon name="info" size={13} className="text-secondary shrink-0" />
-                      <span>
-                        {language === 'hi'
-                          ? 'लैपटॉप केवल वाई-फ़ाई सिग्नल (±50m) का उपयोग करते हैं। ड्राइवर के मोबाइल फ़ोन में उपग्रह (Satellite GPS) से ±3-8m सटीक स्थान मिलता है।'
-                          : 'Laptops estimate location via Wi-Fi (±50m). Drivers using mobile phones outdoors with satellite GPS achieve ±3m to ±8m precision.'}
-                      </span>
-                    </div>
-                  )}
-
-                  {gpsCoordinates && (
-                    <div className="flex items-center justify-between text-[11px] px-1">
-                      <span className="text-on-surface-variant font-medium">
-                        {language === 'hi' ? 'स्थान पिन किया गया' : 'Location pinned'}
-                      </span>
-                      <a
-                        href={`https://www.google.com/maps?q=${encodeURIComponent(gpsCoordinates)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-secondary font-bold hover:underline flex items-center gap-1"
-                      >
-                        <Icon name="open_in_new" size={12} />
-                        <span>{language === 'hi' ? 'गूगल मैप्स पर देखें' : 'View on Google Maps'}</span>
-                      </a>
-                    </div>
-                  )}
-
-                  {gpsError && (
-                    <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-[11px] flex items-center gap-1.5">
-                      <Icon name="warning" size={14} className="text-amber-600 shrink-0" />
-                      <span>{gpsError}</span>
-                    </div>
-                  )}
+                  <input
+                    type="text"
+                    required
+                    value={premises}
+                    onChange={(e) => setPremises(e.target.value)}
+                    placeholder={
+                      language === 'hi'
+                        ? 'उदा: फ्लैट नं. 402, शांति रेजीडेंसी, सेक्टर 14'
+                        : 'e.g. Flat No. 402, Shanti Residency, Sector 14'
+                    }
+                    className="px-3 py-2 rounded-xl bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary text-xs"
+                  />
+                  <span className="text-[10.5px] text-on-surface-variant flex items-center gap-1 pt-0.5">
+                    <Icon name="auto_awesome" size={13} className="text-emerald-600 shrink-0" />
+                    <span>
+                      {language === 'hi'
+                        ? 'केवल पता लिखें। "पंजीकृत करें" पर क्लिक करते ही सटीक GPS स्वतः जनरेट होकर जुड़ जाएगा।'
+                        : 'Only enter the address. Precise GPS is automatically generated on registration.'}
+                    </span>
+                  </span>
                 </div>
+
+                {showManualGpsInput && (
+                  <div className="flex flex-col gap-1.5 p-3 rounded-2xl bg-surface-container-low border border-surface-container text-xs animate-in fade-in">
+                    <div className="flex items-center justify-between">
+                      <label className="font-bold text-on-surface text-[11px] flex items-center gap-1">
+                        <Icon name="pin_drop" size={13} className="text-secondary" />
+                        <span>{language === 'hi' ? 'वैकल्पिक मैन्युअल GPS निर्देशांक' : 'Custom GPS Override (Optional)'}</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setGpsCoordinates(gpsCompiler.gpsCoords);
+                          setGpsError(null);
+                        }}
+                        className="text-[10px] text-primary font-bold hover:underline"
+                      >
+                        {language === 'hi' ? 'संकलित GPS भरें' : 'Use Compiled GPS'}
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={gpsCoordinates}
+                      onChange={(e) => {
+                        setGpsCoordinates(e.target.value);
+                        setGpsError(null);
+                      }}
+                      placeholder={`e.g. ${gpsCompiler.gpsCoords}`}
+                      className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-surface-container text-on-surface font-mono text-xs focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Water Specification & Quota */}
@@ -765,29 +765,113 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                   </div>
 
                   <div>
-                    <span className="font-semibold text-on-surface block mb-1">{t('cadence')}</span>
-                    <select
-                      value={cadence}
-                      onChange={(e: any) => setCadence(e.target.value)}
-                      className="w-full py-1.5 px-2 rounded-xl bg-surface-container-low border border-surface-container text-xs font-medium"
-                    >
-                      <option value="Daily">{t('daily')}</option>
-                      <option value="Alternate Days">{t('altDays')}</option>
-                      <option value="Weekly Mon">{t('weeklyMon')}</option>
-                    </select>
-                  </div>
-
-                  <div>
                     <span className="font-semibold text-on-surface block mb-1">{t('slot')}</span>
                     <select
                       value={slot}
                       onChange={(e: any) => setSlot(e.target.value)}
-                      className="w-full py-1.5 px-2 rounded-xl bg-surface-container-low border border-surface-container text-xs font-medium"
+                      className="w-full py-2.5 px-3 rounded-xl bg-surface-container-low border border-surface-container text-xs font-medium"
                     >
                       <option>07 - 10 AM</option>
                       <option>10 - 01 PM</option>
                       <option>02 - 05 PM</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Delivery Days & Custom Schedule Selector */}
+                <div className="flex flex-col gap-2 p-3.5 bg-surface-container-low rounded-2xl border border-surface-container">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div>
+                      <span className="font-bold text-on-surface text-xs block">
+                        {language === 'hi' ? 'डिलीवरी के दिन / शेड्यूल' : 'Delivery Schedule (Days)'}
+                      </span>
+                      <span className="text-[11px] text-primary font-bold block">
+                        {selectedDeliveryDays.length === 7
+                          ? (language === 'hi' ? 'प्रतिदिन (सभी 7 दिन)' : 'Every Day (Daily)')
+                          : !selectedDeliveryDays.includes('Sun') && selectedDeliveryDays.length === 6
+                          ? (language === 'hi' ? 'रविवार छोड़कर प्रतिदिन (सोम-शनि)' : 'Every day except Sunday (Mon - Sat)')
+                          : selectedDeliveryDays.length === 5 &&
+                            !selectedDeliveryDays.includes('Sat') &&
+                            !selectedDeliveryDays.includes('Sun')
+                          ? (language === 'hi' ? 'केवल कार्यदिवस (सोम-शुक्र)' : 'Weekdays only (Mon - Fri)')
+                          : selectedDeliveryDays.length > 0
+                          ? `${selectedDeliveryDays.join(', ')} (${selectedDeliveryDays.length} ${
+                              language === 'hi' ? 'दिन/सप्ताह' : 'days/wk'
+                            })`
+                          : (language === 'hi' ? '⚠️ कोई दिन नहीं चुना गया' : '⚠️ No days selected')}
+                      </span>
+                    </div>
+
+                    {/* Small Check Button for All Days */}
+                    <button
+                      type="button"
+                      onClick={handleToggleAllDeliveryDays}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer border ${
+                        selectedDeliveryDays.length === 7
+                          ? 'bg-primary text-white border-primary shadow-xs'
+                          : 'bg-white text-on-surface border-surface-container hover:border-primary/40'
+                      }`}
+                      title={
+                        selectedDeliveryDays.length === 7
+                          ? 'Click to deselect all days'
+                          : 'Click to select all 7 days'
+                      }
+                    >
+                      <Icon
+                        name={
+                          selectedDeliveryDays.length === 7
+                            ? 'check_box'
+                            : 'check_box_outline_blank'
+                        }
+                        className="text-sm"
+                      />
+                      <span>{language === 'hi' ? 'सभी दिन (All Days)' : 'All Days'}</span>
+                    </button>
+                  </div>
+
+                  {/* Weekday Buttons (Mon to Sun) */}
+                  <div className="grid grid-cols-7 gap-1.5 pt-1">
+                    {WEEK_DAYS.map((d) => {
+                      const isSelected = selectedDeliveryDays.includes(d.key);
+                      const isSun = d.key === 'Sun';
+                      return (
+                        <button
+                          key={d.key}
+                          type="button"
+                          onClick={() => handleToggleDeliveryDay(d.key)}
+                          className={`py-2 px-1 rounded-xl text-center flex flex-col items-center justify-center gap-0.5 transition-all border cursor-pointer ${
+                            isSelected
+                              ? isSun
+                                ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                                : 'bg-primary text-white border-primary shadow-xs'
+                              : 'bg-white text-on-surface-variant border-surface-container hover:bg-surface-container/60 hover:text-on-surface'
+                          }`}
+                          title={`${d.en} (${isSelected ? 'Delivery Active' : 'Off - No Delivery'})`}
+                        >
+                          <span className="text-xs font-black leading-none">{d.en}</span>
+                          <span
+                            className={`text-[9px] font-medium leading-none ${
+                              isSelected ? 'text-white/85' : 'text-outline'
+                            }`}
+                          >
+                            {d.hi}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex items-center justify-between text-[10px] text-on-surface-variant pt-0.5">
+                    <span>
+                      {language === 'hi'
+                        ? '💡 जिस दिन डिलीवरी नहीं चाहिए, उस पर क्लिक करें (उदा. Sunday)'
+                        : '💡 Click any day to toggle off (e.g. click Sun to exclude Sunday)'}
+                    </span>
+                    {!selectedDeliveryDays.includes('Sun') && selectedDeliveryDays.length > 0 && (
+                      <span className="text-amber-800 font-bold bg-amber-100/90 px-1.5 py-0.5 rounded-md border border-amber-300">
+                        {language === 'hi' ? 'रविवार बंद ✕' : 'Sunday Off ✕'}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -798,6 +882,13 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                   </div>
                 )}
               </div>
+
+              {/* 5-Second Accurate GPS Multi-Sample Compilation Widget */}
+              <GpsCompilationWidget
+                language={language}
+                compiler={gpsCompiler}
+                manualCoordsOverride={gpsCoordinates}
+              />
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t border-surface-container">
@@ -971,8 +1062,17 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                       <strong className="text-primary font-bold block text-sm">
                         {cust.canQuota ? `${cust.canQuota} × 20L Cans` : `${cust.packQuota} × 1L Cases`}
                       </strong>
-                      <span className="text-[10px] text-on-surface-variant font-medium">
-                        {cust.cadence} ({cust.slot})
+                      <span className="text-[10px] text-on-surface-variant font-medium flex items-center gap-1">
+                        <span>
+                          {cust.deliveryDays
+                            ? cust.deliveryDays.length === 7
+                              ? 'Daily'
+                              : !cust.deliveryDays.includes('Sun') && cust.deliveryDays.length === 6
+                              ? 'Mon-Sat (No Sun)'
+                              : cust.deliveryDays.join(',')
+                            : cust.cadence}
+                        </span>
+                        <span>• ({cust.slot})</span>
                       </span>
                     </div>
 

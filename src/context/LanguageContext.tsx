@@ -63,6 +63,10 @@ export const translations: Translations = {
     en: 'Customer Directory',
     hi: 'ग्राहक निर्देशिका',
   },
+  deliveryHistory: {
+    en: 'History & Settlements',
+    hi: 'इतिहास और निपटान',
+  },
   plantReservoir: {
     en: 'Plant Reservoir',
     hi: 'प्लांट जलाशय',
@@ -426,6 +430,58 @@ export const translations: Translations = {
   monthlyLedger: {
     en: 'Monthly Ledger',
     hi: 'मासिक खाता',
+  },
+  oldBalanceCredits: {
+    en: 'Old Balance / Credits',
+    hi: 'पुराना बकाया / क्रेडिट',
+  },
+  previousOutstandingBalance: {
+    en: 'Previous Outstanding Balance',
+    hi: 'पिछला बकाया खाता',
+  },
+  collectOldBalance: {
+    en: 'Collect Old Balance Now',
+    hi: 'यह बकाया आज ही लें',
+  },
+  clearFullBalance: {
+    en: 'Pay Full Balance',
+    hi: 'पूरा बकाया चुकता',
+  },
+  accountAllClear: {
+    en: 'All Cleared (Zero Dues)',
+    hi: 'खाता चुकता (शून्य बकाया)',
+  },
+  creditAvailable: {
+    en: 'Advance Credit Available',
+    hi: 'अग्रिम क्रेडिट उपलब्ध',
+  },
+  applyCredit: {
+    en: 'Apply Credit to Current Bill',
+    hi: 'वर्तमान बिल पर क्रेडिट लागू करें',
+  },
+  currentDeliveryCharge: {
+    en: 'Current Delivery',
+    hi: 'वर्तमान डिलीवरी',
+  },
+  oldBalanceSettled: {
+    en: 'Old Balance Settled',
+    hi: 'पुराना बकाया चुकता',
+  },
+  totalToCollect: {
+    en: 'Total to Collect',
+    hi: 'कुल संग्रह राशि',
+  },
+  payCurrentDelivery: {
+    en: 'Pay Current Delivery',
+    hi: 'आज की डिलीवरी का भुगतान',
+  },
+  deferToLedger: {
+    en: 'Defer to Ledger',
+    hi: 'खाते में बाद में',
+  },
+  instantPaymentRequiredForDues: {
+    en: 'Settling past balance requires Cash or UPI payment (Monthly Ledger unavailable)',
+    hi: 'पुराना बकाया चुकता करने के लिए नकद या यूपीआई आवश्यक है (मासिक खाता अनुपलब्ध)',
   },
   dropOffNotePlaceholder: {
     en: 'e.g. Handed to security guard Mohan / Left at flat',

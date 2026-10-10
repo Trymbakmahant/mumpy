@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { initialAreaHotspots, initialSettlements, weeklySalesTrend } from '../../data/mockData';
+import { AreaHotspot, PaymentSettlement } from '../../types';
 import { GstSummaryModal } from '../Modals/GstSummaryModal';
 import { ManifestModal } from '../Modals/ManifestModal';
 import { useLanguage } from '../../context/LanguageContext';
@@ -11,17 +12,20 @@ import { Icon } from '../common/Icon';
 interface AdminInsightsViewProps {
   grossRevenue: number;
   onDeployExtraReserve: () => void;
+  onOpenHistory?: (areaId?: string) => void;
 }
 
 export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
   grossRevenue,
   onDeployExtraReserve,
+  onOpenHistory,
 }) => {
   const { t, language } = useLanguage();
   const [isGstOpen, setIsGstOpen] = useState(false);
   const [isManifestOpen, setIsManifestOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string>('Today');
   const [serverSyncTime, setServerSyncTime] = useState<string>('2 mins ago');
+  const [settlements, setSettlements] = useState<PaymentSettlement[]>(initialSettlements);
 
   React.useEffect(() => {
     fetch('/api/analytics')
@@ -29,6 +33,9 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
       .then((data) => {
         if (data?.syncTime) {
           setServerSyncTime(data.syncTime);
+        }
+        if (data?.settlements && data.settlements.length > 0) {
+          setSettlements(data.settlements);
         }
       })
       .catch((e) => console.warn('Analytics server sync:', e));
@@ -38,7 +45,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       'Invoice,Client,Location,Amount,Method,Status,Time\n' +
-      initialSettlements
+      settlements
         .map(
           (s) =>
             `${s.invoiceNo},"${s.clientName}","${s.location}",${s.amount},${s.method},${s.status},${s.time}`
@@ -254,16 +261,21 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
               {initialAreaHotspots.map((area) => (
                 <div
                   key={area.id}
-                  className="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container hover:border-secondary/40 hover:bg-surface-container-low/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  onClick={() => onOpenHistory?.(area.id)}
+                  className="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container hover:border-primary/50 hover:bg-surface-container-low/60 hover:shadow-md cursor-pointer transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group"
+                  title={language === 'hi' ? 'क्लिक करके इतिहास और निपटान पृष्ठ खोलें' : 'Click to open History & Settlements page for this sector'}
                 >
                   <div className="flex items-start gap-3.5">
-                    <span className="w-9 h-9 rounded-xl bg-primary-fixed text-primary font-extrabold flex items-center justify-center text-sm shadow-sm">
+                    <span className="w-9 h-9 rounded-xl bg-primary-fixed text-primary font-extrabold flex items-center justify-center text-sm shadow-sm group-hover:scale-105 transition-transform">
                       {area.rank}
                     </span>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-bold text-on-surface text-base">
-                          {area.areaName}
+                        <h4 className="font-bold text-on-surface text-base group-hover:text-primary transition-colors flex items-center gap-1.5">
+                          <span>{area.areaName}</span>
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-primary text-xs font-semibold flex items-center">
+                            → {language === 'hi' ? 'इतिहास पृष्ठ' : 'View History Page'}
+                          </span>
                         </h4>
                         <span className="text-xs text-outline font-medium">
                           {area.routeTag}
@@ -401,24 +413,36 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             </div>
 
             <div className="divide-y divide-surface-container-low flex flex-col">
-              {initialSettlements.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="py-3 flex items-center justify-between gap-3 hover:bg-surface-container-lowest transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-primary text-sm shadow-xs">
-                      <Icon name={tx.method.includes('UPI') ? 'bolt' : tx.method === 'Cash' ? 'store' : 'domain'} className="text-base" />
+              {settlements.map((tx) => {
+                const matchedArea = initialAreaHotspots.find((a) =>
+                  tx.location.toLowerCase().includes(a.areaName.toLowerCase().split(' ')[0]) ||
+                  (tx.clientName.toLowerCase().includes('infosys') && a.id === 'area-01') ||
+                  (tx.clientName.toLowerCase().includes('aura') && a.id === 'area-04') ||
+                  (tx.clientName.toLowerCase().includes('apex') && a.id === 'area-03') ||
+                  (tx.clientName.toLowerCase().includes('lakeview') && a.id === 'area-02') ||
+                  (tx.clientName.toLowerCase().includes('faculty') && a.id === 'area-05')
+                ) || initialAreaHotspots[0];
+
+                return (
+                  <div
+                    key={tx.id}
+                    onClick={() => onOpenHistory?.(matchedArea.id)}
+                    className="py-3 flex items-center justify-between gap-3 hover:bg-surface-container-low/60 rounded-xl px-2 transition-all cursor-pointer group"
+                    title={language === 'hi' ? 'क्लिक करके निपटान और इतिहास पृष्ठ देखें' : 'Click to inspect settlement ledger & history page'}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-primary text-sm shadow-xs group-hover:scale-105 transition-transform">
+                        <Icon name={tx.method.includes('UPI') ? 'bolt' : tx.method === 'Cash' ? 'store' : 'domain'} className="text-base" />
+                      </div>
+                      <div>
+                        <h5 className="font-bold text-on-surface text-sm leading-tight group-hover:text-primary transition-colors">
+                          {tx.clientName}
+                        </h5>
+                        <span className="text-[11px] text-outline">
+                          {tx.location}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <h5 className="font-bold text-on-surface text-sm leading-tight">
-                        {tx.clientName}
-                      </h5>
-                      <span className="text-[11px] text-outline">
-                        {tx.location}
-                      </span>
-                    </div>
-                  </div>
 
                   <div className="text-right">
                     <span className="font-bold text-on-surface text-sm block">
@@ -437,11 +461,12 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                     </span>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             <button
-              onClick={() => alert(language === 'hi' ? 'सभी 142 दैनिक भुगतान खुल रहे हैं।' : 'Opening all 142 daily settlements table view.')}
+              onClick={() => onOpenHistory ? onOpenHistory('all') : alert(language === 'hi' ? 'सभी 142 दैनिक भुगतान खुल रहे हैं।' : 'Opening all 142 daily settlements table view.')}
               className="w-full py-2.5 rounded-xl bg-surface-container-low text-primary font-bold text-xs hover:bg-surface-container transition-colors text-center"
             >
               {t('viewAllInvoices')}

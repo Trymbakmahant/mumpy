@@ -50,6 +50,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             icon: 'analytics',
           },
           {
+            id: 'delivery-history',
+            labelKey: 'deliveryHistory',
+            icon: 'receipt_long',
+          },
+          {
             id: 'customer-directory',
             labelKey: 'customerDirectory',
             icon: 'group_add',

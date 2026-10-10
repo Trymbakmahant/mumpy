@@ -9,6 +9,7 @@ import { BottomNav } from '../components/BottomNav';
 import { AdminInsightsView } from '../components/views/AdminInsightsView';
 import { DriverProximityView } from '../components/views/DriverProximityView';
 import { CustomerDirectoryView } from '../components/views/CustomerDirectoryView';
+import { DeliveryHistoryView } from '../components/views/DeliveryHistoryView';
 import { LandingPageView } from '../components/views/LandingPageView';
 import { BroadcastModal } from '../components/Modals/BroadcastModal';
 import { LoginModal } from '../components/Modals/LoginModal';
@@ -19,6 +20,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>(
     role === 'driver' ? 'driver-delivery' : 'admin-insights'
   );
+  const [selectedHistoryAreaId, setSelectedHistoryAreaId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [grossRevenue, setGrossRevenue] = useState<number>(48650);
   const [reservoirLevel, setReservoirLevel] = useState<number>(92);
@@ -95,12 +97,24 @@ export default function Home() {
               )}
             </>
           ) : (
-            /* ADMIN VIEWS - ONLY Admin Insights & Customer Directory (Driver Proximity completely removed) */
+            /* ADMIN VIEWS - Admin Insights, Customer Directory & Delivery History Page */
             <>
               {activeTab === 'admin-insights' && (
                 <AdminInsightsView
                   grossRevenue={grossRevenue}
                   onDeployExtraReserve={handleDeployExtraReserve}
+                  onOpenHistory={(areaId) => {
+                    setSelectedHistoryAreaId(areaId || 'all');
+                    setActiveTab('delivery-history');
+                  }}
+                />
+              )}
+
+              {activeTab === 'delivery-history' && (
+                <DeliveryHistoryView
+                  initialAreaId={selectedHistoryAreaId}
+                  onBackToAnalytics={() => setActiveTab('admin-insights')}
+                  onNotify={showToast}
                 />
               )}
 

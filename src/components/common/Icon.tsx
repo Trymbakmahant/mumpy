@@ -69,6 +69,7 @@ import {
   Zap,
   Store,
   Wallet,
+  ExternalLink,
   LucideProps,
 } from 'lucide-react';
 
@@ -96,13 +97,19 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   radar: Compass,
   cell_tower: Radio,
   radio: Radio,
+  satellite: Radio,
+  satellite_alt: Radio,
   wifi: Wifi,
   alt_route: Route,
   route: Route,
   navigation: Navigation,
   near_me: Navigation,
   location_on: MapPin,
+  pin_drop: MapPin,
   my_location: Crosshair,
+  auto_awesome: Sparkles,
+  sparkles: Sparkles,
+  tune: Filter,
 
   // Users & Administration
   groups: Users,
@@ -152,6 +159,8 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   filter_alt: Filter,
   filter: Filter,
   send: Send,
+  open_in_new: ExternalLink,
+  external_link: ExternalLink,
   add: Plus,
   remove: Minus,
   arrow_forward: ArrowRight,

@@ -85,6 +85,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
       icon: 'analytics',
     },
     {
+      id: 'delivery-history',
+      labelKey: 'deliveryHistory',
+      icon: 'receipt_long',
+    },
+    {
       id: 'customer-directory',
       labelKey: 'customersTab',
       icon: 'groups',
