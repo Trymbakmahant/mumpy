@@ -1244,11 +1244,6 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
                   <h3 className="font-extrabold text-title-lg text-primary">
                     {language === 'hi' ? 'ऑन-रूट नया ग्राहक पंजीकरण' : 'On-Route Customer Registration'}
                   </h3>
-                  <span className="text-[11px] text-on-surface-variant font-medium">
-                    {language === 'hi'
-                      ? `वाहन: ${vanNumber} (${vanPlate}) • ${routeSector}`
-                      : `Route: ${vanNumber} (${vanPlate}) • ${routeSector}`}
-                  </span>
                 </div>
               </div>
               <button
