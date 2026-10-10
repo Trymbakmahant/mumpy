@@ -520,7 +520,17 @@ export const LandingPageView: React.FC = () => {
           </div>
           <div className="flex justify-between items-center text-slate-400">
             <span>Mumpy Pure Hydration Pvt Ltd</span>
-            <span className="text-sky-600 font-semibold">Support Desk</span>
+            <div className="flex items-center gap-3">
+              <a
+                href="/pitchdeck"
+                className="text-sky-600 font-bold hover:underline flex items-center gap-0.5"
+                title="View Owner Pitch Deck"
+              >
+                <span>Pitch Deck</span>
+                <span className="text-[9px] bg-sky-100 text-sky-700 font-mono px-1 py-0.2 rounded font-bold">⚡ LIVE</span>
+              </a>
+              <span className="text-slate-500 font-medium">Support Desk</span>
+            </div>
           </div>
         </footer>
       </div>

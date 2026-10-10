@@ -259,6 +259,18 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
+          {/* Pitch Deck presentation link */}
+          <a
+            href="/pitchdeck"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-800 text-xs font-bold transition-all shadow-2xs"
+            title="Open Owner Pitch Deck Presentation (/pitchdeck)"
+          >
+            <span className="text-[11px]">⚡</span>
+            <span className="hidden sm:inline">Pitch Deck</span>
+          </a>
+
           <button
             onClick={logout}
             className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-surface-container hover:bg-surface-container-high border border-surface-container text-xs font-bold text-on-surface-variant hover:text-primary transition-all shadow-2xs"
