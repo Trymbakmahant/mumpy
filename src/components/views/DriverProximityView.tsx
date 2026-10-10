@@ -497,228 +497,252 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
 
       {/* Main Content: Proximity Queue */}
       <div className="flex flex-col gap-4">
-        <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-surface-container">
+        <div className="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/80 shadow-boro-sm flex flex-col gap-3.5">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-brand-700 flex items-center justify-center border border-blue-100 shadow-2xs">
+                <Icon name="near_me" size={16} />
+              </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <Icon name="near_me" className="text-secondary text-xl" />
-                  <h3 className="text-headline-sm text-primary font-bold">
-                    {t('proximityQueueTitle')}
-                  </h3>
-                  <button
-                    onClick={() => setIsRegisterModalOpen(true)}
-                    className="ml-2 flex items-center gap-1 px-2.5 py-1 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-bold text-xs hover:bg-secondary hover:text-white transition-all shadow-2xs"
-                    title="Register New Customer on Route"
-                  >
-                    <Icon name="person_add" size={14} />
-                    <span>{language === 'hi' ? '+ ऑन-रूट पंजीकरण' : '+ Quick Onboard'}</span>
-                  </button>
-                </div>
-                <span className="text-xs text-on-surface-variant">
+                <h3 className="text-[15px] font-bold text-slate-900 leading-tight">
+                  {t('proximityQueueTitle')}
+                </h3>
+                <p className="text-[11px] text-slate-500 font-medium">
                   {t('sortedByGps')}
-                </span>
-              </div>
-
-              {/* Distance Filters */}
-              <div className="flex bg-surface-container-low p-1 rounded-xl text-xs font-semibold">
-                <button
-                  onClick={() => setActiveFilter('all')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    activeFilter === 'all'
-                      ? 'bg-primary text-white shadow-xs'
-                      : 'text-on-surface-variant'
-                  }`}
-                >
-                  {language === 'hi' ? `सभी (${queue.length})` : `All (${queue.length})`}
-                </button>
-                <button
-                  onClick={() => setActiveFilter('500m')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    activeFilter === '500m'
-                      ? 'bg-primary text-white shadow-xs'
-                      : 'text-on-surface-variant'
-                  }`}
-                >
-                  &lt; 500m
-                </button>
-                <button
-                  onClick={() => setActiveFilter('1km')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    activeFilter === '1km'
-                      ? 'bg-primary text-white shadow-xs'
-                      : 'text-on-surface-variant'
-                  }`}
-                >
-                  &lt; 1km
-                </button>
-                <button
-                  onClick={() => setActiveFilter('unserved')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    activeFilter === 'unserved'
-                      ? 'bg-primary text-white shadow-xs'
-                      : 'text-on-surface-variant'
-                  }`}
-                >
-                  {language === 'hi' ? 'अपूर्ण' : 'Unserved'}
-                </button>
+                </p>
               </div>
             </div>
 
-            {/* Queue Cards */}
-            <div className="flex flex-col gap-3">
-              {filteredQueue.map((item) => {
-                const isSelected = selectedStop.id === item.id;
-                const isCompleted = item.status === 'Completed';
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsRegisterModalOpen(true)}
+                className="flex items-center gap-1 bg-blue-50/90 hover:bg-blue-100/80 active:scale-95 text-brand-700 border border-blue-200/70 rounded-full px-3 py-1 text-[11px] font-semibold transition-all shadow-2xs"
+                title="Register New Customer on Route"
+              >
+                <Icon name="add" size={14} />
+                <span>{language === 'hi' ? 'त्वरित जोड़ें' : 'Quick Onboard'}</span>
+              </button>
+            </div>
+          </div>
 
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedStopId(item.id);
-                      setCansDelivered(item.cansToDeliver);
-                      setEmptiesCollected(item.expectedEmpties);
-                      setPayCurrentDelivery(true);
-                      setPayPastBalance(false);
-                      setPastPaymentAmount(item.balanceDue > 0 ? item.balanceDue : 0);
-                      setApplyCredit(false);
-                    }}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col gap-2.5 ${
-                      isSelected
-                        ? 'border-primary bg-primary-fixed/20 shadow-md scale-[1.01]'
-                        : isCompleted
-                        ? 'border-emerald-200 bg-emerald-50/40 opacity-70'
-                        : 'border-surface-container bg-surface-container-lowest hover:bg-surface-container-low/50'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[11px] font-bold">
-                            {item.distance}
-                          </span>
-                          <span className="text-xs font-bold text-outline">
-                            {item.priority}
-                          </span>
-                          {isCompleted && (
-                            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.2 rounded">
-                              ✓ {language === 'hi' ? 'डिलीवर' : 'Delivered'}
-                            </span>
-                          )}
-                        </div>
-                        <h4 className="font-extrabold text-on-surface text-base mt-1">
-                          {item.customerName}
-                        </h4>
-                        <p className="text-xs text-on-surface-variant flex items-center gap-1 mt-0.5">
-                          <Icon name="location_on" className="text-sm text-outline" />
-                          {item.address}
-                        </p>
-                        {item.deliveryDays && item.deliveryDays.length > 0 && (
-                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-surface-container text-on-surface flex items-center gap-1">
-                              <Icon name="event" size={12} className="text-primary" />
-                              <span>
-                                {item.deliveryDays.length === 7
-                                  ? (language === 'hi' ? 'प्रतिदिन (Mon-Sun)' : 'Daily')
-                                  : !item.deliveryDays.includes('Sun') && item.deliveryDays.length === 6
-                                  ? (language === 'hi' ? 'सोम-शनि (रविवार बंद)' : 'Mon - Sat (No Sun)')
-                                  : item.deliveryDays.join(', ')}
-                              </span>
-                            </span>
-                          </div>
-                        )}
-                      </div>
+          {/* Filter Segmented Tabs */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto no-scrollbar text-xs">
+            <button
+              type="button"
+              onClick={() => setActiveFilter('all')}
+              className={`px-3 py-1 rounded-lg font-semibold transition-all ${
+                activeFilter === 'all'
+                  ? 'bg-brand-950 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+            >
+              {language === 'hi' ? `सभी (${queue.length})` : `All (${queue.length})`}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('500m')}
+              className={`px-3 py-1 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeFilter === '500m'
+                  ? 'bg-brand-950 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+            >
+              &lt; 500m
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('1km')}
+              className={`px-3 py-1 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeFilter === '1km'
+                  ? 'bg-brand-950 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+            >
+              &lt; 1km
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('unserved')}
+              className={`px-3 py-1 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeFilter === 'unserved'
+                  ? 'bg-brand-950 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+            >
+              {language === 'hi' ? 'अपूर्ण' : 'Unserved'}
+            </button>
+          </div>
 
-                      <div className="text-right flex flex-col items-end gap-1.5">
-                        <span
-                          className={`text-xs font-bold ${
-                            item.balanceDue > 0
-                              ? 'text-amber-800'
-                              : item.balanceDue < 0
-                              ? 'text-blue-700'
-                              : 'text-emerald-700'
-                          }`}
-                        >
-                          {language === 'hi' ? 'बैलेंस:' : 'Balance:'}{' '}
-                          {item.balanceDue === 0
-                            ? language === 'hi'
-                              ? 'चुकता (₹0)'
-                              : 'Clear (₹0)'
-                            : item.balanceDue > 0
-                            ? `₹${item.balanceDue} Due`
-                            : `₹${Math.abs(item.balanceDue)} Credit`}
+          {/* Delivery List */}
+          <section aria-label="Nearby Deliveries Queue" className="space-y-3">
+            {filteredQueue.map((item) => {
+              const isSelected = selectedStop.id === item.id;
+              const isCompleted = item.status === 'Completed';
+
+              return (
+                <article
+                  key={item.id}
+                  onClick={() => {
+                    setSelectedStopId(item.id);
+                    setCansDelivered(item.cansToDeliver);
+                    setEmptiesCollected(item.expectedEmpties);
+                    setPayCurrentDelivery(true);
+                    setPayPastBalance(false);
+                    setPastPaymentAmount(item.balanceDue > 0 ? item.balanceDue : 0);
+                    setApplyCredit(false);
+                  }}
+                  className={`bg-white rounded-2xl p-3.5 border transition-all flex flex-col justify-between relative group cursor-pointer ${
+                    isSelected
+                      ? 'border-brand-950 ring-1 ring-brand-950/20 shadow-boro-md bg-blue-50/10'
+                      : isCompleted
+                      ? 'border-slate-200/80 bg-slate-50/50 opacity-80'
+                      : 'border-slate-200/80 shadow-boro-sm hover:border-slate-300'
+                  }`}
+                >
+                  {/* Card Header / Distance & Financial Status */}
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="inline-flex items-center text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200/60">
+                        {item.distance} away
+                      </span>
+                      {isCompleted ? (
+                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
+                          ✓ {language === 'hi' ? 'डिलीवर' : 'Delivered'}
                         </span>
-                        <div className="flex items-center gap-1.5 mt-1">
-                          <a
-                            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="px-2.5 py-1 rounded-xl bg-surface-container hover:bg-secondary-fixed text-secondary font-bold text-xs border border-surface-container-high transition-all flex items-center gap-1 shadow-2xs"
-                            title={language === 'hi' ? 'गूगल मैप्स नेविगेशन खोलें' : 'Open GPS Navigation in Google Maps'}
-                          >
-                            <Icon name="navigation" size={13} />
-                            <span>{language === 'hi' ? 'नेविगेट' : 'GPS'}</span>
-                          </a>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openDropOffModal(item);
-                            }}
-                            className="px-3 py-1 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-container shadow-xs flex items-center gap-1"
-                          >
-                            <Icon name="local_shipping" className="text-sm" />
-                            {t('logDropOff')}
-                          </button>
-                        </div>
-                      </div>
+                      ) : item.priority === 'High Priority' ? (
+                        <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full border border-rose-100">
+                          High Priority
+                        </span>
+                      ) : item.priority === 'Enterprise' ? (
+                        <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded-full border border-indigo-100">
+                          Enterprise
+                        </span>
+                      ) : item.priority === 'Commercial' ? (
+                        <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                          Commercial
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                          {item.priority || 'Standard'}
+                        </span>
+                      )}
                     </div>
+
+                    {/* Financial Status Badge */}
+                    {item.balanceDue > 0 ? (
+                      <div className="text-[12px] font-semibold text-amber-700 bg-amber-50/80 border border-amber-200/60 px-2 py-0.5 rounded-md">
+                        Balance: ₹{item.balanceDue} Due
+                      </div>
+                    ) : item.balanceDue === 0 ? (
+                      <div className="text-[12px] font-semibold text-emerald-700 bg-emerald-50/90 border border-emerald-200/70 px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Balance: Clear (₹0)</span>
+                      </div>
+                    ) : (
+                      <div className="text-[12px] font-semibold text-blue-700 bg-blue-50/90 border border-blue-200/70 px-2 py-0.5 rounded-md">
+                        Credit: ₹{Math.abs(item.balanceDue)}
+                      </div>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          </div>
+
+                  {/* Customer Identity */}
+                  <div className="mb-2">
+                    <h3 className="text-[15px] font-bold text-slate-900 leading-snug tracking-tight">
+                      {item.customerName}
+                    </h3>
+                    <p className="text-[12px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                      <Icon name="location_on" size={14} className="text-slate-400 shrink-0" />
+                      <span>{item.address}</span>
+                    </p>
+                    {item.deliveryDays && item.deliveryDays.length > 0 && (
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1 border border-slate-200/60">
+                          <Icon name="calendar" size={11} className="text-slate-400" />
+                          <span>
+                            {item.deliveryDays.length === 7
+                              ? (language === 'hi' ? 'प्रतिदिन (Mon-Sun)' : 'Daily')
+                              : !item.deliveryDays.includes('Sun') && item.deliveryDays.length === 6
+                              ? (language === 'hi' ? 'सोम-शनि (रविवार बंद)' : 'Mon - Sat (No Sun)')
+                              : item.deliveryDays.join(', ')}
+                          </span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Interaction Actions */}
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/80 text-xs font-semibold hover:bg-blue-100 transition-colors active:scale-95 shadow-2xs"
+                      title={language === 'hi' ? 'गूगल मैप्स नेविगेशन खोलें' : 'Open GPS Navigation in Google Maps'}
+                    >
+                      <Icon name="navigation" size={13} />
+                      <span>GPS</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDropOffModal(item);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-950 text-white text-xs font-semibold hover:bg-brand-900 transition-colors shadow-xs active:scale-95"
+                    >
+                      <Icon name="truck" size={14} className="text-blue-300" />
+                      <span>{t('logDropOff')}</span>
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+        </div>
         </div>
 
-      {/* Driver Daily Telemetry Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
-            <Icon name="schedule" className="text-xl" />
-          </div>
+      {/* Bottom Metrics Row */}
+      <footer className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1">
+        <div className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-boro-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] text-outline uppercase font-bold block">{t('avgStopDuration')}</span>
-            <strong className="text-on-surface text-base">14 min</strong>
+            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">{t('avgStopDuration')}</p>
+            <p className="text-base font-extrabold text-slate-800 tracking-tight mt-0.5">3.4 min</p>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500">
+            <Icon name="schedule" size={16} />
           </div>
         </div>
-        <div className="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-            <Icon name="autorenew" className="text-xl" />
-          </div>
+        <div className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-boro-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] text-outline uppercase font-bold block">{t('emptiesRecovered')}</span>
-            <strong className="text-on-surface text-base">38 Cans</strong>
+            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">{t('emptiesRecovered')}</p>
+            <p className="text-base font-extrabold text-emerald-700 tracking-tight mt-0.5">18 Crates</p>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+            <Icon name="autorenew" size={16} />
           </div>
         </div>
-        <div className="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center text-secondary">
-            <Icon name="account_balance_wallet" className="text-xl" />
-          </div>
+        <div className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-boro-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] text-outline uppercase font-bold block">{t('cashUpiInVan')}</span>
-            <strong className="text-on-surface text-base">₹{inVanCash.toLocaleString('en-IN')}</strong>
+            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">{t('cashUpiInVan')}</p>
+            <p className="text-base font-extrabold text-blue-700 tracking-tight mt-0.5">₹{inVanCash.toLocaleString('en-IN')}</p>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
+            <Icon name="wallet" size={16} />
           </div>
         </div>
-        <div className="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary">
-            <Icon name="task_alt" className="text-xl" />
-          </div>
+        <div className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-boro-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] text-outline uppercase font-bold block">{t('dailyDropsCompleted')}</span>
-            <strong className="text-on-surface text-base">{dropsDone} / 42</strong>
+            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">{t('dailyDropsCompleted')}</p>
+            <p className="text-base font-extrabold text-slate-800 tracking-tight mt-0.5">{dropsDone} / 42</p>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700">
+            <Icon name="task_alt" size={16} />
           </div>
         </div>
-      </div>
+      </footer>
 
       {/* Log Drop-off Entry Modal */}
       {isDropOffModalOpen && (
