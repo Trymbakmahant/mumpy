@@ -78,6 +78,7 @@ export interface RouteStop {
   gateNotes?: string;
   phone?: string;
   deliveryDays?: string[];
+  vanId?: string;
 }
 
 export interface PaymentSettlement {

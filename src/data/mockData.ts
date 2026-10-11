@@ -405,6 +405,7 @@ export const driverProximityQueue: RouteStop[] = [
     etaOrCompletedTime: '2 mins',
     gateNotes: 'Ring bell at Intercom. Gate security Mohan authorized.',
     phone: '+91 98201 44521',
+    deliveryDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   },
   {
     id: 'queue-02',
@@ -422,6 +423,7 @@ export const driverProximityQueue: RouteStop[] = [
     etaOrCompletedTime: '6 mins',
     gateNotes: 'Doctor OP Ward Dispenser #2',
     phone: '+91 99230 11984',
+    deliveryDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   },
   {
     id: 'queue-03',
@@ -439,6 +441,7 @@ export const driverProximityQueue: RouteStop[] = [
     etaOrCompletedTime: '12 mins',
     gateNotes: 'Prepaid client. Collect 6 empty cans from pantry.',
     phone: '+91 97664 88310',
+    deliveryDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
   },
   {
     id: 'queue-04',
@@ -456,6 +459,7 @@ export const driverProximityQueue: RouteStop[] = [
     etaOrCompletedTime: '18 mins',
     gateNotes: 'Unload via rear kitchen bay.',
     phone: '+91 94220 89123',
+    deliveryDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   },
 ];
 

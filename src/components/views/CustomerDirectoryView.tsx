@@ -25,9 +25,31 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
   const driverRouteSector = isDriver2 ? 'Sector 14 - Lakeview' : 'IT Corridor - Phase 2';
 
   const [customers, setCustomers] = useState<CustomerAccount[]>(initialCustomers);
+  const [isLoadingCustomers, setIsLoadingCustomers] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('All Sectors');
   const [statusFilter, setStatusFilter] = useState('All');
+
+  const loadCustomers = async () => {
+    try {
+      setIsLoadingCustomers(true);
+      const res = await fetch('/api/customers');
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.success && Array.isArray(data.customers)) {
+          setCustomers(data.customers);
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load customers from API:', err);
+    } finally {
+      setIsLoadingCustomers(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCustomers();
+  }, []);
 
   // Intake Form State
   const [accType, setAccType] = useState<'Residential' | 'Office / B2B'>('Office / B2B');
@@ -278,6 +300,7 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
     };
 
     // Dynamic server API integration with Supabase & Duplicate Verification
+    let savedCustomer: CustomerAccount = newCust;
     try {
       const res = await fetch('/api/customers', {
         method: 'POST',
@@ -289,14 +312,25 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
         setDuplicateAlert({
           show: true,
           message: data.error || 'Duplicate customer registration rejected by server.',
+          existing: data.existingCustomer,
         });
         return;
+      }
+      if (data?.customer) {
+        savedCustomer = {
+          ...newCust,
+          ...data.customer,
+          coordinates: data.customer.coordinates || newCust.coordinates,
+          emptiesBalance: data.customer.emptiesBalance || newCust.emptiesBalance,
+        };
       }
     } catch (err) {
       console.warn('Server customer sync:', err);
     }
 
-    setCustomers([newCust, ...customers]);
+    setCustomers((prev) => [savedCustomer, ...prev.filter((c) => c.id !== savedCustomer.id)]);
+    // Re-sync with API to make sure fresh database records are in state
+    loadCustomers();
     onNotify(
       language === 'hi'
         ? `ग्राहक "${custName}" का खाता बना! GPS [${finalGpsCoords}] जनरेट कर ${assignedDriverName} (${assignedVanId}) को सौंपा गया।`
@@ -957,13 +991,25 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                 </span>
               </div>
 
-              <button
-                onClick={handleExportRunSheet}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-low text-secondary font-bold text-xs hover:bg-surface-container transition-all border border-surface-container"
-              >
-                <Icon name="download" className="text-base" />
-                {t('exportRunSheet')}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={loadCustomers}
+                  disabled={isLoadingCustomers}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-low text-primary font-bold text-xs hover:bg-surface-container transition-all border border-surface-container disabled:opacity-50"
+                  title="Refresh customer database"
+                >
+                  <Icon name="refresh" className={`text-base ${isLoadingCustomers ? 'animate-spin' : ''}`} />
+                  <span>{isLoadingCustomers ? (language === 'hi' ? 'रिफ्रेश हो रहा है...' : 'Refreshing...') : (language === 'hi' ? 'रिफ्रेश' : 'Refresh')}</span>
+                </button>
+                <button
+                  onClick={handleExportRunSheet}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-low text-secondary font-bold text-xs hover:bg-surface-container transition-all border border-surface-container"
+                >
+                  <Icon name="download" className="text-base" />
+                  {t('exportRunSheet')}
+                </button>
+              </div>
             </div>
 
             {/* Filter controls */}
@@ -1004,11 +1050,22 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
 
             {/* Directory Rows */}
             <div className="flex flex-col gap-3">
-              {filteredCustomers.map((cust) => (
-                <div
-                  key={cust.id}
-                  className="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container hover:border-secondary/40 hover:bg-surface-container-low/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
+              {filteredCustomers.length === 0 ? (
+                <div className="p-8 text-center bg-surface-container-low/50 rounded-2xl border border-dashed border-surface-container flex flex-col items-center justify-center gap-2">
+                  <Icon name="search_off" className="text-3xl text-outline" />
+                  <p className="text-sm font-bold text-on-surface">
+                    {language === 'hi' ? 'कोई ग्राहक नहीं मिला' : 'No customers found'}
+                  </p>
+                  <p className="text-xs text-on-surface-variant">
+                    {language === 'hi' ? 'खोज या फ़िल्टर बदलकर पुनः प्रयास करें।' : 'Try adjusting your search or sector filter.'}
+                  </p>
+                </div>
+              ) : (
+                filteredCustomers.map((cust) => (
+                  <div
+                    key={cust.id}
+                    className="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container hover:border-secondary/40 hover:bg-surface-container-low/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-xl bg-primary-fixed text-primary font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
                       {cust.name.slice(0, 2).toUpperCase()}
@@ -1099,7 +1156,8 @@ export const CustomerDirectoryView: React.FC<CustomerDirectoryViewProps> = ({ on
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+            )}
             </div>
 
             {/* Pagination footer */}

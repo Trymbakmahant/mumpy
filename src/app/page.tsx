@@ -17,9 +17,7 @@ import { Toast } from '../components/Toast';
 
 export default function Home() {
   const { user, role } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabType>(
-    role === 'driver' ? 'driver-delivery' : 'admin-insights'
-  );
+  const [activeTab, setActiveTab] = useState<TabType>('admin-insights');
   const [selectedHistoryAreaId, setSelectedHistoryAreaId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [grossRevenue, setGrossRevenue] = useState<number>(48650);
@@ -27,16 +25,37 @@ export default function Home() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
 
-  // Automatically enforce tab based on role
+  // Load and enforce tab based on role and saved preference
   useEffect(() => {
-    if (role === 'driver') {
-      if (activeTab === 'admin-insights') {
-        setActiveTab('driver-delivery');
+    try {
+      const savedTab = localStorage.getItem('mumpy_active_tab') as TabType;
+      if (savedTab) {
+        if (role === 'driver' && (savedTab === 'admin-insights' || savedTab === 'delivery-history')) {
+          setActiveTab('driver-delivery');
+        } else if (role === 'admin' && savedTab === 'driver-delivery') {
+          setActiveTab('admin-insights');
+        } else {
+          setActiveTab(savedTab);
+        }
+        return;
       }
-    } else if (role === 'admin' && activeTab === 'driver-delivery') {
+    } catch (e) {
+      // localStorage fallback
+    }
+
+    if (role === 'driver') {
+      setActiveTab('driver-delivery');
+    } else if (role === 'admin') {
       setActiveTab('admin-insights');
     }
-  }, [role, activeTab]);
+  }, [role]);
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    try {
+      localStorage.setItem('mumpy_active_tab', tab);
+    } catch (e) {}
+  };
 
   // If user has not selected a role yet, show the role selection Landing Page
   if (!user) {
@@ -64,7 +83,7 @@ export default function Home() {
       {/* Top Fixed Header with Role Badge & Language Switcher */}
       <Header
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onOpenBroadcast={() => setIsBroadcastOpen(true)}
@@ -75,7 +94,7 @@ export default function Home() {
         {/* Left Navigation Sidebar for Desktop / Tablet */}
         <Sidebar
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleTabChange}
           reservoirLevel={reservoirLevel}
         />
 
@@ -88,7 +107,7 @@ export default function Home() {
                 <DriverProximityView
                   onNotify={showToast}
                   onDropCompleted={handleDropCompleted}
-                  onOpenCustomerRegistration={() => setActiveTab('customer-directory')}
+                  onOpenCustomerRegistration={() => handleTabChange('customer-directory')}
                 />
               )}
 
@@ -105,7 +124,7 @@ export default function Home() {
                   onDeployExtraReserve={handleDeployExtraReserve}
                   onOpenHistory={(areaId) => {
                     setSelectedHistoryAreaId(areaId || 'all');
-                    setActiveTab('delivery-history');
+                    handleTabChange('delivery-history');
                   }}
                   onNotify={showToast}
                 />
@@ -114,7 +133,7 @@ export default function Home() {
               {activeTab === 'delivery-history' && (
                 <DeliveryHistoryView
                   initialAreaId={selectedHistoryAreaId}
-                  onBackToAnalytics={() => setActiveTab('admin-insights')}
+                  onBackToAnalytics={() => handleTabChange('admin-insights')}
                   onNotify={showToast}
                 />
               )}
@@ -128,7 +147,7 @@ export default function Home() {
       </div>
 
       {/* Native Mobile Bottom Navigation Bar (Visible on phone/small screen viewports) */}
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <BottomNav activeTab={activeTab} setActiveTab={handleTabChange} />
 
       {/* Global Modals & Notifications */}
       <BroadcastModal

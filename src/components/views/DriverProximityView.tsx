@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { driverProximityQueue } from '../../data/mockData';
-import { RouteStop } from '../../types';
+import { RouteStop, CustomerAccount } from '../../types';
 import { UpiQrModal } from '../Modals/UpiQrModal';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
@@ -24,15 +24,287 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const { user } = useAuth();
-  const isDriver2 = user?.email?.includes('driver2') || user?.full_name?.includes('Suresh');
+  const isDriver2 = user?.email?.includes('driver2') || user?.full_name?.includes('Suresh') || user?.assigned_van_id === 'van-01';
   const driverName = isDriver2 ? 'Suresh Kumar (Driver 2)' : (user?.full_name || 'Rajesh Patil (Driver 1)');
   const vanPlate = isDriver2 ? 'MH-12-BR-3041' : (user?.van_plate || 'MH-12-BR-3042');
   const routeSector = isDriver2 ? 'Sector 14 & 15' : (user?.van_sector || 'IT Corridor - Phase 2');
   const vanNumber = isDriver2 ? 'Van #01' : 'Van #02';
+  const assignedVanId = isDriver2 ? 'van-01' : 'van-02';
+
+  // Helper to ensure all pending stops are at top, and completed stops go to the bottom
+  const sortQueuePendingFirst = (stops: RouteStop[]): RouteStop[] => {
+    const pending = stops.filter((s) => s.status !== 'Completed');
+    const completed = stops.filter((s) => s.status === 'Completed');
+    return [...pending, ...completed];
+  };
+
+  const DAYS_KEYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const todayKey = DAYS_KEYS[new Date().getDay()]; // e.g. 'Sun'
+  const [activeDayFilter, setActiveDayFilter] = useState<string>(todayKey);
+  const [driverSearchQuery, setDriverSearchQuery] = useState<string>('');
+  const [extraPushedStopIds, setExtraPushedStopIds] = useState<string[]>([]);
+
+  // Check if a stop has a scheduled delivery for a specific day
+  const isStopScheduledForDay = (stop: RouteStop, dayKey: string): boolean => {
+    if (!stop.deliveryDays || stop.deliveryDays.length === 0) return true;
+    return stop.deliveryDays.includes(dayKey);
+  };
+
+  // Determine if a stop belongs to today's active delivery view
+  const isStopActiveForDelivery = (stop: RouteStop): boolean => {
+    // 1. If completed, always keep visible (at bottom)
+    if (stop.status === 'Completed') return true;
+    // 2. If manually pushed to today's route by driver, keep visible
+    if (extraPushedStopIds.includes(stop.id)) return true;
+    // 3. Otherwise, only show if scheduled for today
+    return isStopScheduledForDay(stop, activeDayFilter);
+  };
+
+  // Driver pushes an off-schedule customer onto today's active route
+  const handlePushToRoute = (stop: RouteStop) => {
+    setExtraPushedStopIds((prev) => {
+      if (prev.includes(stop.id)) return prev;
+      const updated = [...prev, stop.id];
+      try {
+        localStorage.setItem(`mumpy_driver_pushed_${assignedVanId}`, JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    setSelectedStopId(stop.id);
+    setCansDelivered(stop.cansToDeliver || 2);
+    setEmptiesCollected(stop.expectedEmpties || 0);
+    onNotify(
+      language === 'hi'
+        ? `"${stop.customerName}" को आज के डिलीवरी मार्ग में जोड़ा गया!`
+        : `"${stop.customerName}" pushed to today's active delivery route!`
+    );
+  };
+
+  // Driver removes an on-demand stop from today's route
+  const handleRemoveFromRoute = (stop: RouteStop) => {
+    setExtraPushedStopIds((prev) => {
+      const updated = prev.filter((id) => id !== stop.id);
+      try {
+        localStorage.setItem(`mumpy_driver_pushed_${assignedVanId}`, JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    onNotify(
+      language === 'hi'
+        ? `"${stop.customerName}" को आज के मार्ग से हटाया गया।`
+        : `"${stop.customerName}" removed from today's on-demand route.`
+    );
+  };
 
   const [queue, setQueue] = useState<RouteStop[]>(driverProximityQueue);
+  const [isLoadingQueue, setIsLoadingQueue] = useState<boolean>(false);
   const [selectedStopId, setSelectedStopId] = useState<string>('queue-01');
   const [activeFilter, setActiveFilter] = useState<'all' | '500m' | '1km' | 'unserved'>('all');
+
+  // Immediate sync from localStorage on client mount so page refresh never loses the delivered mark or pushed stops
+  useEffect(() => {
+    try {
+      const savedPushed = localStorage.getItem(`mumpy_driver_pushed_${assignedVanId}`);
+      if (savedPushed) {
+        setExtraPushedStopIds(JSON.parse(savedPushed));
+      }
+    } catch (e) {}
+    try {
+      const storageKey = `mumpy_driver_completed_${assignedVanId}`;
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed: Record<string, any> = JSON.parse(saved);
+        setQueue((prev) => {
+          const updated = prev.map((item) => {
+            const cleanP = (item.phone || '').replace(/[^0-9]/g, '').slice(-10);
+            const comp = parsed[item.id] || (cleanP ? parsed[cleanP] : undefined);
+            if (comp) {
+              return {
+                ...item,
+                status: 'Completed' as const,
+                balanceDue: comp.balanceDue !== undefined ? comp.balanceDue : item.balanceDue,
+                etaOrCompletedTime: comp.timeLabel || (language === 'hi' ? 'पूर्ण' : 'Delivered Today'),
+              };
+            }
+            return item;
+          });
+          return sortQueuePendingFirst(updated);
+        });
+      }
+      const savedStock = localStorage.getItem(`mumpy_van_stock_${assignedVanId}`);
+      if (savedStock) setVanStock(Number(savedStock));
+      const savedCash = localStorage.getItem(`mumpy_in_van_cash_${assignedVanId}`);
+      if (savedCash) setInVanCash(Number(savedCash));
+      const savedDrops = localStorage.getItem(`mumpy_drops_done_${assignedVanId}`);
+      if (savedDrops) setDropsDone(Number(savedDrops));
+    } catch (e) {
+      console.warn('Error reading saved driver delivery data:', e);
+    }
+  }, [assignedVanId, language]);
+
+  const loadDriverRouteQueue = async () => {
+    try {
+      setIsLoadingQueue(true);
+      const storageKey = `mumpy_driver_completed_${assignedVanId}`;
+      let localCompleted: Record<string, any> = {};
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) localCompleted = JSON.parse(raw);
+      } catch (e) {}
+
+      // Fetch customers and persistent deliveries in parallel
+      const [custRes, delivRes] = await Promise.all([
+        fetch('/api/customers'),
+        fetch(`/api/deliveries?vanId=${assignedVanId}`).catch(() => null),
+      ]);
+
+      if (delivRes && delivRes.ok) {
+        try {
+          const delivData = await delivRes.json();
+          if (delivData?.deliveries && Array.isArray(delivData.deliveries)) {
+            delivData.deliveries.forEach((d: any) => {
+              const keyId = d.id || d.customer_id;
+              const cleanPhone = (d.phone || d.customer_phone || '').replace(/[^0-9]/g, '').slice(-10);
+              const isDelivered = d.status === 'Completed' || d.status === 'Delivered';
+              if (isDelivered) {
+                const record = {
+                  id: keyId,
+                  phone: cleanPhone,
+                  customerName: d.customerName || d.customer_name,
+                  status: 'Completed' as const,
+                  balanceDue: Number(d.balanceDue ?? d.remaining_balance ?? 0),
+                  timeLabel: d.etaOrCompletedTime || 'Delivered Today',
+                  cansDelivered: d.cansToDeliver ?? d.delivered_quantity ?? 2,
+                  emptiesCollected: d.expectedEmpties ?? d.empties_returned ?? 0,
+                };
+                if (keyId) localCompleted[keyId] = { ...localCompleted[keyId], ...record };
+                if (cleanPhone) localCompleted[cleanPhone] = { ...localCompleted[cleanPhone], ...record };
+              }
+            });
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(localCompleted));
+            } catch (e) {}
+          }
+        } catch (e) {
+          console.warn('Error parsing deliveries API response:', e);
+        }
+      }
+
+      const isStopCompleted = (stopId: string, phone?: string) => {
+        if (localCompleted[stopId]) return localCompleted[stopId];
+        const clean = (phone || '').replace(/[^0-9]/g, '').slice(-10);
+        if (clean && localCompleted[clean]) return localCompleted[clean];
+        return null;
+      };
+
+      if (custRes.ok) {
+        const data = await custRes.json();
+        if (data?.success && Array.isArray(data.customers)) {
+          // Find customers assigned to this van
+          const assignedCustomers: CustomerAccount[] = data.customers.filter(
+            (c: CustomerAccount) => {
+              if (c.assignedVanId) {
+                return c.assignedVanId === assignedVanId;
+              }
+              if (isDriver2) {
+                return c.sector.includes('Sector 14') || c.sector.includes('Lakeview');
+              }
+              return c.sector.includes('IT Corridor') || !c.sector.includes('Sector 14');
+            }
+          );
+
+          // Convert assigned customers into RouteStop objects
+          const customerStops: RouteStop[] = assignedCustomers.map((c) => {
+            const comp = isStopCompleted(c.id, c.phone);
+            const days = c.deliveryDays || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const scheduleLabel =
+              days.length === 7
+                ? (language === 'hi' ? 'प्रतिदिन (Mon-Sun)' : 'Daily')
+                : !days.includes('Sun') && days.length === 6
+                ? (language === 'hi' ? 'सोम-शनि (रविवार बंद)' : 'Mon-Sat (No Sun)')
+                : `${days.join(',')}`;
+
+            return {
+              id: c.id,
+              customerName: c.name,
+              address: c.premises || c.coordinates?.formatted || c.sector,
+              distance: '50m away',
+              distanceMeters: 50,
+              priority: comp ? 'Standard' : 'High Priority',
+              orderSummary: `${c.canQuota || 2} x 20L Mineral Cans • ${scheduleLabel}`,
+              cansToDeliver: c.canQuota || 2,
+              packsToDeliver: c.packQuota || 0,
+              expectedEmpties: c.emptiesBalance?.clean || c.canQuota || 0,
+              balanceDue: comp && comp.balanceDue !== undefined ? comp.balanceDue : (c.balanceDue || 0),
+              status: comp ? ('Completed' as const) : ('Pending' as const),
+              etaOrCompletedTime: comp?.timeLabel || (language === 'hi' ? 'ऑन-रूट स्टॉप' : 'On-Route Priority'),
+              phone: c.phone,
+              gateNotes: c.premises ? `Premises: ${c.premises}` : 'Registered doorstep client',
+              deliveryDays: days,
+              vanId: assignedVanId,
+            };
+          });
+
+          // Process mock stops: filter duplicates and apply completed status
+          const existingCustPhones = new Set(
+            customerStops.map((cs) => (cs.phone || '').replace(/[^0-9]/g, '').slice(-10))
+          );
+
+          const filteredMockStops = driverProximityQueue
+            .filter((ms) => {
+              const cleanP = (ms.phone || '').replace(/[^0-9]/g, '').slice(-10);
+              return !existingCustPhones.has(cleanP);
+            })
+            .map((ms) => {
+              const comp = isStopCompleted(ms.id, ms.phone);
+              if (comp) {
+                return {
+                  ...ms,
+                  status: 'Completed' as const,
+                  balanceDue: comp.balanceDue !== undefined ? comp.balanceDue : ms.balanceDue,
+                  etaOrCompletedTime: comp.timeLabel || (language === 'hi' ? 'पूर्ण' : 'Delivered Today'),
+                  vanId: assignedVanId,
+                };
+              }
+              return { ...ms, vanId: assignedVanId };
+            });
+
+          // Deduplicate merged list
+          const combined = [...customerStops, ...filteredMockStops];
+          const seen = new Set<string>();
+          const uniqueList: RouteStop[] = [];
+          for (const item of combined) {
+            if (!seen.has(item.id)) {
+              seen.add(item.id);
+              uniqueList.push(item);
+            }
+          }
+
+          // Sort: Pending stops at top, Completed stops go to the bottom
+          const sortedList = sortQueuePendingFirst(uniqueList);
+          setQueue(sortedList);
+
+          // Update selectedStopId if currently pointing to a completed stop or none
+          setSelectedStopId((prevSelectedId) => {
+            const currentSelected = sortedList.find((s) => s.id === prevSelectedId);
+            if (!currentSelected || currentSelected.status === 'Completed') {
+              const firstPending = sortedList.find((s) => s.status !== 'Completed');
+              return firstPending ? firstPending.id : (sortedList[0]?.id || prevSelectedId);
+            }
+            return prevSelectedId;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load driver route queue:', err);
+    } finally {
+      setIsLoadingQueue(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDriverRouteQueue();
+  }, [assignedVanId, isDriver2, language]);
 
   // On-Route Quick Customer Registration State
   const WEEK_DAYS = [
@@ -321,7 +593,7 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
         deliveryDays: newCustDeliveryDays,
       };
 
-      setQueue((prev) => [newStop, ...prev]);
+      setQueue((prev) => sortQueuePendingFirst([newStop, ...prev]));
       setSelectedStopId(newStop.id);
       setCansDelivered(newCustCans);
       setEmptiesCollected(0);
@@ -340,6 +612,9 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
           ? `ग्राहक "${newCustName}" सफलतापूर्वक पंजीकृत! आपके मार्ग में नया स्टॉप जोड़ा गया।`
           : `Customer "${newCustName}" registered successfully! Added to your delivery route as Stop #1.`
       );
+
+      // Re-sync with API so customer is firmly established in route
+      loadDriverRouteQueue();
     } catch (err: any) {
       console.error('Customer registration error:', err);
       setNewCustDuplicateError(err?.message || 'Server connection error during registration.');
@@ -391,11 +666,15 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
     const paidCurrent = payCurrentDelivery && method !== 'Ledger';
 
     setIsDropOffModalOpen(false);
-    setVanStock((prev) => Math.max(0, prev - cansDelivered));
-    setDropsDone((prev) => prev + 1);
+    const newVanStock = Math.max(0, vanStock - cansDelivered);
+    const newDropsDone = dropsDone + 1;
+    const newInVanCash = (method === 'Cash' || method === 'UPI QR') ? inVanCash + totalAmount : inVanCash;
+
+    setVanStock(newVanStock);
+    setDropsDone(newDropsDone);
 
     if (method === 'Cash' || method === 'UPI QR') {
-      setInVanCash((prev) => prev + totalAmount);
+      setInVanCash(newInVanCash);
       onDropCompleted(totalAmount);
     }
 
@@ -412,20 +691,81 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
       newBalanceDue = newBalanceDue + creditUsed;
     }
 
-    setQueue((prev) =>
-      prev.map((item) =>
+    const completionTimeLabel = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    const cleanCustomerPhone = (selectedStop.phone || '').replace(/[^0-9]/g, '').slice(-10);
+
+    // 1. Immediately persist completed delivery to localStorage so refreshes keep the delivered mark
+    try {
+      const storageKey = `mumpy_driver_completed_${assignedVanId}`;
+      const raw = localStorage.getItem(storageKey);
+      const storedMap = raw ? JSON.parse(raw) : {};
+      const completedEntry = {
+        id: selectedStop.id,
+        phone: cleanCustomerPhone,
+        customerName: selectedStop.customerName,
+        status: 'Completed',
+        completedAt: new Date().toISOString(),
+        timeLabel: completionTimeLabel,
+        balanceDue: newBalanceDue,
+        cansDelivered,
+        emptiesCollected,
+        paymentMethod: method,
+        paymentAmount: totalAmount,
+      };
+      storedMap[selectedStop.id] = completedEntry;
+      if (cleanCustomerPhone) {
+        storedMap[cleanCustomerPhone] = completedEntry;
+      }
+      localStorage.setItem(storageKey, JSON.stringify(storedMap));
+
+      // Persist live session metrics across browser reloads
+      localStorage.setItem(`mumpy_van_stock_${assignedVanId}`, String(newVanStock));
+      localStorage.setItem(`mumpy_drops_done_${assignedVanId}`, String(newDropsDone));
+      localStorage.setItem(`mumpy_in_van_cash_${assignedVanId}`, String(newInVanCash));
+    } catch (err) {
+      console.warn('LocalStorage save error:', err);
+    }
+
+    // Ensure this customer is also added to extraPushedStopIds so they stay on today's route
+    setExtraPushedStopIds((prev) => {
+      if (prev.includes(selectedStop.id)) return prev;
+      const updated = [...prev, selectedStop.id];
+      try {
+        localStorage.setItem(`mumpy_driver_pushed_${assignedVanId}`, JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    // 2. Update queue and ALWAYS move completed deliveries to bottom
+    setQueue((prev) => {
+      const updated = prev.map((item) =>
         item.id === selectedStop.id
           ? {
               ...item,
               balanceDue: newBalanceDue,
-              status: 'Completed',
-              etaOrCompletedTime: language === 'hi' ? 'अभी-अभी' : 'Just Now',
+              status: 'Completed' as const,
+              etaOrCompletedTime: completionTimeLabel,
             }
           : item
-      )
-    );
+      );
+      return sortQueuePendingFirst(updated);
+    });
 
-    // Call dynamic server-based API
+    // 3. Automatically transition active focus to the next pending stop at the top
+    const nextPendingStop = queue.find(
+      (item) => item.id !== selectedStop.id && item.status !== 'Completed'
+    );
+    if (nextPendingStop) {
+      setSelectedStopId(nextPendingStop.id);
+      setCansDelivered(nextPendingStop.cansToDeliver || 2);
+      setEmptiesCollected(nextPendingStop.expectedEmpties || 0);
+      setPastPaymentAmount(nextPendingStop.balanceDue > 0 ? nextPendingStop.balanceDue : 0);
+      setPayCurrentDelivery(true);
+      setPayPastBalance(false);
+      setApplyCredit(false);
+    }
+
+    // 4. Call dynamic server-based API
     try {
       await fetch('/api/deliveries', {
         method: 'POST',
@@ -433,6 +773,8 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
         body: JSON.stringify({
           customerId: selectedStop.id,
           customerName: selectedStop.customerName,
+          customerPhone: selectedStop.phone,
+          address: selectedStop.address,
           deliveredCount: cansDelivered,
           emptiesReturned: emptiesCollected,
           paymentMethod: method,
@@ -442,7 +784,7 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
           creditApplied: creditUsed,
           remainingBalance: newBalanceDue,
           notes: gateNote,
-          vanId: isDriver2 ? 'van-01' : 'van-02',
+          vanId: assignedVanId,
         }),
       });
     } catch (e) {
@@ -475,12 +817,37 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
     onNotify(toastMsg);
   };
 
-  const filteredQueue = queue.filter((item) => {
-    if (activeFilter === '500m') return item.distanceMeters <= 500;
-    if (activeFilter === '1km') return item.distanceMeters <= 1000;
-    if (activeFilter === 'unserved') return item.status !== 'Completed';
-    return true;
-  });
+  const filteredQueue = useMemo(() => {
+    const q = driverSearchQuery.trim().toLowerCase();
+
+    let list = queue;
+
+    if (!q) {
+      // Normal mode: HIDE customers who don't want water on this day!
+      list = list.filter((item) => isStopActiveForDelivery(item));
+    } else {
+      // Search mode: show all matching clients on route, including off-schedule ones!
+      list = list.filter((item) => {
+        const nameMatch = item.customerName.toLowerCase().includes(q);
+        const phoneClean = (item.phone || '').replace(/[^0-9]/g, '');
+        const queryDigits = q.replace(/[^0-9]/g, '');
+        const phoneMatch = queryDigits ? phoneClean.includes(queryDigits) : false;
+        const addressMatch = (item.address || '').toLowerCase().includes(q);
+        const notesMatch = (item.gateNotes || '').toLowerCase().includes(q);
+        return nameMatch || phoneMatch || addressMatch || notesMatch;
+      });
+    }
+
+    if (activeFilter === '500m') {
+      list = list.filter((item) => item.distanceMeters <= 500);
+    } else if (activeFilter === '1km') {
+      list = list.filter((item) => item.distanceMeters <= 1000);
+    } else if (activeFilter === 'unserved') {
+      list = list.filter((item) => item.status !== 'Completed');
+    }
+
+    return sortQueuePendingFirst(list);
+  }, [queue, driverSearchQuery, activeFilter, activeDayFilter, extraPushedStopIds]);
 
   return (
     <div className="p-4 md:p-8 flex flex-col gap-6 max-w-[1600px] mx-auto w-full animate-in fade-in duration-300">
@@ -508,13 +875,34 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
                 <h3 className="text-[15px] font-bold text-slate-900 leading-tight">
                   {t('proximityQueueTitle')}
                 </h3>
-                <p className="text-[11px] text-slate-500 font-medium">
-                  {t('sortedByGps')}
-                </p>
+                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    {t('sortedByGps')}
+                  </p>
+                  <span className="text-slate-300">•</span>
+                  <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200/70 text-brand-700 text-[10px] font-bold shadow-2xs">
+                    <Icon name="calendar" size={11} className="text-brand-600" />
+                    <span>
+                      {language === 'hi'
+                        ? `आज: ${activeDayFilter === 'Sun' ? 'रविवार (Sunday)' : activeDayFilter}`
+                        : `Today: ${activeDayFilter === 'Sun' ? 'Sunday' : activeDayFilter}`}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={loadDriverRouteQueue}
+                disabled={isLoadingQueue}
+                className="flex items-center gap-1 bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-all shadow-2xs disabled:opacity-50"
+                title="Sync and refresh delivery queue"
+              >
+                <Icon name="refresh" className={isLoadingQueue ? 'animate-spin' : ''} size={14} />
+                <span>{isLoadingQueue ? (language === 'hi' ? '...' : 'Syncing') : (language === 'hi' ? 'रिफ्रेश' : 'Sync')}</span>
+              </button>
               <button
                 type="button"
                 onClick={() => setIsRegisterModalOpen(true)}
@@ -525,6 +913,54 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
                 <span>{language === 'hi' ? 'त्वरित जोड़ें' : 'Quick Onboard'}</span>
               </button>
             </div>
+          </div>
+
+          {/* Quick Search Bar to find ANY customer (including off-schedule / Sunday requests) */}
+          <div className="flex flex-col gap-1.5">
+            <div className="relative flex items-center w-full">
+              <Icon name="search" className="absolute left-3 text-slate-400 pointer-events-none" size={15} />
+              <input
+                type="text"
+                value={driverSearchQuery}
+                onChange={(e) => setDriverSearchQuery(e.target.value)}
+                placeholder={
+                  language === 'hi'
+                    ? 'ऑफ़-शेड्यूल ग्राहक खोजें (नाम, फोन या पता) और तुरंत डिलीवरी जोड़ें...'
+                    : 'Search off-schedule customers (e.g. need water on Sunday) to deliver...'
+                }
+                className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200/90 text-slate-800 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-950/20 focus:border-brand-950 transition-all shadow-2xs"
+              />
+              {driverSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setDriverSearchQuery('')}
+                  className="absolute right-2.5 text-slate-400 hover:text-slate-600 text-xs px-1.5 py-0.5 rounded-md hover:bg-slate-200 transition-colors"
+                  title="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {driverSearchQuery && (
+              <div className="text-[11px] text-slate-600 bg-blue-50/80 border border-blue-100/90 rounded-xl px-3 py-1.5 flex items-center justify-between animate-in fade-in">
+                <span className="flex items-center gap-1.5">
+                  <Icon name="info" size={13} className="text-brand-600 shrink-0" />
+                  <span>
+                    {language === 'hi'
+                      ? `"${driverSearchQuery}" के लिए परिणाम (${filteredQueue.length} मिले - ऑफ़-शेड्यूल ग्राहक भी शामिल)`
+                      : `Results for "${driverSearchQuery}" (${filteredQueue.length} found • off-schedule clients included)`}
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setDriverSearchQuery('')}
+                  className="text-brand-700 font-bold hover:underline ml-2 text-[11px]"
+                >
+                  {language === 'hi' ? 'खोज हटाएं' : 'Reset Search'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Filter Segmented Tabs */}
@@ -538,7 +974,9 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
                   : 'text-slate-600 hover:text-slate-900 font-medium'
               }`}
             >
-              {language === 'hi' ? `सभी (${queue.length})` : `All (${queue.length})`}
+              {driverSearchQuery
+                ? (language === 'hi' ? `खोज परिणाम (${filteredQueue.length})` : `Matches (${filteredQueue.length})`)
+                : (language === 'hi' ? `आज का मार्ग (${filteredQueue.length})` : `Active Route (${filteredQueue.length})`)}
             </button>
             <button
               type="button"
@@ -571,135 +1009,245 @@ export const DriverProximityView: React.FC<DriverProximityViewProps> = ({
                   : 'text-slate-600 hover:text-slate-900 font-medium'
               }`}
             >
-              {language === 'hi' ? 'अपूर्ण' : 'Unserved'}
+              {language === 'hi'
+                ? `अपूर्ण (${filteredQueue.filter((s) => s.status !== 'Completed').length})`
+                : `Unserved (${filteredQueue.filter((s) => s.status !== 'Completed').length})`}
             </button>
           </div>
 
           {/* Delivery List */}
           <section aria-label="Nearby Deliveries Queue" className="space-y-3">
-            {filteredQueue.map((item) => {
-              const isSelected = selectedStop.id === item.id;
-              const isCompleted = item.status === 'Completed';
+            {filteredQueue.length === 0 ? (
+              <div className="p-8 text-center bg-slate-50/60 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center gap-2">
+                <Icon name="search_off" className="text-3xl text-slate-400" />
+                <p className="text-xs font-bold text-slate-700">
+                  {driverSearchQuery
+                    ? (language === 'hi' ? `"${driverSearchQuery}" के लिए कोई ग्राहक नहीं मिला` : `No clients match "${driverSearchQuery}"`)
+                    : (language === 'hi' ? 'आज इस फ़िल्टर में कोई डिलीवरी निर्धारित नहीं है' : 'No deliveries scheduled for this filter today')}
+                </p>
+                <p className="text-[11px] text-slate-400 max-w-sm">
+                  {driverSearchQuery
+                    ? (language === 'hi' ? 'मोबाइल नंबर या नाम सही जांचें या ऊपर "+ नया ग्राहक जोड़ें" पर क्लिक करें।' : 'Check name/phone spelling or click "+ Register Customer" above.')
+                    : (language === 'hi' ? 'यदि किसी को आज अतिरिक्त पानी चाहिए, तो ऊपर सर्च बार में उनका नाम खोजकर जोड़ें।' : 'If an off-schedule client needs water today, search their name above to deliver.')}
+                </p>
+              </div>
+            ) : (
+              filteredQueue.map((item, index) => {
+                const isSelected = selectedStop.id === item.id;
+                const isCompleted = item.status === 'Completed';
+                const isScheduled = isStopScheduledForDay(item, activeDayFilter);
+                const isPushed = extraPushedStopIds.includes(item.id);
+                const isOffSchedule = !isScheduled && !isPushed && !isCompleted;
 
-              return (
-                <article
-                  key={item.id}
-                  onClick={() => {
-                    setSelectedStopId(item.id);
-                    setCansDelivered(item.cansToDeliver);
-                    setEmptiesCollected(item.expectedEmpties);
-                    setPayCurrentDelivery(true);
-                    setPayPastBalance(false);
-                    setPastPaymentAmount(item.balanceDue > 0 ? item.balanceDue : 0);
-                    setApplyCredit(false);
-                  }}
-                  className={`bg-white rounded-2xl p-3.5 border transition-all flex flex-col justify-between relative group cursor-pointer ${
-                    isSelected
-                      ? 'border-brand-950 ring-1 ring-brand-950/20 shadow-boro-md bg-blue-50/10'
-                      : isCompleted
-                      ? 'border-slate-200/80 bg-slate-50/50 opacity-80'
-                      : 'border-slate-200/80 shadow-boro-sm hover:border-slate-300'
-                  }`}
-                >
-                  {/* Card Header / Distance & Financial Status */}
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="inline-flex items-center text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200/60">
-                        {item.distance} away
-                      </span>
-                      {isCompleted ? (
-                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
-                          ✓ {language === 'hi' ? 'डिलीवर' : 'Delivered'}
-                        </span>
-                      ) : item.priority === 'High Priority' ? (
-                        <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full border border-rose-100">
-                          High Priority
-                        </span>
-                      ) : item.priority === 'Enterprise' ? (
-                        <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded-full border border-indigo-100">
-                          Enterprise
-                        </span>
-                      ) : item.priority === 'Commercial' ? (
-                        <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full">
-                          Commercial
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full">
-                          {item.priority || 'Standard'}
-                        </span>
-                      )}
-                    </div>
+                const isFirstCompleted =
+                  isCompleted &&
+                  index > 0 &&
+                  filteredQueue[index - 1].status !== 'Completed';
 
-                    {/* Financial Status Badge */}
-                    {item.balanceDue > 0 ? (
-                      <div className="text-[12px] font-semibold text-amber-700 bg-amber-50/80 border border-amber-200/60 px-2 py-0.5 rounded-md">
-                        Balance: ₹{item.balanceDue} Due
-                      </div>
-                    ) : item.balanceDue === 0 ? (
-                      <div className="text-[12px] font-semibold text-emerald-700 bg-emerald-50/90 border border-emerald-200/70 px-2 py-0.5 rounded-md flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        <span>Balance: Clear (₹0)</span>
-                      </div>
-                    ) : (
-                      <div className="text-[12px] font-semibold text-blue-700 bg-blue-50/90 border border-blue-200/70 px-2 py-0.5 rounded-md">
-                        Credit: ₹{Math.abs(item.balanceDue)}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Customer Identity */}
-                  <div className="mb-2">
-                    <h3 className="text-[15px] font-bold text-slate-900 leading-snug tracking-tight">
-                      {item.customerName}
-                    </h3>
-                    <p className="text-[12px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
-                      <Icon name="location_on" size={14} className="text-slate-400 shrink-0" />
-                      <span>{item.address}</span>
-                    </p>
-                    {item.deliveryDays && item.deliveryDays.length > 0 && (
-                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1 border border-slate-200/60">
-                          <Icon name="calendar" size={11} className="text-slate-400" />
+                return (
+                  <React.Fragment key={item.id}>
+                    {isFirstCompleted && (
+                      <div className="flex items-center gap-3 pt-3 pb-1">
+                        <div className="h-px flex-1 bg-slate-200/90"></div>
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] font-bold shadow-2xs">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                           <span>
-                            {item.deliveryDays.length === 7
-                              ? (language === 'hi' ? 'प्रतिदिन (Mon-Sun)' : 'Daily')
-                              : !item.deliveryDays.includes('Sun') && item.deliveryDays.length === 6
-                              ? (language === 'hi' ? 'सोम-शनि (रविवार बंद)' : 'Mon - Sat (No Sun)')
-                              : item.deliveryDays.join(', ')}
+                            {language === 'hi'
+                              ? `पूर्ण डिलीवरी (${filteredQueue.filter((s) => s.status === 'Completed').length}) • नीचे`
+                              : `Completed Deliveries (${filteredQueue.filter((s) => s.status === 'Completed').length}) • Bottom`}
                           </span>
-                        </span>
+                        </div>
+                        <div className="h-px flex-1 bg-slate-200/90"></div>
                       </div>
                     )}
-                  </div>
-
-                  {/* Interaction Actions */}
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/80 text-xs font-semibold hover:bg-blue-100 transition-colors active:scale-95 shadow-2xs"
-                      title={language === 'hi' ? 'गूगल मैप्स नेविगेशन खोलें' : 'Open GPS Navigation in Google Maps'}
-                    >
-                      <Icon name="navigation" size={13} />
-                      <span>GPS</span>
-                    </a>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openDropOffModal(item);
+                    <article
+                      onClick={() => {
+                        setSelectedStopId(item.id);
+                        setCansDelivered(item.cansToDeliver);
+                        setEmptiesCollected(item.expectedEmpties);
+                        setPayCurrentDelivery(true);
+                        setPayPastBalance(false);
+                        setPastPaymentAmount(item.balanceDue > 0 ? item.balanceDue : 0);
+                        setApplyCredit(false);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-950 text-white text-xs font-semibold hover:bg-brand-900 transition-colors shadow-xs active:scale-95"
+                      className={`bg-white rounded-2xl p-3.5 border transition-all flex flex-col justify-between relative group cursor-pointer ${
+                        isSelected
+                          ? 'border-brand-950 ring-1 ring-brand-950/20 shadow-boro-md bg-blue-50/10'
+                          : isCompleted
+                          ? 'border-slate-200/80 bg-slate-50/60 opacity-85'
+                          : isOffSchedule
+                          ? 'border-amber-200 bg-amber-50/20 hover:border-amber-300'
+                          : 'border-slate-200/80 shadow-boro-sm hover:border-slate-300'
+                      }`}
                     >
-                      <Icon name="truck" size={14} className="text-blue-300" />
-                      <span>{t('logDropOff')}</span>
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
+                      {/* Card Header / Distance & Financial Status */}
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="inline-flex items-center text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200/60">
+                            {item.distance} away
+                          </span>
+                          {isCompleted ? (
+                            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                              <span>✓</span>
+                              <span>{language === 'hi' ? 'डिलीवर पूर्ण' : 'Delivered'}</span>
+                              {item.etaOrCompletedTime && (
+                                <span className="text-[10px] text-emerald-600/80 font-normal">
+                                  • {item.etaOrCompletedTime}
+                                </span>
+                              )}
+                            </span>
+                          ) : isOffSchedule ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 shadow-2xs">
+                              <Icon name="event_busy" size={12} className="text-amber-600" />
+                              <span>
+                                {language === 'hi'
+                                  ? `आज शेड्यूल नहीं (${activeDayFilter === 'Sun' ? 'रविवार' : activeDayFilter} बंद)`
+                                  : `Off-Schedule Today (No ${activeDayFilter === 'Sun' ? 'Sun' : activeDayFilter} drop)`}
+                              </span>
+                            </span>
+                          ) : isPushed ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                              <Icon name="bolt" size={12} className="text-purple-600" />
+                              <span>{language === 'hi' ? 'ऑन-डिमांड जोड़ा गया' : 'On-Demand Stop'}</span>
+                            </span>
+                          ) : item.priority === 'High Priority' ? (
+                            <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full border border-rose-100">
+                              High Priority
+                            </span>
+                          ) : item.priority === 'Enterprise' ? (
+                            <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded-full border border-indigo-100">
+                              Enterprise
+                            </span>
+                          ) : item.priority === 'Commercial' ? (
+                            <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                              Commercial
+                            </span>
+                          ) : (
+                            <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                              {item.priority || 'Standard'}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Financial Status Badge */}
+                        {item.balanceDue > 0 ? (
+                          <div className="text-[12px] font-semibold text-amber-700 bg-amber-50/80 border border-amber-200/60 px-2 py-0.5 rounded-md">
+                            Balance: ₹{item.balanceDue} Due
+                          </div>
+                        ) : item.balanceDue === 0 ? (
+                          <div className="text-[12px] font-semibold text-emerald-700 bg-emerald-50/90 border border-emerald-200/70 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>Balance: Clear (₹0)</span>
+                          </div>
+                        ) : (
+                          <div className="text-[12px] font-semibold text-blue-700 bg-blue-50/90 border border-blue-200/70 px-2 py-0.5 rounded-md">
+                            Credit: ₹{Math.abs(item.balanceDue)}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Customer Identity */}
+                      <div className="mb-2">
+                        <h3 className="text-[15px] font-bold text-slate-900 leading-snug tracking-tight">
+                          {item.customerName}
+                        </h3>
+                        <p className="text-[12px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                          <Icon name="location_on" size={14} className="text-slate-400 shrink-0" />
+                          <span>{item.address}</span>
+                        </p>
+                        {item.deliveryDays && item.deliveryDays.length > 0 && (
+                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1 border border-slate-200/60">
+                              <Icon name="calendar" size={11} className="text-slate-400" />
+                              <span>
+                                {item.deliveryDays.length === 7
+                                  ? (language === 'hi' ? 'प्रतिदिन (Mon-Sun)' : 'Daily')
+                                  : !item.deliveryDays.includes('Sun') && item.deliveryDays.length === 6
+                                  ? (language === 'hi' ? 'सोम-शनि (रविवार बंद)' : 'Mon - Sat (No Sun)')
+                                  : item.deliveryDays.join(', ')}
+                              </span>
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Interaction Actions */}
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2 flex-wrap">
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/80 text-xs font-semibold hover:bg-blue-100 transition-colors active:scale-95 shadow-2xs"
+                          title={language === 'hi' ? 'गूगल मैप्स नेविगेशन खोलें' : 'Open GPS Navigation in Google Maps'}
+                        >
+                          <Icon name="navigation" size={13} />
+                          <span>GPS</span>
+                        </a>
+
+                        {/* If off-schedule: allow pushing onto today's route */}
+                        {isOffSchedule && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePushToRoute(item);
+                            }}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold transition-all shadow-2xs active:scale-95"
+                            title={language === 'hi' ? 'आज के सक्रिय मार्ग में जोड़ें' : 'Push to today active route'}
+                          >
+                            <Icon name="add" size={13} />
+                            <span>{language === 'hi' ? '+ रूट में जोड़ें' : '+ Add to Route'}</span>
+                          </button>
+                        )}
+
+                        {/* If on-demand pushed and not completed: allow remove */}
+                        {isPushed && !isCompleted && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveFromRoute(item);
+                            }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition-colors"
+                            title={language === 'hi' ? 'आज के मार्ग से हटाएं' : 'Remove from today route'}
+                          >
+                            <span>✕ {language === 'hi' ? 'हटाएं' : 'Remove'}</span>
+                          </button>
+                        )}
+
+                        {isCompleted ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDropOffModal(item);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold hover:bg-emerald-100 transition-colors shadow-2xs active:scale-95"
+                            title={language === 'hi' ? 'डिलीवरी विवरण पुनः देखें/संपादित करें' : 'Review or edit completed drop'}
+                          >
+                            <Icon name="check" size={13} className="text-emerald-600" />
+                            <span>{language === 'hi' ? 'पूर्ण (संपादित करें)' : 'Delivered (Edit)'}</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDropOffModal(item);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-950 text-white text-xs font-semibold hover:bg-brand-900 transition-colors shadow-xs active:scale-95"
+                          >
+                            <Icon name="truck" size={14} className="text-blue-300" />
+                            <span>{t('logDropOff')}</span>
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  </React.Fragment>
+                );
+              })
+            )}
           </section>
         </div>
         </div>

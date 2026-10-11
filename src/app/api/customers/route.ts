@@ -13,6 +13,18 @@ function normalizePhone(p: string): string {
 }
 
 function mapDbCustomerToAccount(c: any): CustomerAccount {
+  const vanId = c.assigned_van_id || c.assignedVanId || 'van-02';
+  const isVan01 = vanId === 'van-01';
+  const defaultDriver = isVan01 ? 'Suresh Kumar (Driver 2)' : 'Rajesh Patil (Driver 1)';
+  const defaultPlate = isVan01 ? 'MH-12-BR-3041' : 'MH-12-BR-3042';
+
+  let lat = Number(c.latitude || (c.coordinates?.lat ?? 0));
+  let lng = Number(c.longitude || (c.coordinates?.lng ?? 0));
+  let formatted = c.formatted_coordinates || c.coordinates?.formatted || '';
+  if (!formatted && lat && lng) {
+    formatted = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  }
+
   return {
     id: c.id,
     name: c.name,
@@ -21,20 +33,27 @@ function mapDbCustomerToAccount(c: any): CustomerAccount {
     accountType: c.account_type || c.accountType || 'Residential',
     sector: c.sector || 'IT Corridor - Phase 2',
     hub: c.hub || 'Main Water Plant',
-    assignedVanId: c.assigned_van_id || c.assignedVanId || 'van-02',
-    assignedVanPlate: c.assigned_van_plate || c.assignedVanPlate || 'MH-12-BR-3042',
-    assignedDriverName: c.assigned_driver_name || c.assignedDriverName || 'Rajesh Patil (Driver 1)',
+    assignedVanId: vanId,
+    assignedVanPlate: c.assigned_van_plate || c.assignedVanPlate || defaultPlate,
+    assignedDriverName: c.assigned_driver_name || c.assignedDriverName || defaultDriver,
     premises: c.premises || '',
-    coordinates: c.coordinates || {
-      lat: Number(c.latitude || 0),
-      lng: Number(c.longitude || 0),
-      formatted: c.formatted_coordinates || '',
+    coordinates: {
+      lat,
+      lng,
+      formatted,
     },
     productTier: c.product_tier || c.productTier || '20L Mineral Can',
     canQuota: c.can_quota ?? c.canQuota ?? 0,
     packQuota: c.pack_quota ?? c.packQuota ?? 0,
     cadence: c.cadence || 'Daily',
-    deliveryDays: c.delivery_days || c.deliveryDays || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    deliveryDays: c.delivery_days || c.deliveryDays || (
+      c.cadence === 'Alternate Days' ? ['Mon', 'Wed', 'Fri'] :
+      c.cadence === 'Weekly Mon' ? ['Mon'] :
+      c.cadence === 'Weekly Thu' ? ['Thu'] :
+      c.cadence === 'Weekly Sat' ? ['Sat'] :
+      c.cadence?.includes('Mon-Sat') ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] :
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    ),
     balanceDue: Number(c.balance_due ?? c.balanceDue ?? 0),
     slot: c.slot || '07 - 10 AM',
     emptiesBalance: c.emptiesBalance || {
@@ -53,6 +72,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const sector = searchParams.get('sector');
     const search = searchParams.get('search');
+    const vanId = searchParams.get('vanId') || searchParams.get('assignedVanId');
 
     const supabase = createServerSupabaseClient();
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('demo')) {
@@ -61,6 +81,9 @@ export async function GET(req: NextRequest) {
         let mapped = data.map(mapDbCustomerToAccount);
         if (sector && sector !== 'All Sectors') {
           mapped = mapped.filter((c) => c.sector.includes(sector));
+        }
+        if (vanId) {
+          mapped = mapped.filter((c) => c.assignedVanId === vanId);
         }
         if (search) {
           const q = search.toLowerCase();
@@ -80,6 +103,9 @@ export async function GET(req: NextRequest) {
     let result = serverCustomers;
     if (sector && sector !== 'All Sectors') {
       result = result.filter((c) => c.sector.includes(sector));
+    }
+    if (vanId) {
+      result = result.filter((c) => c.assignedVanId === vanId);
     }
     if (search) {
       const q = search.toLowerCase();
@@ -243,7 +269,7 @@ export async function POST(req: NextRequest) {
     // Try Supabase persistence with all new schema columns
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('demo')) {
       try {
-        await supabase.from('customers').insert({
+        const { error: insertErr } = await supabase.from('customers').insert({
           id: newCustomer.id,
           name: newCustomer.name,
           phone: newCustomer.phone,
@@ -269,6 +295,9 @@ export async function POST(req: NextRequest) {
           whatsapp_opt_in: newCustomer.whatsAppOptIn,
           status: 'Active',
         });
+        if (insertErr) {
+          console.error('Supabase customer insert error:', insertErr);
+        }
       } catch (dbErr) {
         console.warn('Supabase customer insert warning:', dbErr);
       }

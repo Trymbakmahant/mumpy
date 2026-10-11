@@ -11,20 +11,52 @@ let serverSettlements: PaymentSettlement[] = [...initialSettlements];
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const vanId = searchParams.get('vanId') || searchParams.get('assignedVanId');
+
     const supabase = createServerSupabaseClient();
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('demo')) {
-      const { data, error } = await supabase
+      let query = supabase
         .from('deliveries')
         .select('*, customers(*)')
         .order('delivered_at', { ascending: false });
-      if (data && !error && data.length > 0) {
-        return NextResponse.json({ success: true, deliveries: data, source: 'supabase_db' });
+      if (vanId) {
+        query = query.eq('van_id', vanId);
       }
+      const { data, error } = await query;
+      if (data && !error && data.length > 0) {
+        const mappedDeliveries: RouteStop[] = data.map((d: any) => ({
+          id: d.customer_id || d.id,
+          customerName: d.customer_name || d.customers?.name || 'Direct Client',
+          address: d.customers?.premises || d.drop_off_notes || 'Doorstep Delivery',
+          distance: '50m away',
+          distanceMeters: 50,
+          priority: 'Standard',
+          orderSummary: `${d.delivered_quantity || 2} x 20L Mineral Cans`,
+          cansToDeliver: d.delivered_quantity || 2,
+          packsToDeliver: 0,
+          expectedEmpties: d.empties_returned || 0,
+          balanceDue: Number(d.remaining_balance ?? d.customers?.balance_due ?? 0),
+          status: 'Completed',
+          etaOrCompletedTime: d.delivered_at
+            ? new Date(d.delivered_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+            : 'Delivered Today',
+          gateNotes: d.drop_off_notes || '',
+          phone: d.customers?.phone || '',
+          vanId: d.van_id || vanId || 'van-02',
+        }));
+        return NextResponse.json({ success: true, deliveries: mappedDeliveries, source: 'supabase_db' });
+      }
+    }
+
+    let result = serverDeliveries;
+    if (vanId) {
+      result = result.filter((d) => !d.vanId || d.vanId === vanId);
     }
 
     return NextResponse.json({
       success: true,
-      deliveries: serverDeliveries,
+      deliveries: result,
       source: 'server_dynamic',
       timestamp: new Date().toISOString(),
     });
@@ -38,6 +70,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const customerId = body.customerId || body.customer_id;
     const customerName = body.customerName || body.customer_name;
+    const customerPhone = body.customerPhone || body.customer_phone || body.phone || '';
     const deliveredCount = Number(body.deliveredCount ?? body.delivered_quantity ?? body.deliveredQuantity ?? 2);
     const emptiesReturned = Number(body.emptiesReturned ?? body.empties_returned ?? 0);
     const paymentMethod = body.paymentMethod || body.payment_method || 'Cash';
@@ -48,7 +81,7 @@ export async function POST(req: NextRequest) {
     const remainingBalance = Number(body.remainingBalance ?? body.remaining_balance ?? 0);
     const notes = body.notes || body.drop_off_notes || '';
     const driverId = body.driverId || body.driver_id;
-    const vanId = body.vanId || body.van_id;
+    const vanId = body.vanId || body.van_id || 'van-02';
 
     const deliveryRecord: RouteStop = {
       id: customerId || `queue-${Date.now()}`,
@@ -65,9 +98,20 @@ export async function POST(req: NextRequest) {
       status: 'Completed',
       etaOrCompletedTime: 'Just Now',
       gateNotes: notes,
+      phone: customerPhone,
+      vanId,
     };
 
-    serverDeliveries = [deliveryRecord, ...serverDeliveries.filter((d) => d.id !== customerId)];
+    const cleanInputPhone = customerPhone.replace(/[^0-9]/g, '').slice(-10);
+    serverDeliveries = [
+      deliveryRecord,
+      ...serverDeliveries.filter((d) => {
+        if (d.id === customerId) return false;
+        const cleanExisting = (d.phone || '').replace(/[^0-9]/g, '').slice(-10);
+        if (cleanInputPhone && cleanExisting === cleanInputPhone) return false;
+        return true;
+      }),
+    ];
 
     const nowFormattedTime = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     const invoiceNo = `INV-${Math.floor(9830 + Math.random() * 900)}`;
