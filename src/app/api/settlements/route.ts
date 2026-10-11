@@ -23,6 +23,55 @@ export async function GET(req: NextRequest) {
         .select('*')
         .order('created_at', { ascending: false });
 
+      const { data: dbCustomers } = await supabase
+        .from('customers')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      let liveAreaClients = [...serverAreaClients];
+      if (dbCustomers && dbCustomers.length > 0) {
+        const mappedLiveClients: AreaClientRecord[] = dbCustomers.map((c: any) => {
+          const bal = Number(c.balance_due || 0);
+          const isIT = (c.sector || '').includes('IT');
+          const isLake = (c.sector || '').includes('Lake');
+          const isCivil = (c.sector || '').includes('Civil');
+          const aId = isIT ? 'area-01' : isLake ? 'area-02' : isCivil ? 'area-03' : 'area-01';
+          const quota = Number(c.can_quota || 2);
+
+          return {
+            id: c.id,
+            name: c.name,
+            type: c.account_type || 'Residential',
+            areaId: aId,
+            areaName: c.sector || 'Main Hub Sector',
+            routeTag: `Hub Route: ${c.sector || 'Main Route'}`,
+            address: c.premises || 'Doorstep Delivery',
+            phone: c.phone || '',
+            dailyBottles: quota,
+            lastDeliveryTime: 'Today',
+            paymentMethod: bal > 0 ? 'Credit / Net-7' : 'UPI QR',
+            balanceDue: bal,
+            paymentStatus: bal === 0 ? ('Cleared' as const) : ('Due in 5d' as const),
+            history: [
+              {
+                date: 'Today, Oct 11',
+                delivered: quota,
+                emptiesReturned: Number(c.clean_empties || quota),
+                amount: bal > 0 ? bal : quota * 70,
+                status: bal === 0 ? ('Settled' as const) : ('Pending' as const),
+                invoiceNo: `INV-${c.id}`,
+                method: bal > 0 ? 'Credit / Net-7' : 'UPI QR',
+              },
+            ],
+          };
+        });
+
+        liveAreaClients = [
+          ...mappedLiveClients,
+          ...serverAreaClients.filter((sc) => !mappedLiveClients.some((lc) => lc.id === sc.id)),
+        ];
+      }
+
       if (dbSettlements && dbSettlements.length > 0) {
         let mapped = dbSettlements.map((s: any) => ({
           id: s.id,
@@ -45,10 +94,24 @@ export async function GET(req: NextRequest) {
           mapped = mapped.filter((s: any) => s.clientName.toLowerCase().includes(q) || s.invoiceNo.toLowerCase().includes(q));
         }
 
+        let filteredClients = liveAreaClients;
+        if (areaId && areaId !== 'all') {
+          filteredClients = filteredClients.filter((c) => c.areaId === areaId);
+        }
+        if (status && status !== 'all') {
+          filteredClients = filteredClients.filter((c) => c.paymentStatus.toLowerCase() === status.toLowerCase());
+        }
+        if (search) {
+          const q = search.toLowerCase();
+          filteredClients = filteredClients.filter(
+            (c) => c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.address.toLowerCase().includes(q)
+          );
+        }
+
         return NextResponse.json({
           success: true,
           settlements: mapped,
-          areaClients: serverAreaClients,
+          areaClients: filteredClients,
           hotspots: initialAreaHotspots,
           source: 'supabase_db',
         });

@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { initialAreaHotspots, initialSettlements, weeklySalesTrend } from '../../data/mockData';
+import React, { useState, useEffect, useMemo } from 'react';
+import { initialAreaHotspots, initialSettlements } from '../../data/mockData';
 import { AreaHotspot, PaymentSettlement } from '../../types';
 import { GstSummaryModal } from '../Modals/GstSummaryModal';
 import { ManifestModal } from '../Modals/ManifestModal';
@@ -16,7 +15,7 @@ interface AdminInsightsViewProps {
   onNotify?: (msg: string) => void;
 }
 
-interface LedgerAccountItem {
+export interface LedgerAccountItem {
   id: string;
   accountNo: string;
   customerName: string;
@@ -31,86 +30,61 @@ interface LedgerAccountItem {
   statusLabel: string;
   statusClass: string;
   isOverdue?: boolean;
+  phone?: string;
+  balanceDue?: number;
 }
 
-const INITIAL_LEDGER_ACCOUNTS: LedgerAccountItem[] = [
-  {
-    id: 'CUST-4409',
-    accountNo: 'Account #CUST-4409',
-    customerName: 'Infosys Cafeteria #2',
-    sector: 'IT Park Tech Phase 2',
-    deliveredVolume: '120 Jars',
-    productType: '20L RO Water',
-    emptyJarsText: '120 / 120 Returned',
-    emptyJarsClass: 'text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[11px]',
-    amount: 4200,
-    paymentMode: 'UPI Autopay',
-    status: 'paid',
-    statusLabel: 'PAID & SETTLED',
-    statusClass: 'bg-emerald-100 text-emerald-800',
+interface AnalyticsKpis {
+  grossRevenueToday: number;
+  targetRevenue: number;
+  revenueTrendPercentage: number;
+  unitsDispatched: number;
+  bottlesCount: number;
+  jarsCount: number;
+  paymentMix: {
+    upiAmount: number;
+    upiPercentage: number;
+    cashAmount: number;
+    cashPercentage: number;
+    creditAmount: number;
+    creditPercentage: number;
+  };
+  jarTelemetry: {
+    totalJars: number;
+    returnedJars: number;
+    pendingJars: number;
+    returnPercentage: number;
+    lossRatePercentage: number;
+  };
+  driverCashReconciled: number;
+  activeVansCount: number;
+}
+
+const DEFAULT_KPIS: AnalyticsKpis = {
+  grossRevenueToday: 420,
+  targetRevenue: 5000,
+  revenueTrendPercentage: 14.2,
+  unitsDispatched: 6,
+  bottlesCount: 0,
+  jarsCount: 6,
+  paymentMix: {
+    upiAmount: 280,
+    upiPercentage: 66.7,
+    cashAmount: 140,
+    cashPercentage: 33.3,
+    creditAmount: 0,
+    creditPercentage: 0,
   },
-  {
-    id: 'CUST-1048',
-    accountNo: 'Account #CUST-1048',
-    customerName: 'Lakeview Society Tower C',
-    sector: 'Lakeview Loop A',
-    deliveredVolume: '60 Jars',
-    productType: '20L RO Water',
-    emptyJarsText: '45 / 60 (15 Due)',
-    emptyJarsClass: 'text-amber-800 font-semibold bg-amber-100 px-2 py-0.5 rounded text-[11px]',
-    amount: 3000,
-    paymentMode: 'Credit Net-7',
-    status: 'credit',
-    statusLabel: 'DUE IN 2 DAYS',
-    statusClass: 'bg-amber-100 text-amber-900',
+  jarTelemetry: {
+    totalJars: 6,
+    returnedJars: 6,
+    pendingJars: 0,
+    returnPercentage: 100,
+    lossRatePercentage: 1.2,
   },
-  {
-    id: 'CUST-7721',
-    accountNo: 'Account #CUST-7721',
-    customerName: 'Aura Mart & General Store',
-    sector: 'High Street Commercial',
-    deliveredVolume: '40 Cartons',
-    productType: '1L Bottles',
-    emptyJarsText: '— (Non-returnable)',
-    emptyJarsClass: 'text-slate-400 text-[11px] font-medium',
-    amount: 1850,
-    paymentMode: 'Cash to Van #08',
-    status: 'paid',
-    statusLabel: 'DRIVER RECONCILED',
-    statusClass: 'bg-blue-100 text-blue-800',
-  },
-  {
-    id: 'CUST-9011',
-    accountNo: 'Account #CUST-9011',
-    customerName: 'Blue Horizon Fitness Gym',
-    sector: 'South Perimeter Ring',
-    deliveredVolume: '18 Jars',
-    productType: '20L RO Water',
-    emptyJarsText: '8 / 18 (10 Overdue)',
-    emptyJarsClass: 'text-rose-800 font-semibold bg-rose-100 px-2 py-0.5 rounded text-[11px]',
-    amount: 1440,
-    paymentMode: 'UPI Pending',
-    status: 'unpaid',
-    statusLabel: 'OVERDUE 4 DAYS',
-    statusClass: 'bg-rose-100 text-rose-800',
-    isOverdue: true,
-  },
-  {
-    id: 'CUST-0024',
-    accountNo: 'Account #CUST-0024',
-    customerName: 'Apex Heart Institute',
-    sector: 'Civil Lines Hospital Hub',
-    deliveredVolume: '160 Jars',
-    productType: '20L RO Pure',
-    emptyJarsText: '160 / 160 Returned',
-    emptyJarsClass: 'text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[11px]',
-    amount: 6400,
-    paymentMode: 'Corporate NEFT / UPI',
-    status: 'paid',
-    statusLabel: 'PAID & SETTLED',
-    statusClass: 'bg-emerald-100 text-emerald-800',
-  },
-];
+  driverCashReconciled: 140,
+  activeVansCount: 4,
+};
 
 export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
   grossRevenue,
@@ -123,11 +97,22 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
   const [isManifestOpen, setIsManifestOpen] = useState(false);
   const [timeFilter, setTimeFilter] = useState<'today' | 'week' | 'month' | 'year'>('today');
   const [ledgerFilter, setLedgerFilter] = useState<'all' | 'paid' | 'unpaid' | 'credit'>('all');
-  const [serverSyncTime, setServerSyncTime] = useState<string>('2 mins ago');
-  const [ledgerAccounts, setLedgerAccounts] = useState<LedgerAccountItem[]>(INITIAL_LEDGER_ACCOUNTS);
-  const [settlements, setSettlements] = useState<PaymentSettlement[]>(initialSettlements);
-  const [systemTime, setSystemTime] = useState<string>('02:45 PM IST');
+  const [ledgerSearch, setLedgerSearch] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10;
 
+  const [serverSyncTime, setServerSyncTime] = useState<string>('Just now');
+  const [systemTime, setSystemTime] = useState<string>('12:00 PM IST');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Live state fetched from API
+  const [kpis, setKpis] = useState<AnalyticsKpis>(DEFAULT_KPIS);
+  const [ledgerAccounts, setLedgerAccounts] = useState<LedgerAccountItem[]>([]);
+  const [hotspots, setHotspots] = useState<AreaHotspot[]>(initialAreaHotspots);
+  const [settlements, setSettlements] = useState<PaymentSettlement[]>(initialSettlements);
+  const [isSettling, setIsSettling] = useState<string | null>(null);
+
+  // System clock timer
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -145,20 +130,41 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    fetch('/api/analytics')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.syncTime) {
-          setServerSyncTime(data.syncTime);
+  // Fetch real analytics data
+  const loadLiveAnalytics = async (filter: string) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/analytics?timeFilter=${filter}`);
+      const data = await res.json();
+      if (data?.success) {
+        if (data.kpis) {
+          setKpis(data.kpis);
         }
-        if (data?.settlements && data.settlements.length > 0) {
+        if (data.hotspots && data.hotspots.length > 0) {
+          setHotspots(data.hotspots);
+        }
+        if (data.settlements && data.settlements.length > 0) {
           setSettlements(data.settlements);
         }
-      })
-      .catch((e) => console.warn('Analytics server sync:', e));
-  }, []);
+        if (data.ledgerAccounts && data.ledgerAccounts.length > 0) {
+          setLedgerAccounts(data.ledgerAccounts);
+        }
+        if (data.syncTime) {
+          setServerSyncTime(data.syncTime);
+        }
+      }
+    } catch (e) {
+      console.warn('Analytics API sync warning:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    loadLiveAnalytics(timeFilter);
+  }, [timeFilter]);
+
+  // Export Daily Sales CSV with real settlement records
   const exportCsv = () => {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
@@ -177,16 +183,25 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
     link.click();
     document.body.removeChild(link);
     if (onNotify) {
-      onNotify('Daily Sales CSV downloaded successfully.');
+      onNotify(language === 'hi' ? 'दैनिक बिक्री CSV सफलतापूर्वक डाउनलोड हुई।' : 'Daily Sales CSV downloaded successfully.');
     }
   };
 
-  const handleMarkPaid = (id: string) => {
+  // Mark Customer Paid with backend persistence
+  const handleMarkPaid = async (id: string) => {
+    const target = ledgerAccounts.find((a) => a.id === id);
+    if (!target) return;
+
+    setIsSettling(id);
+
+    // Optimistically update UI
     setLedgerAccounts((prev) =>
       prev.map((acc) =>
         acc.id === id
           ? {
               ...acc,
+              amount: 0,
+              balanceDue: 0,
               status: 'paid',
               statusLabel: 'PAID & SETTLED',
               statusClass: 'bg-emerald-100 text-emerald-800',
@@ -195,38 +210,126 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           : acc
       )
     );
-    const target = ledgerAccounts.find((a) => a.id === id);
-    if (onNotify && target) {
-      onNotify(`Invoice of ₹${target.amount} for ${target.customerName} marked as PAID & SETTLED.`);
+
+    try {
+      // 1. Update customer balance in customers table
+      await fetch('/api/customers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          balanceDue: 0,
+          status: 'Active',
+        }),
+      });
+
+      // 2. Settle in settlements API
+      await fetch('/api/settlements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'settle_invoice',
+          clientId: id,
+          invoiceNo: `INV-${target.id}`,
+          amountPaid: target.amount,
+        }),
+      });
+
+      if (onNotify) {
+        onNotify(
+          language === 'hi'
+            ? `${target.customerName} का खाता (₹${target.amount}) सफलतापूर्वक चुकता हुआ!`
+            : `Invoice of ₹${target.amount} for ${target.customerName} marked as PAID & SETTLED.`
+        );
+      }
+    } catch (err) {
+      console.warn('Mark paid error:', err);
+    } finally {
+      setIsSettling(null);
     }
   };
 
+  // Send WhatsApp payment reminder link
   const handleSendReminder = (acc: LedgerAccountItem) => {
+    const rawPhone = (acc.phone || '').replace(/[^0-9]/g, '');
+    const cleanPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+    const msg = `Dear ${acc.customerName}, payment of ₹${acc.amount} for your Mumpy Pure RO Water delivery is due. Kindly clear via UPI QR or link. Thank you!`;
+
+    if (cleanPhone && typeof window !== 'undefined') {
+      window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
     if (onNotify) {
-      onNotify(`Payment reminder link of ₹${acc.amount} sent via WhatsApp & SMS to ${acc.customerName}.`);
+      onNotify(
+        language === 'hi'
+          ? `${acc.customerName} को ₹${acc.amount} का भुगतान रिमाइंडर WhatsApp पर भेजा गया।`
+          : `Payment reminder of ₹${acc.amount} sent via WhatsApp to ${acc.customerName}.`
+      );
     }
   };
 
+  // Call owner
   const handleCallOwner = (acc: LedgerAccountItem) => {
+    if (acc.phone && typeof window !== 'undefined') {
+      window.open(`tel:${acc.phone}`, '_self');
+    }
     if (onNotify) {
-      onNotify(`Initiating call with Accounts Manager of ${acc.customerName}...`);
+      onNotify(
+        language === 'hi'
+          ? `${acc.customerName} (${acc.phone || 'खाता प्रबंधक'}) को कॉल प्रारंभ किया जा रहा है...`
+          : `Initiating call with ${acc.customerName} (${acc.phone || 'Accounts Manager'})...`
+      );
     }
   };
 
-  const filteredLedger = ledgerAccounts.filter((item) => {
-    if (ledgerFilter === 'paid') return item.status === 'paid';
-    if (ledgerFilter === 'unpaid') return item.status === 'unpaid';
-    if (ledgerFilter === 'credit') return item.status === 'credit';
-    return true;
-  });
+  // Computed filtered ledger list
+  const filteredLedger = useMemo(() => {
+    return ledgerAccounts.filter((item) => {
+      if (ledgerFilter === 'paid' && item.status !== 'paid') return false;
+      if (ledgerFilter === 'unpaid' && item.status !== 'unpaid') return false;
+      if (ledgerFilter === 'credit' && item.status !== 'credit') return false;
 
-  const totalClearedAmount = ledgerAccounts
-    .filter((a) => a.status === 'paid')
-    .reduce((sum, a) => sum + a.amount, 0) + 31760; // offset for 128 accounts total
+      if (ledgerSearch.trim()) {
+        const q = ledgerSearch.toLowerCase();
+        return (
+          item.customerName.toLowerCase().includes(q) ||
+          item.accountNo.toLowerCase().includes(q) ||
+          item.sector.toLowerCase().includes(q) ||
+          (item.phone && item.phone.includes(q))
+        );
+      }
+      return true;
+    });
+  }, [ledgerAccounts, ledgerFilter, ledgerSearch]);
 
-  const totalOverdueAmount = ledgerAccounts
-    .filter((a) => a.status === 'unpaid' || a.status === 'credit')
-    .reduce((sum, a) => sum + a.amount, 0);
+  const totalPages = Math.max(1, Math.ceil(filteredLedger.length / pageSize));
+  const paginatedLedger = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredLedger.slice(start, start + pageSize);
+  }, [filteredLedger, currentPage, pageSize]);
+
+  // Dynamic counts for status pills
+  const paidCount = useMemo(() => ledgerAccounts.filter((a) => a.status === 'paid').length, [ledgerAccounts]);
+  const unpaidCount = useMemo(() => ledgerAccounts.filter((a) => a.status === 'unpaid').length, [ledgerAccounts]);
+  const creditCount = useMemo(() => ledgerAccounts.filter((a) => a.status === 'credit').length, [ledgerAccounts]);
+
+  const totalClearedAmount = useMemo(() => {
+    return ledgerAccounts
+      .filter((a) => a.status === 'paid')
+      .reduce((sum, a) => sum + (a.amount || 0), 0);
+  }, [ledgerAccounts]);
+
+  const totalOverdueAmount = useMemo(() => {
+    return ledgerAccounts
+      .filter((a) => a.status === 'unpaid' || a.status === 'credit')
+      .reduce((sum, a) => sum + (a.amount || 0), 0);
+  }, [ledgerAccounts]);
+
+  const formatCurrencyK = (num: number) => {
+    if (!num) return '0';
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}k`;
+    return num.toLocaleString('en-IN');
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -241,7 +344,8 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
               {language === 'hi' ? 'वित्तीय केंद्र' : 'Financial Hub'}
             </span>
             <span className="text-xs text-slate-400">
-              • {language === 'hi' ? 'रीयल-टाइम बहीखाता सिंक्रनाइज़' : 'Real-time ledger synced'} {serverSyncTime}
+              • {language === 'hi' ? 'रीयल-टाइम बहीखाता सिंक्रनाइज़' : 'Real-time ledger synced'}{' '}
+              <strong className="text-slate-600 font-semibold">{serverSyncTime}</strong>
             </span>
           </div>
           <h1 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -250,7 +354,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           <p className="text-xs lg:text-sm text-slate-500 mt-0.5 font-medium">
             {language === 'hi'
               ? 'लाइव टेलीमेट्री, खाली जार ट्रैकिंग और डिलीवरी मार्गों में संग्रह विभाजन'
-              : 'Live telemetry, empty jar tracking, and cash collection breakdown across delivery routes'}
+              : 'Live telemetry, empty jar tracking, and real cash collection breakdown across delivery routes'}
           </p>
         </div>
 
@@ -263,7 +367,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           >
             <button
               onClick={() => setTimeFilter('today')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 timeFilter === 'today'
                   ? 'bg-white text-brand-700 shadow-2xs font-bold'
                   : 'hover:text-slate-900'
@@ -274,7 +378,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             </button>
             <button
               onClick={() => setTimeFilter('week')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 timeFilter === 'week'
                   ? 'bg-white text-brand-700 shadow-2xs font-bold'
                   : 'hover:text-slate-900'
@@ -285,7 +389,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             </button>
             <button
               onClick={() => setTimeFilter('month')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 timeFilter === 'month'
                   ? 'bg-white text-brand-700 shadow-2xs font-bold'
                   : 'hover:text-slate-900'
@@ -296,7 +400,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             </button>
             <button
               onClick={() => setTimeFilter('year')}
-              className={`px-3 py-1.5 rounded-lg transition-all hidden sm:inline-block ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer hidden sm:inline-block ${
                 timeFilter === 'year'
                   ? 'bg-white text-brand-700 shadow-2xs font-bold'
                   : 'hover:text-slate-900'
@@ -310,7 +414,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           {/* Date Picker Button */}
           <button
             onClick={() => setIsManifestOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
             type="button"
           >
             <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,7 +423,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             <span>{language === 'hi' ? 'कस्टम दिनांक' : 'Custom Date'}</span>
           </button>
 
-          {/* Export CSV / Print Manifest */}
+          {/* Export CSV */}
           <button
             onClick={exportCsv}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-50 text-brand-700 border border-brand-200/80 text-xs font-bold hover:bg-brand-100 transition-colors cursor-pointer"
@@ -331,6 +435,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             <span>{language === 'hi' ? 'दैनिक बिक्री CSV' : 'Daily Sales CSV'}</span>
           </button>
 
+          {/* GST Summary */}
           <button
             onClick={() => setIsGstOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-navy text-white text-xs font-bold hover:bg-slate-900 transition-colors shadow-xs cursor-pointer"
@@ -345,13 +450,19 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
       </section>
       {/* END: HeaderAndDateRangeFilterBar */}
 
-      {/* BEGIN: KeyMetricsCards (4 Cards) */}
+      {/* BEGIN: KeyMetricsCards (4 Cards - Powered by Live Data) */}
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" data-purpose="top-kpi-metrics">
         {/* Card 1: Gross Revenue Today */}
         <div className="bg-white rounded-2xl p-4 lg:p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              {language === 'hi' ? 'आज का कुल राजस्व' : 'Gross Revenue Today'}
+              {timeFilter === 'today'
+                ? language === 'hi'
+                  ? 'आज का कुल राजस्व'
+                  : 'Gross Revenue Today'
+                : language === 'hi'
+                ? 'कुल चयनित राजस्व'
+                : 'Gross Period Revenue'}
             </span>
             <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,16 +472,18 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           </div>
           <div className="mt-2">
             <div className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
-              ₹{grossRevenue.toLocaleString('en-IN')}
+              ₹{kpis.grossRevenueToday.toLocaleString('en-IN')}
             </div>
             <div className="mt-2 flex items-center justify-between text-xs">
               <span className="text-emerald-600 font-bold flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
                 </svg>
-                +14.2% vs Yesterday
+                +{kpis.revenueTrendPercentage}% {language === 'hi' ? 'वृद्धि' : 'vs Baseline'}
               </span>
-              <span className="text-slate-400">Target: ₹45,000</span>
+              <span className="text-slate-400">
+                Target: ₹{kpis.targetRevenue.toLocaleString('en-IN')}
+              </span>
             </div>
           </div>
         </div>
@@ -390,7 +503,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight leading-none">
-                1,620
+                {kpis.unitsDispatched.toLocaleString('en-IN')}
               </span>
               <span className="text-xs font-semibold text-slate-500">
                 {language === 'hi' ? 'कुल इकाइयाँ' : 'Units Total'}
@@ -398,12 +511,12 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
             </div>
             <div className="mt-2 flex items-center gap-4 text-xs text-slate-500">
               <span className="inline-flex items-center gap-1.5 font-medium">
-                <span className="w-2 h-2 rounded-full bg-brand-500 shrink-0"></span>
-                <strong className="font-bold text-slate-700">980</strong> 1L Bottles
+                <span className="w-2 h-2 rounded-full bg-cyan-500 shrink-0"></span>
+                <strong className="font-bold text-slate-700">{kpis.jarsCount}</strong> 20L Jars
               </span>
               <span className="inline-flex items-center gap-1.5 font-medium">
-                <span className="w-2 h-2 rounded-full bg-cyan-500 shrink-0"></span>
-                <strong className="font-bold text-slate-700">640</strong> 20L Jars
+                <span className="w-2 h-2 rounded-full bg-brand-500 shrink-0"></span>
+                <strong className="font-bold text-slate-700">{kpis.bottlesCount}</strong> 1L Bottles
               </span>
             </div>
           </div>
@@ -423,21 +536,41 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           </div>
           <div className="mt-2">
             <div className="flex items-baseline justify-between">
-              <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">70.3%</span>
+              <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+                {kpis.paymentMix.upiPercentage.toFixed(1)}%
+              </span>
               <span className="text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">
                 UPI Verified
               </span>
             </div>
             {/* Multi-colored payment progress strip */}
             <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden flex my-2">
-              <div className="bg-brand-500 h-full" style={{ width: '70.3%' }} title="UPI: 70.3%"></div>
-              <div className="bg-emerald-500 h-full" style={{ width: '23.5%' }} title="Cash: 23.5%"></div>
-              <div className="bg-amber-400 h-full" style={{ width: '6.2%' }} title="Credit: 6.2%"></div>
+              <div
+                className="bg-brand-500 h-full transition-all duration-500"
+                style={{ width: `${Math.max(5, kpis.paymentMix.upiPercentage)}%` }}
+                title={`UPI: ${kpis.paymentMix.upiPercentage.toFixed(1)}%`}
+              ></div>
+              <div
+                className="bg-emerald-500 h-full transition-all duration-500"
+                style={{ width: `${Math.max(5, kpis.paymentMix.cashPercentage)}%` }}
+                title={`Cash: ${kpis.paymentMix.cashPercentage.toFixed(1)}%`}
+              ></div>
+              <div
+                className="bg-amber-400 h-full transition-all duration-500"
+                style={{ width: `${Math.max(2, kpis.paymentMix.creditPercentage)}%` }}
+                title={`Credit: ${kpis.paymentMix.creditPercentage.toFixed(1)}%`}
+              ></div>
             </div>
             <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
-              <span>UPI: <strong>₹34.2k</strong></span>
-              <span>Cash: <strong>₹11.4k</strong></span>
-              <span className="text-amber-700 font-bold">Credit: <strong>₹3.0k</strong></span>
+              <span>
+                UPI: <strong>₹{formatCurrencyK(kpis.paymentMix.upiAmount)}</strong>
+              </span>
+              <span>
+                Cash: <strong>₹{formatCurrencyK(kpis.paymentMix.cashAmount)}</strong>
+              </span>
+              <span className="text-amber-700 font-bold">
+                Credit: <strong>₹{formatCurrencyK(kpis.paymentMix.creditAmount)}</strong>
+              </span>
             </div>
           </div>
         </div>
@@ -460,18 +593,21 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
           <div className="mt-2">
             <div className="flex items-baseline justify-between">
               <div className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
-                1,480 <span className="text-xs font-normal text-slate-500">/ 1,620</span>
+                {kpis.jarTelemetry.returnedJars}{' '}
+                <span className="text-xs font-normal text-slate-500">/ {kpis.jarTelemetry.totalJars}</span>
               </div>
               <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                91.3% In
+                {kpis.jarTelemetry.returnPercentage.toFixed(1)}% In
               </span>
             </div>
             <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
               <span className="font-medium text-amber-700">
-                {language === 'hi' ? 'बकाया वापसी: 140 जार' : 'Pending Return: 140 Jars'}
+                {language === 'hi'
+                  ? `बकाया वापसी: ${kpis.jarTelemetry.pendingJars} जार`
+                  : `Pending Return: ${kpis.jarTelemetry.pendingJars} Jars`}
               </span>
               <span className="text-slate-400">
-                Loss Rate: <strong className="text-slate-700">1.2%</strong>
+                Loss Rate: <strong className="text-slate-700">{kpis.jarTelemetry.lossRatePercentage}%</strong>
               </span>
             </div>
           </div>
@@ -494,8 +630,8 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                 </h3>
                 <p className="text-xs text-slate-500">
                   {language === 'hi'
-                    ? 'दैनिक कार्टन और जार घनत्व के अनुसार वितरण क्षेत्रों की रैंकिंग'
-                    : 'Ranking delivery sectors by daily carton & jar density'}
+                    ? 'दैनिक कार्टन और जार घनत्व के अनुसार वास्तविक वितरण क्षेत्रों की रैंकिंग'
+                    : 'Ranking live delivery sectors by daily carton & jar density from customer directory'}
                 </p>
               </div>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200/60">
@@ -504,183 +640,61 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
               </span>
             </div>
 
-            {/* Route ranking rows */}
+            {/* Dynamic Route ranking rows from live data */}
             <div className="mt-4 space-y-3.5">
-              {/* Sector 1 */}
-              <div
-                onClick={() => onOpenHistory?.('area-01')}
-                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
-                    01
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
-                        IT Park & Tech Phase 2
-                      </h4>
-                      <span className="px-2 py-0.2 text-[10px] rounded bg-emerald-100 text-emerald-800 font-semibold">
-                        High Demand Peak
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
-                      Hub Route: Express North #4 • 11:00 AM - 2:00 PM
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
-                  <div>
-                    <div className="text-xs font-bold font-mono text-slate-900">
-                      450 bottles <span className="text-slate-400 font-normal">(28%)</span>
-                    </div>
-                    <div className="text-[11px] text-brand-600 font-medium">
-                      Auto-restock +120 Jars Dispatched
-                    </div>
-                  </div>
-                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
-                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '85%' }}></div>
-                  </div>
-                </div>
-              </div>
+              {hotspots.map((area, idx) => {
+                const badgeColor =
+                  area.statusType === 'alert'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : area.statusType === 'warning'
+                    ? 'bg-amber-100 text-amber-800'
+                    : area.statusType === 'success'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-purple-100 text-purple-800';
 
-              {/* Sector 2 */}
-              <div
-                onClick={() => onOpenHistory?.('area-02')}
-                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
-                    02
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
-                        Lakeview Residential Towers
-                      </h4>
-                      <span className="px-2 py-0.2 text-[10px] rounded bg-blue-100 text-blue-800 font-semibold">
-                        Morning Run Completed
+                return (
+                  <div
+                    key={area.id || idx}
+                    onClick={() => onOpenHistory?.(area.id)}
+                    className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                        {area.rank || String(idx + 1).padStart(2, '0')}
                       </span>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                            {area.areaName}
+                          </h4>
+                          <span className={`px-2 py-0.5 text-[10px] rounded font-semibold ${badgeColor}`}>
+                            {area.statusTag}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                          {area.routeTag}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Hub Route: Lakeside Loop A</p>
-                  </div>
-                </div>
-                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
-                  <div>
-                    <div className="text-xs font-bold font-mono text-slate-900">
-                      380 bottles <span className="text-slate-400 font-normal">(23%)</span>
+                    <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
+                      <div>
+                        <div className="text-xs font-bold font-mono text-slate-900">
+                          {area.bottlesCount} bottles <span className="text-slate-400 font-normal">({area.percentage}%)</span>
+                        </div>
+                        <div className="text-[11px] text-brand-600 font-medium">
+                          {area.actionNote || 'Fleet Active'}
+                        </div>
+                      </div>
+                      <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
+                        <div
+                          className="bg-brand-navy h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(100, Math.max(8, area.percentage))}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="text-[11px] text-emerald-600 font-medium">Buffer: 40 Units Available</div>
                   </div>
-                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
-                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '72%' }}></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sector 3 */}
-              <div
-                onClick={() => onOpenHistory?.('area-03')}
-                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
-                    03
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
-                        Civil Lines & Care Hospitals
-                      </h4>
-                      <span className="px-2 py-0.2 text-[10px] rounded bg-rose-100 text-rose-800 font-semibold">
-                        Strict Quality Verified
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
-                      Hub Route: MedCorridor Quick • TDS: 110ppm Checked
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
-                  <div>
-                    <div className="text-xs font-bold font-mono text-slate-900">
-                      310 bottles <span className="text-slate-400 font-normal">(19%)</span>
-                    </div>
-                    <div className="text-[11px] text-rose-600 font-medium">Critical Priority Stop</div>
-                  </div>
-                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
-                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '60%' }}></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sector 4 */}
-              <div
-                onClick={() => onOpenHistory?.('area-04')}
-                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
-                    04
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
-                        High Street Commercial Plaza
-                      </h4>
-                      <span className="px-2 py-0.2 text-[10px] rounded bg-amber-100 text-amber-800 font-semibold">
-                        Evening Refresh Pending
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Hub Route: Retail Transit #1</p>
-                  </div>
-                </div>
-                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
-                  <div>
-                    <div className="text-xs font-bold font-mono text-slate-900">
-                      260 bottles <span className="text-slate-400 font-normal">(16%)</span>
-                    </div>
-                    <div className="text-[11px] text-brand-600 font-medium">Van 08 Dispatched</div>
-                  </div>
-                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
-                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '48%' }}></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sector 5 */}
-              <div
-                onClick={() => onOpenHistory?.('area-05')}
-                className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center justify-center shrink-0">
-                    05
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
-                        University Campus Hostels
-                      </h4>
-                      <span className="px-2 py-0.2 text-[10px] rounded bg-purple-100 text-purple-800 font-semibold">
-                        Bulk Discount Applied
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Hub Route: South Perimeter Ring</p>
-                  </div>
-                </div>
-                <div className="flex items-center sm:text-right gap-4 justify-between sm:justify-end">
-                  <div>
-                    <div className="text-xs font-bold font-mono text-slate-900">
-                      220 bottles <span className="text-slate-400 font-normal">(14%)</span>
-                    </div>
-                    <div className="text-[11px] text-slate-500 font-medium">Next Delivery 4:30 PM</div>
-                  </div>
-                  <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden shrink-0">
-                    <div className="bg-brand-navy h-full rounded-full" style={{ width: '38%' }}></div>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
 
@@ -710,7 +724,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                   {language === 'hi' ? 'भुगतान प्रवाह' : 'Payment Stream'}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  {language === 'hi' ? 'रीयल-टाइम भुगतान सत्यापन फ़ीड' : 'Real-time payment verification feed'}
+                  {language === 'hi' ? 'रीयल-टाइम भुगतान सत्यापन फ़ीड' : 'Real-time payment verification feed from active drops'}
                 </p>
               </div>
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700">
@@ -718,175 +732,76 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
               </span>
             </div>
 
-            {/* Mini List of Transactions */}
-            <div className="mt-4 space-y-3">
-              {/* Payment item 1 */}
-              <div
-                onClick={() => onOpenHistory?.('area-01')}
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
-                      Infosys Cafeteria #2
-                    </h5>
-                    <p className="text-[11px] text-slate-500 mt-1">IT Park • INV-9821</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-900">₹4,200</span>
-                  <div className="mt-0.5">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      UPI Auto • Cleared
-                    </span>
-                  </div>
-                </div>
-              </div>
+            {/* Dynamic List of Real Transactions */}
+            <div className="mt-4 space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
+              {settlements.slice(0, 8).map((s, idx) => {
+                const isCash = (s.method || '').toLowerCase().includes('cash');
+                const isDue = (s.status || '').toLowerCase().includes('due') || (s.status || '').toLowerCase().includes('pending');
 
-              {/* Payment item 2 */}
-              <div
-                onClick={() => onOpenHistory?.('area-04')}
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-                    </svg>
+                return (
+                  <div
+                    key={s.id || idx}
+                    onClick={() => onOpenHistory?.('all')}
+                    className={`flex items-center justify-between p-2.5 rounded-xl border transition-colors cursor-pointer group ${
+                      isDue
+                        ? 'bg-amber-50/60 hover:bg-amber-50 border-amber-200/50'
+                        : 'bg-white hover:bg-slate-50 border-slate-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform ${
+                          isCash
+                            ? 'bg-emerald-50 text-emerald-600'
+                            : isDue
+                            ? 'bg-amber-100 text-amber-700'
+                            : 'bg-brand-50 text-brand-600'
+                        }`}
+                      >
+                        {isCash ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                          </svg>
+                        ) : isDue ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+                          </svg>
+                        )}
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
+                          {s.clientName}
+                        </h5>
+                        <p className="text-[11px] text-slate-500 mt-1 truncate max-w-[190px]">
+                          {s.location} • {s.invoiceNo}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-xs font-extrabold font-mono text-slate-900">
+                        ₹{s.amount.toLocaleString('en-IN')}
+                      </span>
+                      <div className="mt-0.5">
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            s.status === 'Cleared'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : s.status === 'Collected'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-amber-200 text-amber-900'
+                          }`}
+                        >
+                          {s.method} • {s.status}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
-                      Aura Mart & General Store
-                    </h5>
-                    <p className="text-[11px] text-slate-500 mt-1">High Street • INV-9820</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-900">₹1,850</span>
-                  <div className="mt-0.5">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
-                      Cash • Collected
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment item 3 */}
-              <div
-                onClick={() => onOpenHistory?.('area-03')}
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
-                      Apex Heart Institute
-                    </h5>
-                    <p className="text-[11px] text-slate-500 mt-1">Civil Lines • INV-9819</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-900">₹6,400</span>
-                  <div className="mt-0.5">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      UPI QR • Cleared
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment item 4: Credit Overdue */}
-              <div
-                onClick={() => onOpenHistory?.('area-02')}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-amber-50/60 hover:bg-amber-50 border border-amber-200/50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-amber-900 transition-colors">
-                      Lakeview Society Tower C
-                    </h5>
-                    <p className="text-[11px] text-amber-800 mt-1">Lakeview • INV-9818</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-900">₹3,000</span>
-                  <div className="mt-0.5">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
-                      Credit Net-7 • Due in 5d
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment item 5 */}
-              <div
-                onClick={() => onOpenHistory?.('area-05')}
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
-                      Engineering Faculty Mess
-                    </h5>
-                    <p className="text-[11px] text-slate-500 mt-1">University • INV-9817</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-900">₹2,100</span>
-                  <div className="mt-0.5">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      UPI QR • Cleared
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment item 6 */}
-              <div
-                onClick={() => onOpenHistory?.('area-01')}
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 leading-none group-hover:text-brand-600 transition-colors">
-                      Sharma Residency - Flat 402
-                    </h5>
-                    <p className="text-[11px] text-slate-500 mt-1">IT Corridor • INV-9816</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-900">₹240</span>
-                  <div className="mt-0.5">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      UPI QR • Cleared
-                    </span>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
 
@@ -897,7 +812,11 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
               className="w-full py-2 px-3 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               type="button"
             >
-              <span>{language === 'hi' ? 'आज के सभी 142 चालान देखें' : 'View All 142 Invoices Today'}</span>
+              <span>
+                {language === 'hi'
+                  ? `आज के सभी ${settlements.length} चालान देखें`
+                  : `View All ${settlements.length} Recorded Invoices`}
+              </span>
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M14 5l7 7m0 0l-7 7m7-7H3" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
               </svg>
@@ -907,13 +826,13 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
       </section>
       {/* END: MidSectionGrid */}
 
-      {/* BEGIN: CustomerLedgerSection ("Who Paid vs Who Didn't") */}
+      {/* BEGIN: CustomerLedgerSection ("Who Paid vs Who Didn't" - Powered by Live Database) */}
       <section
         className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 lg:p-6"
         data-purpose="customer-payment-ledger"
         id="customer-directory"
       >
-        {/* Header & Detailed Tab Filters */}
+        {/* Header & Filter Tabs */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-2">
@@ -921,24 +840,45 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                 {language === 'hi' ? 'ग्राहक निपटान बहीखाता' : 'Customer Settlement Ledger'}
               </h2>
               <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-slate-100 text-slate-700">
-                342 Active Accounts
+                {ledgerAccounts.length} Active Accounts
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
               {language === 'hi'
                 ? 'किसने भुगतान किया, लंबित क्रेडिट, वैन में नकदी और वन-क्लिक रिमाइंडर फ़िल्टर करें'
-                : "Filter who has paid, pending credit aging, cash held with delivery vans, and one-click reminders"}
+                : 'Live customer directory showing exact account balances, delivered jars, and instant payment settlement'}
             </p>
           </div>
 
-          {/* "Who Paid vs Who Didn't" Filter Tabs */}
-          <div className="flex items-center flex-wrap gap-2">
+          {/* Search and Status Filter Tabs */}
+          <div className="flex items-center flex-wrap gap-2.5">
+            {/* Quick search input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={ledgerSearch}
+                onChange={(e) => {
+                  setLedgerSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder={language === 'hi' ? 'ग्राहक या खाता खोजें...' : 'Search client, sector...'}
+                className="pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 w-44 sm:w-56"
+              />
+              <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
+              </svg>
+            </div>
+
+            {/* Status Tabs */}
             <div
               className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/90 text-xs font-semibold"
               data-purpose="payment-status-filter-pills"
             >
               <button
-                onClick={() => setLedgerFilter('all')}
+                onClick={() => {
+                  setLedgerFilter('all');
+                  setCurrentPage(1);
+                }}
                 className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   ledgerFilter === 'all'
                     ? 'bg-white text-slate-900 shadow-2xs font-bold'
@@ -946,10 +886,13 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                 }`}
                 type="button"
               >
-                All Records
+                All ({ledgerAccounts.length})
               </button>
               <button
-                onClick={() => setLedgerFilter('paid')}
+                onClick={() => {
+                  setLedgerFilter('paid');
+                  setCurrentPage(1);
+                }}
                 className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${
                   ledgerFilter === 'paid'
                     ? 'bg-white text-emerald-900 shadow-2xs font-bold'
@@ -958,10 +901,13 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                 type="button"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                Paid / Cleared (128)
+                Paid ({paidCount})
               </button>
               <button
-                onClick={() => setLedgerFilter('unpaid')}
+                onClick={() => {
+                  setLedgerFilter('unpaid');
+                  setCurrentPage(1);
+                }}
                 className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${
                   ledgerFilter === 'unpaid'
                     ? 'bg-white text-rose-900 shadow-2xs font-bold'
@@ -970,10 +916,13 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                 type="button"
               >
                 <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                Unpaid / Due (14)
+                Unpaid / Due ({unpaidCount})
               </button>
               <button
-                onClick={() => setLedgerFilter('credit')}
+                onClick={() => {
+                  setLedgerFilter('credit');
+                  setCurrentPage(1);
+                }}
                 className={`px-3 py-1.5 rounded-lg transition-colors hidden sm:flex items-center gap-1 cursor-pointer ${
                   ledgerFilter === 'credit'
                     ? 'bg-white text-amber-900 shadow-2xs font-bold'
@@ -982,7 +931,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
                 type="button"
               >
                 <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                Credit / Net-7 (8)
+                Credit ({creditCount})
               </button>
             </div>
           </div>
@@ -1004,142 +953,172 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredLedger.map((row) => (
-                <tr
-                  key={row.id}
-                  className={`transition-colors ${
-                    row.isOverdue
-                      ? 'bg-rose-50/40 hover:bg-rose-50/70'
-                      : row.status === 'credit'
-                      ? 'bg-amber-50/30 hover:bg-amber-50/60'
-                      : 'hover:bg-slate-50/80'
-                  }`}
-                >
-                  <td className="py-3.5 px-3">
-                    <div className="font-bold text-slate-900">{row.customerName}</div>
-                    <div className="text-[11px] text-slate-400">{row.accountNo}</div>
-                  </td>
-                  <td className="py-3.5 px-3 text-slate-600 font-medium">{row.sector}</td>
-                  <td className="py-3.5 px-3">
-                    <span className="font-mono font-bold text-slate-800">{row.deliveredVolume}</span>
-                    <span className="text-[10px] text-slate-400 block">{row.productType}</span>
-                  </td>
-                  <td className="py-3.5 px-3">
-                    <span className={row.emptyJarsClass}>{row.emptyJarsText}</span>
-                  </td>
-                  <td
-                    className={`py-3.5 px-3 font-mono font-bold text-sm ${
-                      row.isOverdue || row.status === 'unpaid' ? 'text-rose-700' : 'text-slate-900'
-                    }`}
-                  >
-                    ₹{row.amount.toLocaleString('en-IN')}
-                  </td>
-                  <td className="py-3.5 px-3 text-slate-600 font-medium">{row.paymentMode}</td>
-                  <td className="py-3.5 px-3">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${row.statusClass}`}
-                    >
-                      {row.status === 'paid' && (
-                        <svg className="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            clipRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            fillRule="evenodd"
-                          ></path>
-                        </svg>
-                      )}
-                      {(row.status === 'credit' || row.isOverdue) && (
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            row.isOverdue ? 'bg-rose-600' : 'bg-amber-600'
-                          }`}
-                        />
-                      )}
-                      {row.statusLabel}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-3 text-right space-x-1.5 whitespace-nowrap">
-                    {row.status === 'paid' ? (
-                      <button
-                        onClick={() => setIsGstOpen(true)}
-                        className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:text-brand-700 hover:border-brand-300 font-semibold text-[11px] transition-colors cursor-pointer"
-                        type="button"
-                      >
-                        Receipt
-                      </button>
-                    ) : row.status === 'credit' ? (
-                      <>
-                        <button
-                          onClick={() => handleSendReminder(row)}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-xs transition-colors cursor-pointer"
-                          type="button"
-                        >
-                          WhatsApp Link
-                        </button>
-                        <button
-                          onClick={() => handleMarkPaid(row.id)}
-                          className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-white font-semibold text-[11px] transition-colors cursor-pointer"
-                          type="button"
-                        >
-                          Mark Paid
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => handleSendReminder(row)}
-                          className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] shadow-xs transition-colors cursor-pointer"
-                          type="button"
-                        >
-                          Send Reminder
-                        </button>
-                        <button
-                          onClick={() => handleCallOwner(row)}
-                          className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-white font-semibold text-[11px] transition-colors cursor-pointer"
-                          type="button"
-                        >
-                          Call Owner
-                        </button>
-                      </>
-                    )}
+              {paginatedLedger.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-8 text-center text-slate-400 font-medium">
+                    {language === 'hi'
+                      ? 'कोई खाता नहीं मिला।'
+                      : 'No matching customer accounts found in this filter.'}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paginatedLedger.map((row) => (
+                  <tr
+                    key={row.id}
+                    className={`transition-colors ${
+                      row.isOverdue
+                        ? 'bg-rose-50/40 hover:bg-rose-50/70'
+                        : row.status === 'credit'
+                        ? 'bg-amber-50/30 hover:bg-amber-50/60'
+                        : 'hover:bg-slate-50/80'
+                    }`}
+                  >
+                    <td className="py-3.5 px-3">
+                      <div className="font-bold text-slate-900">{row.customerName}</div>
+                      <div className="text-[11px] text-slate-400">{row.accountNo}</div>
+                    </td>
+                    <td className="py-3.5 px-3 text-slate-600 font-medium">{row.sector}</td>
+                    <td className="py-3.5 px-3">
+                      <span className="font-mono font-bold text-slate-800">{row.deliveredVolume}</span>
+                      <span className="text-[10px] text-slate-400 block">{row.productType}</span>
+                    </td>
+                    <td className="py-3.5 px-3">
+                      <span className={row.emptyJarsClass}>{row.emptyJarsText}</span>
+                    </td>
+                    <td
+                      className={`py-3.5 px-3 font-mono font-bold text-sm ${
+                        row.isOverdue || row.status === 'unpaid' ? 'text-rose-700' : 'text-slate-900'
+                      }`}
+                    >
+                      ₹{row.amount.toLocaleString('en-IN')}
+                    </td>
+                    <td className="py-3.5 px-3 text-slate-600 font-medium">{row.paymentMode}</td>
+                    <td className="py-3.5 px-3">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${row.statusClass}`}
+                      >
+                        {row.status === 'paid' && (
+                          <svg className="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                              clipRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              fillRule="evenodd"
+                            ></path>
+                          </svg>
+                        )}
+                        {(row.status === 'credit' || row.isOverdue) && (
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              row.isOverdue ? 'bg-rose-600' : 'bg-amber-600'
+                            }`}
+                          />
+                        )}
+                        {row.statusLabel}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-3 text-right space-x-1.5 whitespace-nowrap">
+                      {row.status === 'paid' ? (
+                        <button
+                          onClick={() => setIsGstOpen(true)}
+                          className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:text-brand-700 hover:border-brand-300 font-semibold text-[11px] transition-colors cursor-pointer"
+                          type="button"
+                        >
+                          Receipt
+                        </button>
+                      ) : row.status === 'credit' ? (
+                        <>
+                          <button
+                            onClick={() => handleSendReminder(row)}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-xs transition-colors cursor-pointer"
+                            type="button"
+                          >
+                            WhatsApp Link
+                          </button>
+                          <button
+                            disabled={isSettling === row.id}
+                            onClick={() => handleMarkPaid(row.id)}
+                            className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-white font-semibold text-[11px] transition-colors cursor-pointer disabled:opacity-50"
+                            type="button"
+                          >
+                            {isSettling === row.id ? 'Saving...' : 'Mark Paid'}
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleSendReminder(row)}
+                            className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] shadow-xs transition-colors cursor-pointer"
+                            type="button"
+                          >
+                            Send Reminder
+                          </button>
+                          <button
+                            disabled={isSettling === row.id}
+                            onClick={() => handleMarkPaid(row.id)}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 hover:bg-emerald-100 font-semibold text-[11px] transition-colors cursor-pointer disabled:opacity-50"
+                            type="button"
+                          >
+                            {isSettling === row.id ? 'Saving...' : 'Mark Paid'}
+                          </button>
+                          <button
+                            onClick={() => handleCallOwner(row)}
+                            className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-white font-semibold text-[11px] transition-colors cursor-pointer"
+                            type="button"
+                          >
+                            Call Owner
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Ledger Pagination & Quick Stats Footer */}
+        {/* Ledger Pagination & Real Financial Totals */}
         <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <span>
-              Showing <strong>{filteredLedger.length}</strong> of <strong>342</strong> accounts
+              Showing <strong>{filteredLedger.length}</strong> of <strong>{ledgerAccounts.length}</strong> accounts
             </span>
             <span className="text-emerald-700 font-semibold">
-              Total Cleared Today: ₹{totalClearedAmount.toLocaleString('en-IN')}
+              Total Cleared: ₹{totalClearedAmount.toLocaleString('en-IN')}
             </span>
             <span className="text-rose-700 font-semibold">
               Total Overdue: ₹{totalOverdueAmount.toLocaleString('en-IN')}
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer disabled:opacity-40"
+              type="button"
+            >
               Previous
             </button>
-            <button className="px-2.5 py-1 rounded-lg bg-brand-navy text-white text-xs font-bold cursor-pointer" type="button">
-              1
-            </button>
-            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
-              2
-            </button>
-            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
-              3
-            </button>
-            <span className="px-1 text-slate-400">...</span>
-            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
-              68
-            </button>
-            <button className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer" type="button">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+              <button
+                key={pg}
+                onClick={() => setCurrentPage(pg)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                  currentPage === pg
+                    ? 'bg-brand-navy text-white'
+                    : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+                type="button"
+              >
+                {pg}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs cursor-pointer disabled:opacity-40"
+              type="button"
+            >
               Next
             </button>
           </div>
@@ -1147,19 +1126,20 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
       </section>
       {/* END: CustomerLedgerSection */}
 
-      {/* BEGIN: BottomStatusBar */}
+      {/* BEGIN: BottomStatusBar (Dynamic Vans & Cash Reconciled) */}
       <footer className="bg-white rounded-2xl border border-slate-200/90 py-3 px-4 lg:px-6 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-2xs">
         <div className="flex items-center gap-3">
           <span className="font-bold text-slate-800">Mumpy Central Operating System v4.2</span>
           <span>•</span>
           <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            All 8 Delivery Vans Connected (GPS Telemetry Live)
+            All {kpis.activeVansCount} Delivery Vans Connected (GPS Telemetry Live)
           </span>
         </div>
         <div className="flex items-center gap-4 text-slate-500">
           <span>
-            Driver Cash Handover Reconciled: <strong className="text-slate-800">₹11,400</strong>
+            Driver Cash Handover Reconciled:{' '}
+            <strong className="text-slate-800">₹{kpis.driverCashReconciled.toLocaleString('en-IN')}</strong>
           </span>
           <span>•</span>
           <span className="text-slate-400 font-mono">System Time: {systemTime}</span>
@@ -1171,7 +1151,7 @@ export const AdminInsightsView: React.FC<AdminInsightsViewProps> = ({
       <GstSummaryModal
         isOpen={isGstOpen}
         onClose={() => setIsGstOpen(false)}
-        grossRevenue={grossRevenue}
+        grossRevenue={kpis.grossRevenueToday || grossRevenue}
       />
       <ManifestModal
         isOpen={isManifestOpen}

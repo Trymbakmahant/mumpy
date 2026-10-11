@@ -20,10 +20,21 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('admin-insights');
   const [selectedHistoryAreaId, setSelectedHistoryAreaId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [grossRevenue, setGrossRevenue] = useState<number>(48650);
+  const [grossRevenue, setGrossRevenue] = useState<number>(0);
   const [reservoirLevel, setReservoirLevel] = useState<number>(92);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/analytics')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.kpis?.grossRevenueToday !== undefined) {
+          setGrossRevenue(data.kpis.grossRevenueToday);
+        }
+      })
+      .catch(() => null);
+  }, []);
 
   // Load and enforce tab based on role and saved preference
   useEffect(() => {
